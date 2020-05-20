@@ -1,0 +1,17 @@
+.Map {
+  
+  margin-bottom: 2rem;
+
+  svg {
+    background-color: rgb(237, 226, 226);
+    display: block;
+    width: 100%;
+    height: 70vh;
+  }
+  svg path:hover {
+    stroke: black;
+    stroke-width: 1px;
+    cursor: pointer;
+  }
+
+}
