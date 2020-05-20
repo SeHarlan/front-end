@@ -16,8 +16,8 @@ const GeoChart = ({ geoJson, property, rotateX, rotateY }) => {
 
     const minProp = min(geoJson.features, feature => feature.properties[property]);
     const maxProp = max(geoJson.features, feature => feature.properties[property]);
-    const colorScale = scaleSqrt().domain([minProp, maxProp]).range(['green', 'red']);
-    // const colorScale = scaleSequential().domain([minProp, maxProp]).interpolator(interpolateRainbow);
+    // const colorScale = scaleSqrt().domain([minProp, maxProp]).range(['green', 'red']);
+    const colorScale = scaleSequential().domain([minProp, maxProp]).interpolator(interpolateRainbow);
     // domain([min, middle, max]).range(['red', 'purple', 'blue'])
 
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
