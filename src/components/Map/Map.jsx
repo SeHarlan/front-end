@@ -1,24 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { select, geoPath, geoMercator, min, max, scaleSequential, interpolateWarm, interpolateRainbow, scaleSqrt, geoOrthographic } from 'd3';
+import { select, geoPath, geoMercator, min, max, scaleSequential, interpolateWarm, interpolateRainbow, scaleSqrt, geoOrthographic, scaleLinear } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 
 import style from './Map.css';
+import { useWorldMobilityData } from '../../hooks/mobilityHooks';
 
-const GeoChart = ({ geoJson, property, rotateX, rotateY }) => {
+const GeoChart = () => {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [property, setProperty] = useState('residentialChange');
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  const geoJson = useWorldMobilityData('2020-04-30T00:00:00.000+00:00');
 
   useEffect(() => {
+    if(!geoJson.features) return;
     const svg = select(svgRef.current);
 
-    const minProp = min(geoJson.features, feature => feature.properties[property]);
-    const maxProp = max(geoJson.features, feature => feature.properties[property]);
-    // const colorScale = scaleSqrt().domain([minProp, maxProp]).range(['green', 'red']);
-    const colorScale = scaleSequential().domain([minProp, maxProp]).interpolator(interpolateRainbow);
-    // domain([min, middle, max]).range(['red', 'purple', 'blue'])
+    const minProp = -100;
+    const maxProp = 100;
+    const colorScale = scaleLinear().domain([minProp, maxProp]).range(['blue', 'red']);
 
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
@@ -39,29 +43,37 @@ const GeoChart = ({ geoJson, property, rotateX, rotateY }) => {
       .selectAll('.country')
       .data(geoJson.features)
       .join('path')
-      .on('click', feature => {
-        setSelectedCountry(selectedCountry === feature ? null : feature);
+      .on('click', clickedCountry => {
+        setSelectedCountry(selectedCountry === clickedCountry ? null : clickedCountry);
         //change a countries position in memory with rotation so zoom will work
       })
       .attr('class', 'country')
       // .transition() //take off while rotating
-      .attr('fill', feature => colorScale(feature.properties[property]))
-      .attr('d', feature => pathGenerator(feature));
+      .attr('fill', country => country.mobilityData[property] 
+        ? colorScale(country.mobilityData[property])
+        : 'grey'
+      )
+      .attr('d', country => pathGenerator(country));
 
   }, [geoJson, dimensions, property, selectedCountry, rotateX, rotateY]);
 
   return (
     <div ref={wrapperRef} className={style.Map} >
       <svg ref={svgRef}></svg>
+      <select value={property} onChange={({ target }) => setProperty(target.value)}>
+        <option value="residentialChange">Residential</option>
+        <option value="groceryChange">Grocery</option>
+        <option value="parksChange">Parks</option>
+        <option value="retailChange">Retail</option>
+        <option value="transitChange">Transit</option>
+        <option value="workplaceChange">Workplace</option>
+      </select>
+      <span>rotate X</span>
+      <input type="range" min="-180" max="180" step="0.5" value={rotateX} onChange={({ target }) => setRotateX(target.value)}/>
+      <span>rotate Y</span>
+      <input type="range" min="-180" max="180" step="0.5" value={rotateY} onChange={({ target }) => setRotateY(target.value)}/>
     </div>
   );
-};
-
-GeoChart.propTypes = {
-  geoJson: PropTypes.array,
-  property: PropTypes.string,
-  rotateX: PropTypes.number,
-  rotateY: PropTypes.number
 };
 
 export default GeoChart;
