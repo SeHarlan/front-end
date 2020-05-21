@@ -1,4 +1,4 @@
-import React, { Component, useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styles from './LineGraph.css';
 // import JSONdata from '../../data/daily-test.json';
 import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear } from 'd3';
@@ -8,28 +8,35 @@ function formatDate(badDate) {
   return badDate.toString().slice(5, 6) + '/' + badDate.toString().slice(6);
 }
 
+const selectOptions = (myObj) => {
+  const myKeys = Object.keys(myObj);
+  return myKeys.map((myKey, i) => <option key={i} value={myKey}>{myKey}</option>);
+};
+
 function LineGraph() {
   
   const svgRef = useRef();
-  const { dateData, positiveData } = useCovidData();
-  
+  const [property, setProperty] = useState('positive');
+  const { dateData, positiveData, recoveredData, deathData } = useCovidData();
+  const covidData = { date: dateData, positive: positiveData, recovered: recoveredData, death: deathData };
+
   useEffect(() => {
-    if(!dateData || !positiveData) return;
+    if(!dateData || !positiveData || !recoveredData || !deathData) return;
 
     const svg = select(svgRef.current);
     
     const xScale = scaleLinear()
-      .domain([0, positiveData.length - 1])
+      .domain([0, covidData[property].length - 1])
       .range([600, 0]);
     const yScale = scaleLinear()
-      .domain([0, Math.max(...positiveData)])
+      .domain([0, Math.max(...covidData['positive'])])
       .range([400, 0]);
   
     const xAxis = axisBottom(xScale)
-      .ticks(positiveData.length / 5)
+      .ticks(covidData[property].length / 5)
       .tickFormat(index => formatDate(dateData[index]));
     const yAxis = axisRight(yScale)
-      .ticks(positiveData.length / 5);
+      .ticks(covidData[property].length / 5);
 
     svg
       .select('.x-axis')
@@ -49,13 +56,13 @@ function LineGraph() {
 
     svg
       .selectAll('.line')
-      .data([positiveData])
+      .data([covidData[property]])
       .join('path')
       .attr('class', 'line')
       .attr('d', value => myLine(value))
       .attr('fill', 'none')
       .attr('stroke', 'blue');
-  }, [dateData, positiveData]);
+  }, [covidData]);
 
   return (   
     <div className={styles.LineGraph}>
@@ -68,9 +75,12 @@ function LineGraph() {
         <br />
         <br />
         <br />
-        <br />
-        {/* <button onClick={() => setData(tempData.map(value => value + 5))}>Update Data</button>
-        <button onClick={() => setData(tempData.filter(value => value < 35))}>Filter Data</button> */}
+        <select value={property} onChange={({ target }) => setProperty(target.value)}>
+          {selectOptions(covidData)}
+          {/* <option value="positive">Total Positive Cases</option>
+          <option value="recovered">Current Cases</option>
+          <option value="death">Deaths</option> */}
+        </select>
       </div>
     </div>
   );
