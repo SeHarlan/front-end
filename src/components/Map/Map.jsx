@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { select, geoPath, geoMercator, min, max, scaleSequential, interpolateWarm, interpolateRainbow, scaleSqrt, geoOrthographic, scaleLinear, geoGraticule, event, mouse, drag } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
+import { Grid, Typography } from '@material-ui/core';
 
 import style from './Map.css';
 import { useWorldMobilityData } from '../../hooks/mobilityHooks';
