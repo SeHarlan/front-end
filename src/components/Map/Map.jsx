@@ -10,13 +10,14 @@ const WorldMap = () => {
   const [property, setProperty] = useState('residentialChange');
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
-  
+
+  const geoJson = useWorldMobilityData('2020-05-01T00:00:00.000+00:00');
+
   const svgRef = useRef();
   const wrapperRef = useRef();
 
   const dimensions = useResizeObserver(wrapperRef);
-  const geoJson = useWorldMobilityData('2020-05-01T00:00:00.000+00:00');
-
+  
   useEffect(() => {
     if(!geoJson.features) return;
 
@@ -28,18 +29,12 @@ const WorldMap = () => {
       .domain([-100, 0, 100])
       .range(['blue', 'rgb(243, 240, 225)', 'green']);
 
-
     const projection = geoOrthographic()
       .fitSize([width * 0.9, height * 0.9], geoJson)
       .center([0, 0])
       .rotate([rotateX, rotateY, 0])
       .translate([width / 2, height / 2])
       .precision(200);
-
-    // const projection = geoMercator()
-    //   .fitSize([width, height], selectedCountry || geoJson)
-    //   .rotate([rotateX, rotateY, 0])
-    //   .precision(100);
 
     const pathGenerator = geoPath().projection(projection);
 
@@ -94,7 +89,6 @@ const WorldMap = () => {
         : 'rgba(150, 150, 150, 0.3)'
       )
       .attr('d', country => pathGenerator(country));
-    
       
   }, [geoJson, dimensions, property, selectedCountry, rotateY, rotateX]);
 
