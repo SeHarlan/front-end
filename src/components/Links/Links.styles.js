@@ -22,6 +22,16 @@ export const useStyles = makeStyles((theme) => ({
     '&$focusVisible': {
       color: theme.palette.common.blue.main,
     }
+  },
+  search: {
+    padding: '0 .4rem 0 .4rem',
+    fontWeight: '550',
+    fontSize: '1.2rem',
+    height: '2rem',
+    width: '12rem',
+    borderRadius: '1rem',
+    color: theme.palette.common.green.main, 
+
   }
 }
 ));
