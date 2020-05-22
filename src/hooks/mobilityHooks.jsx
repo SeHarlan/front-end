@@ -39,3 +39,31 @@ export const useWorldMobilityData = (date) => {
     'features': worldMobilityData
   };
 };
+
+
+export const useMobilityDataByDate = (date) => {
+
+  const [mobilityData, setMobilityData] = useState(null);
+
+  useEffect(() => {
+    fetchWorldMobilityData(date)
+      .then(res => setMobilityData(res));
+  }, [date]);
+
+  return mobilityData;
+};
+
+
+// ON HOLD: Will need this backend route — show chart of mobility metrics over time for a specific location
+export const useMobilityDataByCounty = (date, subRegion1, subRegion2) => {
+
+  const [mobilityData, setMobilityData] = useState(null);
+
+  useEffect(() => {
+    fetchWorldMobilityData(date)
+      .then(res => res.json())
+      .then(json => setMobilityData(json));
+  }, [date]);
+
+  return mobilityData;
+};
