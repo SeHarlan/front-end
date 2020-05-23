@@ -17,28 +17,16 @@ function LineGraph() {
   const { dateData, positiveData, recoveredData, deathData } = useCovidData();
   const covidData = { date: dateData, positive: positiveData, recovered: recoveredData, death: deathData };
   // const mobilityData = useMobilityDataByDate('2020-04-30T00:00:00.000+00:00');
-
   const [checkedOptionsArray, setCheckedOptionsArray] = useState([]);
-  const [checkedPositive, setCheckedPositive] = useState(false);
-  const [checkedRecovered, setCheckedRecovered] = useState(false);
-  const [uncheckedOptionsArray, setUncheckedOptionsArray] = useState([]);
 
   const handleCheckbox = ({ target }) => {
-    if(target.value === 'positive') setCheckedPositive(!checkedPositive);
-    if(target.value === 'recovered') setCheckedRecovered(!checkedRecovered);
-
-    // if(!checkedOptionsArray.includes(target.value)) {
-    //   setCheckedOptionsArray(prevState => [...prevState, target.value]);
-    //   setUncheckedOptionsArray(uncheckedOptionsArray.filter(item => (item !== target.value)));
-    // }
-    // else {
-    //   setCheckedOptionsArray(checkedOptionsArray.filter(item => (item !== target.value)));
-    //   setUncheckedOptionsArray(prevState => [...prevState, target.value]);
-    // }
+    if(!checkedOptionsArray.includes(target.value)) 
+      setCheckedOptionsArray(prevState => [...prevState, target.value]);
+    else setCheckedOptionsArray(checkedOptionsArray.filter(item => (item !== target.value)));
   };
   
-  const checkboxOptions = (myObj) => {
-    const myKeys = Object.keys(myObj);
+  const checkboxOptions = (data) => {
+    const myKeys = filteredKeys(data);
     return myKeys.map((myKey, i) => 
       <div key={i}>
         <input type='checkbox' id={myKey} name={myKey} value={myKey} onChange={handleCheckbox} />
@@ -51,17 +39,30 @@ function LineGraph() {
     return badDate.toString().slice(5, 6) + '/' + badDate.toString().slice(6);
   }
   
-  const selectOptions = (myObj) => {
-    const myKeys = Object.keys(myObj);
+  const selectOptions = (data) => {
+    const myKeys = filteredKeys(data);
     return myKeys.map((myKey, i) => <option key={i} value={myKey}>{myKey}</option>);
+  };
+
+  const filteredData = (data, selectedKeys) => {
+    // Refactor this
+    const newArr = [];
+    selectedKeys.map(item => { 
+      if(data[item]); 
+      newArr.push(data[item]);
+    });
+    return newArr;
+  }; 
+
+  const filteredKeys = (data) => {
+    const keys = Object.keys(data);
+    return keys.filter(item => item !== 'date');
   };
   
 
   useEffect(() => {
     if(!dimensions) return;
     if(!dateData || !positiveData || !recoveredData || !deathData) return;
-
-    // console.log('mobilityData:', mobilityData);
 
     const svg = select(svgRef.current);
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
@@ -78,7 +79,6 @@ function LineGraph() {
     const yAxis = axisRight(yScale)
       .ticks(covidData[property].length / 5);
 
-    console.log('height and width: ', height, width);
     svg
       .select('.x-axis')
       .style('transform', `translateY(${height}px)`)
@@ -94,92 +94,89 @@ function LineGraph() {
       .x((value, index) => xScale(index))
       .y((yScale))
       .curve(curveCardinal);
-
-    // const positiveDataFiltered =  covidData['positive'].filter(item => checkedPositive);
-    const positiveDataFiltered = checkedPositive ? positiveData : [];
-    console.log('positiveDataFiltered', positiveDataFiltered);
-
+   
     svg
-      .selectAll('path')
-      .data([positiveDataFiltered])
+      .selectAll('.graphLine')
+      .data(filteredData(covidData, checkedOptionsArray))
       .join('path')
-      .attr('class', '.line')
+      .attr('class', 'graphLine')
       .attr('d', value => myLine(value))
       .attr('fill', 'none')
       .attr('stroke', 'blue');
 
 
-    // Mouseover bubbles
-    const mouseG = svg.append('g')
-      .attr('class', 'mouse-over-effects');
-    const lines = document.getElementsByClassName('line');
-    console.log('lines is: ', lines);
-    const mousePerLine = mouseG.selectAll('.mouse-per-line')
-      .data([covidData['death']])
-      .enter()
-      .append('g')
-      .attr('class', 'mouse-per-line');
-    mousePerLine.append('circle')
-      .attr('r', 4)
-      .style('stroke', 'red')
-      .style('fill', 'none')
-      .style('stroke-width', '1px')
-      .style('opacity', '0');
-    mousePerLine.append('text')
-      .attr('transform', 'translate(10,3)');
-    mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-      .attr('width', width) // can't catch mouse events on a g element
-      .attr('height', height)
-      .attr('fill', 'none')
-      .attr('pointer-events', 'all')
-      .on('mouseout', function() { // on mouse out hide line, circles and text
-        svg.select('.mouse-line')
-          .style('opacity', '0');
-        svg.selectAll('.mouse-per-line circle')
-          .style('opacity', '0');
-        svg.selectAll('.mouse-per-line text')
-          .style('opacity', '0');
-      })
-      .on('mouseover', function() { // on mouse in show line, circles and text
-        svg.select('.mouse-line')
-          .style('opacity', '1');
-        svg.selectAll('.mouse-per-line circle')
-          .style('opacity', '1');
-        svg.selectAll('.mouse-per-line text')
-          .style('opacity', '1');
-      })
-      .on('mousemove', function() { // mouse moving over canvas
-        const thisMouse = mouse(this);
-        svg.selectAll('.mouse-per-line')
-          .attr('transform', function(d, i) {
-            // console.log(width/mouse[0])
-            // const xDate = x.invert(mouse[0]),
-            //   bisect = svg.bisector(function(d) { return d.date; }).right;
-            // bisect(d.values, xDate);
-            let beginning = 0;
-            let end = lines[i].getTotalLength();
-            console.log('getTotalLength', lines[i].getTotalLength());
-            let target = null;
-            let pos;
-            // NOTE: Something is going wrong in here in interpreting the Y axis in mouse position
-            while(true){
-              target = Math.floor((beginning + end) / 2);
-              pos = lines[i].getPointAtLength(target);
-              // console.log('pos:', pos);
-              if((target === end || target === beginning) && pos.x !== thisMouse[0]) {
-                break;
-              }
-              if(pos.x > thisMouse[0]) end = target;
-              else if(pos.x < thisMouse[0]) beginning = target;
-              else break; //position found
-            }
-            // svg.select(this).select('text')
-            //   .text(y.invert(pos.y).toFixed(2));
-            return 'translate(' + thisMouse[0] + ',' + pos.y + ')';
-          });
-      });
+    // // Mouseover bubbles
+    //
+    // const mouseG = svg.append('g')
+    //   .attr('class', 'mouse-over-effects');
+    // const lines = document.getElementsByClassName('line');
+    // console.log('lines is: ', lines);
+    // const mousePerLine = mouseG.selectAll('.mouse-per-line')
+    //   .data([covidData['death']])
+    //   .enter()
+    //   .append('g')
+    //   .attr('class', 'mouse-per-line');
+    // mousePerLine.append('circle')
+    //   .attr('r', 4)
+    //   .style('stroke', 'red')
+    //   .style('fill', 'none')
+    //   .style('stroke-width', '1px')
+    //   .style('opacity', '0');
+    // mousePerLine.append('text')
+    //   .attr('transform', 'translate(10,3)');
+    // mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+    //   .attr('width', width) // can't catch mouse events on a g element
+    //   .attr('height', height)
+    //   .attr('fill', 'none')
+    //   .attr('pointer-events', 'all')
+    //   .on('mouseout', function() { // on mouse out hide line, circles and text
+    //     svg.select('.mouse-line')
+    //       .style('opacity', '0');
+    //     svg.selectAll('.mouse-per-line circle')
+    //       .style('opacity', '0');
+    //     svg.selectAll('.mouse-per-line text')
+    //       .style('opacity', '0');
+    //   })
+    //   .on('mouseover', function() { // on mouse in show line, circles and text
+    //     svg.select('.mouse-line')
+    //       .style('opacity', '1');
+    //     svg.selectAll('.mouse-per-line circle')
+    //       .style('opacity', '1');
+    //     svg.selectAll('.mouse-per-line text')
+    //       .style('opacity', '1');
+    //   })
+    //   .on('mousemove', function() { // mouse moving over canvas
+    //     const thisMouse = mouse(this);
+    //     svg.selectAll('.mouse-per-line')
+    //       .attr('transform', function(d, i) {
+    //         // console.log(width/mouse[0])
+    //         // const xDate = x.invert(mouse[0]),
+    //         //   bisect = svg.bisector(function(d) { return d.date; }).right;
+    //         // bisect(d.values, xDate);
+    //         let beginning = 0;
+    //         let end = lines[i].getTotalLength();
+    //         console.log('getTotalLength', lines[i].getTotalLength());
+    //         let target = null;
+    //         let pos;
+    //         // NOTE: Something is going wrong in here in interpreting the Y axis in mouse position
+    //         while(true){
+    //           target = Math.floor((beginning + end) / 2);
+    //           pos = lines[i].getPointAtLength(target);
+    //           // console.log('pos:', pos);
+    //           if((target === end || target === beginning) && pos.x !== thisMouse[0]) {
+    //             break;
+    //           }
+    //           if(pos.x > thisMouse[0]) end = target;
+    //           else if(pos.x < thisMouse[0]) beginning = target;
+    //           else break; //position found
+    //         }
+    //         // svg.select(this).select('text')
+    //         //   .text(y.invert(pos.y).toFixed(2));
+    //         return 'translate(' + thisMouse[0] + ',' + pos.y + ')';
+    //       });
+    //   });
 
-  }, [covidData, checkedOptionsArray, uncheckedOptionsArray, checkedPositive, checkedRecovered]);
+  }, [covidData, checkedOptionsArray]);
 
   return (   
     <div className={styles.LineGraph}>
