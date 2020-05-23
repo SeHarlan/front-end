@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { select, geoPath, geoMercator, min, max, scaleSequential, interpolateWarm, interpolateRainbow, scaleSqrt, geoOrthographic, scaleLinear, geoGraticule, event, mouse, drag } from 'd3';
+import { select, geoPath, geoMercator, min, max, scaleSequential, interpolateWarm, interpolateRainbow, scaleSqrt, geoOrthographic, scaleLinear, geoGraticule, event, mouse, drag, quantize, scaleBand, formatSpecifier } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import { Grid, Typography } from '@material-ui/core';
 
@@ -16,6 +16,7 @@ const WorldMap = () => {
 
   const svgRef = useRef();
   const wrapperRef = useRef();
+  const legendRef = useRef();
 
   const dimensions = useResizeObserver(wrapperRef);
   
@@ -90,12 +91,26 @@ const WorldMap = () => {
         : 'rgba(150, 150, 150, 0.3)'
       )
       .attr('d', country => pathGenerator(country));
-      
+
+    const legend = select(legendRef.current)
+      .attr('class', 'legendColor');
+
+    const legendText = [-100, -75, -50, -25, 0, 25, 50, 75, 100];
+
+    const keys = legend.selectAll('span')
+      .data([-100, -75, -50, -25, 0, 25, 50, 75, 100]);
+
+    keys.enter().append('span')
+      .attr('class', 'legendSpan')
+      .style('background', (d) => colorScale(d))
+      // .text(legendText.forEach(number => number));
+      .text((d, i) => legendText[i]);
   }, [geoJson, dimensions, property, selectedCountry, rotateY, rotateX]);
 
   return (
     <div ref={wrapperRef} className={style.Map} >
       <svg ref={svgRef}></svg>
+      <div ref={legendRef}>Map legend:</div>
       <select value={property} onChange={({ target }) => setProperty(target.value)}>
         <option value="residentialChange">Residential</option>
         <option value="groceryChange">Grocery</option>
