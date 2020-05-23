@@ -67,3 +67,26 @@ export const useMobilityDataByCounty = (date, subRegion1, subRegion2) => {
 
   return mobilityData;
 };
+
+// TBDev'd: Hits backend route that gives mobility metrics over all time for a country by code (with filtered out subregions)
+export const useMobilityDataByCountryCode = (countryCode) => {};
+
+// TBDev'd: Hits backend route that gives mobility metrics over all time for a country by name (with filtered out subregions)
+export const useMobilityDataByCountryName = (countryCode) => {};
+
+// TBDev'd: Hits backend route that gives mobility metrics over all time for a country's region (i.e. state)
+export const useMobilityDataByRegion1 = (country, subRegion1) => {};
+
+// TBDev'd: Hits backend route that gives mobility metrics over all time for a country's subregion (i.e. county)
+export const useMobilityDataByRegion2 = (date, country, subRegion1, subRegion2) => {
+
+  const [mobilityData, setMobilityData] = useState(null);
+
+  useEffect(() => {
+    fetchWorldMobilityData(date)
+      .then(res => res.json())
+      .then(json => setMobilityData(json));
+  }, [date]);
+
+  return mobilityData;
+};
