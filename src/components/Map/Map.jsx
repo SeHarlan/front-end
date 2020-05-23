@@ -95,15 +95,16 @@ const WorldMap = () => {
     const legend = select(legendRef.current)
       .attr('class', 'legendColor');
 
+    const legendText = [-100, -75, -50, -25, 0, 25, 50, 75, 100];
+
     const keys = legend.selectAll('span')
       .data([-100, -75, -50, -25, 0, 25, 50, 75, 100]);
 
     keys.enter().append('span')
       .attr('class', 'legendSpan')
       .style('background', (d) => colorScale(d))
-      // .style('background', (d) => colorScale(d))
-      .text('span');
-      
+      // .text(legendText.forEach(number => number));
+      .text((d, i) => legendText[i]);
   }, [geoJson, dimensions, property, selectedCountry, rotateY, rotateX]);
 
   return (
