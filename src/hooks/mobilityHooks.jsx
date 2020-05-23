@@ -54,8 +54,17 @@ export const useMobilityDataByDate = (date) => {
 };
 
 
-// ON HOLD: Will need this backend route — show chart of mobility metrics over time for a specific location
-export const useMobilityDataByCounty = (date, subRegion1, subRegion2) => {
+// TBDev'd: Hits backend route that gives mobility metrics over all time for a country by code (with filtered out subregions)
+export const useMobilityDataByCountryCode = (countryCode) => {};
+
+// TBDev'd: Hits backend route that gives mobility metrics over all time for a country by name (with filtered out subregions)
+export const useMobilityDataByCountryName = (countryCode) => {};
+
+// TBDev'd: Hits backend route that gives mobility metrics over all time for a country's region (i.e. state)
+export const useMobilityDataByRegion1 = (country, subRegion1) => {};
+
+// TBDev'd: Hits backend route that gives mobility metrics over all time for a country's subregion (i.e. county)
+export const useMobilityDataByRegion2 = (date, country, subRegion1, subRegion2) => {
 
   const [mobilityData, setMobilityData] = useState(null);
 

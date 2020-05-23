@@ -4,28 +4,37 @@ import styles from './LineGraph.css';
 import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse } from 'd3';
 import { useCovidData } from '../../hooks/covidHooks';
 import { useMobilityDataByDate } from '../../hooks/mobilityHooks';
+import { useResizeObserver } from '../../hooks/d3Hooks';
 
 
 function LineGraph() {
   
   const svgRef = useRef();
+  const wrapperRef = useRef();
+  const dimensions = useResizeObserver(wrapperRef);
+
   const [property, setProperty] = useState('positive');
   const { dateData, positiveData, recoveredData, deathData } = useCovidData();
   const covidData = { date: dateData, positive: positiveData, recovered: recoveredData, death: deathData };
   // const mobilityData = useMobilityDataByDate('2020-04-30T00:00:00.000+00:00');
 
   const [checkedOptionsArray, setCheckedOptionsArray] = useState([]);
+  const [checkedPositive, setCheckedPositive] = useState(false);
+  const [checkedRecovered, setCheckedRecovered] = useState(false);
   const [uncheckedOptionsArray, setUncheckedOptionsArray] = useState([]);
 
   const handleCheckbox = ({ target }) => {
-    if(!checkedOptionsArray.includes(target.value)) {
-      setCheckedOptionsArray(prevState => [...prevState, target.value]);
-      setUncheckedOptionsArray(uncheckedOptionsArray.filter(item => (item !== target.value)));
-    }
-    else {
-      setCheckedOptionsArray(checkedOptionsArray.filter(item => (item !== target.value)));
-      setUncheckedOptionsArray(prevState => [...prevState, target.value]);
-    }
+    if(target.value === 'positive') setCheckedPositive(!checkedPositive);
+    if(target.value === 'recovered') setCheckedRecovered(!checkedRecovered);
+
+    // if(!checkedOptionsArray.includes(target.value)) {
+    //   setCheckedOptionsArray(prevState => [...prevState, target.value]);
+    //   setUncheckedOptionsArray(uncheckedOptionsArray.filter(item => (item !== target.value)));
+    // }
+    // else {
+    //   setCheckedOptionsArray(checkedOptionsArray.filter(item => (item !== target.value)));
+    //   setUncheckedOptionsArray(prevState => [...prevState, target.value]);
+    // }
   };
   
   const checkboxOptions = (myObj) => {
@@ -49,18 +58,19 @@ function LineGraph() {
   
 
   useEffect(() => {
+    if(!dimensions) return;
     if(!dateData || !positiveData || !recoveredData || !deathData) return;
 
     // console.log('mobilityData:', mobilityData);
 
     const svg = select(svgRef.current);
-    
+    const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
     const xScale = scaleLinear()
       .domain([0, covidData[property].length - 1])
-      .range([600, 0]);
+      .range([width, 0]);
     const yScale = scaleLinear()
       .domain([0, Math.max(...covidData['positive'])])
-      .range([400, 0]);
+      .range([height, 0]);
   
     const xAxis = axisBottom(xScale)
       .ticks(covidData[property].length / 5)
@@ -68,61 +78,35 @@ function LineGraph() {
     const yAxis = axisRight(yScale)
       .ticks(covidData[property].length / 5);
 
+    console.log('height and width: ', height, width);
     svg
       .select('.x-axis')
-      .style('transform', 'translateY(400px)')
+      .style('transform', `translateY(${height}px)`)
       .call(xAxis);
 
     svg
       .select('.y-axis')
-      .style('transform', 'translateX(600px)')
+      .style('transform', `translateX(${width}px)`)
       .call(yAxis);
 
     
     const myLine = line()
       .x((value, index) => xScale(index))
-      .y(yScale)
+      .y((yScale))
       .curve(curveCardinal);
 
-    svg.selectAll('.line').remove();
+    // const positiveDataFiltered =  covidData['positive'].filter(item => checkedPositive);
+    const positiveDataFiltered = checkedPositive ? positiveData : [];
+    console.log('positiveDataFiltered', positiveDataFiltered);
 
-    uncheckedOptionsArray.map(item => {
-      console.log('removing', `line-${item}`);
-      svg
-        .selectAll(`.line-${item}`)
-        .remove();
-    });
-
-    checkedOptionsArray.map(item => {
-      console.log('adding', `line-${item}`);
-      svg
-        .selectAll(`.line-${item}`)
-        .data([covidData[item]])
-        .join('path')
-        .attr('class', `.line-${item}`)
-        .attr('d', value => myLine(value))
-        .attr('fill', 'none')
-        .attr('stroke', 'blue');
-    });
-
-
-    // svg
-    //   .selectAll('.line2')
-    //   .data([covidData['positive']])
-    //   .join('path')
-    //   .attr('class', 'line2')
-    //   .attr('d', value => myLine(value))
-    //   .attr('fill', 'none')
-    //   .attr('stroke', 'red');
-
-    // svg
-    //   .selectAll('.line3')
-    //   .data([covidData['recovered']])
-    //   .join('path')
-    //   .attr('class', 'line3')
-    //   .attr('d', value => myLine(value))
-    //   .attr('fill', 'none')
-    //   .attr('stroke', 'aqua');
+    svg
+      .selectAll('path')
+      .data([positiveDataFiltered])
+      .join('path')
+      .attr('class', '.line')
+      .attr('d', value => myLine(value))
+      .attr('fill', 'none')
+      .attr('stroke', 'blue');
 
 
     // Mouseover bubbles
@@ -144,8 +128,8 @@ function LineGraph() {
     mousePerLine.append('text')
       .attr('transform', 'translate(10,3)');
     mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-      .attr('width', 600) // can't catch mouse events on a g element
-      .attr('height', 400)
+      .attr('width', width) // can't catch mouse events on a g element
+      .attr('height', height)
       .attr('fill', 'none')
       .attr('pointer-events', 'all')
       .on('mouseout', function() { // on mouse out hide line, circles and text
@@ -195,20 +179,15 @@ function LineGraph() {
           });
       });
 
-  }, [covidData, checkedOptionsArray]);
+  }, [covidData, checkedOptionsArray, uncheckedOptionsArray, checkedPositive, checkedRecovered]);
 
   return (   
     <div className={styles.LineGraph}>
-      <div>
+      <div ref={wrapperRef} className={styles.container}>
         <svg ref={svgRef}>
           <g className='x-axis' />
           <g className='y-axis' />
         </svg>
-        <br />
-        <br />
-        <br />
-        {checkboxOptions(covidData)}
-
         {/* <select value={property} onChange={({ target }) => setProperty(target.value)}>
           {selectOptions(covidData)} */}
           {/* <option value='positive'>Total Positive Cases</option>
@@ -216,6 +195,10 @@ function LineGraph() {
           <option value='death'>Deaths</option> */}
         {/* </select> */}
       </div>
+      <div className={styles.Controls}>
+        {checkboxOptions(covidData)}
+      </div>
+
     </div>
   );
 }
