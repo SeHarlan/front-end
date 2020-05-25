@@ -28,8 +28,8 @@ const WorldMap = () => {
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
     
     const colorScale = scaleLinear()
-      .domain([-100, 0, 100])
-      .range(['blue', 'rgb(243, 240, 225)', 'green']);
+      .domain([-100, 0, 50])
+      .range(['#FF8200', 'rgb(243, 240, 225)', '#5F0F40']);
 
     const projection = geoOrthographic()
       .fitSize([width * 0.9, height * 0.9], geoJson)
@@ -95,22 +95,23 @@ const WorldMap = () => {
     const legend = select(legendRef.current)
       .attr('class', 'legendColor');
 
-    const legendText = [-100, -75, -50, -25, 0, 25, 50, 75, 100];
+    const legendText = [-100, -75, -50, -25, 0, 25, 50];
 
     const keys = legend.selectAll('span')
-      .data([-100, -75, -50, -25, 0, 25, 50, 75, 100]);
+      .data([-100, -75, -50, -25, 0, 25, 50]);
 
     keys.enter().append('span')
       .attr('class', 'legendSpan')
       .style('background', (d) => colorScale(d))
       // .text(legendText.forEach(number => number));
       .text((d, i) => legendText[i]);
+
   }, [geoJson, dimensions, property, selectedCountry, rotateY, rotateX]);
 
   return (
     <div ref={wrapperRef} className={style.Map} >
       <svg ref={svgRef}></svg>
-      <div ref={legendRef}>Map legend:</div>
+      <div id="legend" height="400px" ref={legendRef}>Map legend:</div>
       <select value={property} onChange={({ target }) => setProperty(target.value)}>
         <option value="residentialChange">Residential</option>
         <option value="groceryChange">Grocery</option>
