@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from './LineGraph.css';
-import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, scaleOrdinal, schemeCategory10 } from 'd3';
+import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, scaleOrdinal, schemeCategory10, min, max } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 
 
-function LineGraph({ dataset, yAxisConstraints }) {
+function LineGraph({ dataSet }) {
   
   const svgRef = useRef();
   const wrapperRef = useRef();
@@ -55,7 +55,7 @@ function LineGraph({ dataset, yAxisConstraints }) {
   
 
   useEffect(() => {
-    if(!dataset || !dataset.date) {
+    if(!dataSet || !dataSet.date) {
       console.log('No data, exiting useEffect()');
       return;
     }
@@ -64,19 +64,22 @@ function LineGraph({ dataset, yAxisConstraints }) {
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
     
     // Define scales
+    const yAxisMin = min(dataSet.totalCases ?? -100);
+    const yAxisMax = max(dataSet.totalCases ?? 100);
+
     const xScale = scaleLinear()
-      .domain([0, dataset['date'].length - 1]) // range of data
+      .domain([0, dataSet['date'].length - 1]) // range of data
       .range([0, width]); // range of pixels
     const yScale = scaleLinear()
-      .domain([yAxisConstraints[0], yAxisConstraints[1]])
+      .domain([yAxisMin, yAxisMax])
       .range([height, 0]);
     const colorScale = scaleOrdinal(schemeCategory10)
-      .domain(filteredKeys(dataset));
+      .domain(filteredKeys(dataSet));
   
     // Define axis
     const xAxis = axisBottom(xScale)
-      .ticks(dataset['date'].length / 5)
-      .tickFormat(index => formatDate(dataset.date[index]));
+      .ticks(dataSet['date'].length / 5)
+      .tickFormat(index => formatDate(dataSet.date[index]));
     const yAxis = axisRight(yScale)
       .ticks(height / 20);
 
@@ -98,10 +101,10 @@ function LineGraph({ dataset, yAxisConstraints }) {
 
     // Draw line
     svg
-      .selectAll(`.graphLine-${dataset.countryCode}`)
-      .data(filteredData(dataset, checkedOptions))
+      .selectAll(`.graphLine-${dataSet.countryName}`)
+      .data(filteredData(dataSet, checkedOptions))
       .join('path')
-      .attr('class', `graphLine-${dataset.countryCode}`)
+      .attr('class', `graphLine-${dataSet.countryName}`)
       .attr('d', value => myLine(value))
       .attr('fill', 'none')
       .attr('stroke', d => colorScale(d));
@@ -199,7 +202,7 @@ function LineGraph({ dataset, yAxisConstraints }) {
     // });
 
 
-  }, [dataset, checkedOptions]);
+  }, [dataSet, checkedOptions]);
 
   return (   
     <div className={styles.LineGraph}>
@@ -216,7 +219,7 @@ function LineGraph({ dataset, yAxisConstraints }) {
         {/* </select> */}
       </div>
       <div className={styles.Controls}>
-        {dataset && <>{checkboxOptions(dataset)}</> }
+        {dataSet && <>{checkboxOptions(dataSet)}</> }
       </div>
 
     </div>
@@ -224,7 +227,7 @@ function LineGraph({ dataset, yAxisConstraints }) {
 }
 
 LineGraph.propTypes = {
-  dataset: PropTypes.object.isRequired,
+  dataSet: PropTypes.object.isRequired,
   yAxisConstraints: PropTypes.array.isRequired
 };
 

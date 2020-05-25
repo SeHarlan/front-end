@@ -9,3 +9,9 @@ export const fetchGlobalCovidData = () => {
   return fetch('https://pandemic-legacy.herokuapp.com/api/v1/covid/')
     .then(res => res.json());
 };
+
+// fetch country-level covid data by countryCode
+export const fetchCountryCovidData = (countryCode = '') => {
+  return fetch(`https://pandemic-legacy.herokuapp.com/api/v1/covid/${countryCode}`)
+    .then(res => res.json());
+};

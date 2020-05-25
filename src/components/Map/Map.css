@@ -1,4 +1,8 @@
 .Map {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   svg {
     background-color: rgb(238, 229, 229);
     display: block;
@@ -25,20 +29,4 @@
   svg path:active {
     cursor: grabbing;
   }
-
-  :global(.legendSpan) {
-    padding: 1rem 1rem 1rem 1rem;
-    margin: .5rem;
-    width: 1rem;
-    height: 1rem;
-  }
-li.key {
-    border-top-width: 15px;
-    border-top-style: solid;
-    font-size: .75em;
-    width: 10%;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
 }

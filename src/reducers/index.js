@@ -1,4 +1,4 @@
 import { combineReducers } from 'redux';
-import global from './globalReducer';
+import reducer from './reducer';
 
-export default combineReducers({ global });
+export default combineReducers({ reducer });
