@@ -9,12 +9,9 @@ export const Links = () => {
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.links}>
-        <input type="text" value="Search for country" className={classes.search} placeholder="Search for country"/>        
+        {/* <input type="text" value="Search for country" className={classes.search} placeholder="Search for country"/>         */}
+        <Link className={classes.link} href="/highscore">High Score</Link>
         <Link className={classes.link} href="/">Home</Link>
-        {/* <Link className={classes.link} href="/search">Search</Link> */}
-        <Link className={classes.link} href="/">Home</Link>
-        <Link className={classes.link} href="/search">Search</Link>
-
         <Link className={classes.link} href="/country">Individual Country</Link>
       </Grid>
     </Grid>

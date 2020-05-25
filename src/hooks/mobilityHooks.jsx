@@ -5,7 +5,6 @@ import geoJson from '../data/World-map-lo-res.geo.json';
 export const useWorldMobilityData = (date) => {
   // const [fetchedData, setFetchedData] = useState(null);
   const [worldMobilityData, setworldMobilityData] = useState(null);
-  
   useEffect(() => {    
     fetchWorldMobilityData(date)
       // .then(result => { 

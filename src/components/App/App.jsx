@@ -6,6 +6,7 @@ import Home from '../Home/Home';
 import { Header } from '../Header/Header';
 import { Footer } from '../Footer/Footer';
 import { individualCountry } from '../individualCountry/individualCountry';
+import { HighScore } from '../HighScore/HighScore';
 
 export default function App() {
   const styles = useStyles();
@@ -17,7 +18,7 @@ export default function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/country" component={individualCountry} />
-          {/* <Route path="/search" component={search} /> */}
+          <Route path="/highscore" component={HighScore} />
         </Switch>
         <Footer />
       </Container>
