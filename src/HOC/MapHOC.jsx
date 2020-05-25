@@ -35,7 +35,8 @@ const Map = ({ mapData, countryCode = '' }) => {
       .center([0, 0])
       .rotate([rotateX, rotateY, 0])
       .translate([width / 2, height / 2])
-      .precision(200);
+      .precision(100);
+
     
 
     const selectedCountry = mapData.features
@@ -76,15 +77,17 @@ const Map = ({ mapData, countryCode = '' }) => {
       .on('drag', () => {
 
         const rotate = projection.rotate();
-        const k = 50 / projection.scale();
+        const sensitivity = 50 / projection.scale();
 
         projection.rotate([
-          rotate[0] + event.dx * k, 
-          rotate[1] - event.dy * k
+          rotate[0] + event.dx * sensitivity, 
+          rotate[1] - event.dy * sensitivity,
         ]);
-        setRotateX(rotate[0] + event.dx * k);
-        setRotateY(rotate[1] - event.dy * k);
-        //touchmove only triggers event/dx, event/dy once. thats why mobile drag doesnt work
+        setRotateX(rotate[0] + event.dx * sensitivity);
+        setRotateY(rotate[1] - event.dy * sensitivity);
+
+        const path = geoPath().projection(projection);
+        svg.selectAll('path').attr('d', path);
       })
       .on('end', () => { setRotating(false);})
       
@@ -98,8 +101,7 @@ const Map = ({ mapData, countryCode = '' }) => {
         //code for when a country is clicked
       })
       .attr('class', 'country');
-
-    //if rotating
+    
     if(rotating) {
       map
         .attr('fill', country => country.mobilityData[property] 
@@ -125,13 +127,14 @@ const Map = ({ mapData, countryCode = '' }) => {
     const keys = legend.selectAll('span')
       .data([-100, -75, -50, -25, 0, 25, 50, 75, 100]);
 
-    keys.enter().append('span')
+    keys.join('span')
       .attr('class', 'legendSpan')
       .style('background', (d) => colorScale(d))
     // .text(legendText.forEach(number => number));
       .text((d, i) => legendText[i]);
       
-  }, [mapData, dimensions, property, rotateX, rotateY]);
+  }, [mapData, dimensions, property]);
+
 
   return (
     <div ref={wrapperRef} className={style.Map} >
