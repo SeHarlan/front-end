@@ -9,7 +9,9 @@ export const Links = () => {
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.links}>
-        {/* <input type="text" value="Search for country" className={classes.search} placeholder="Search for country"/>         */}
+        {/* <form onSubmit={handleSubmit}> */}
+          <input type="text" value="Search for country" className={classes.search} placeholder="Search for country"/>
+        {/* </form>       */}
         <Link className={classes.link} href="/highscore">High Score</Link>
         <Link className={classes.link} href="/">Home</Link>
         <Link className={classes.link} href="/country">Individual Country</Link>

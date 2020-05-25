@@ -1,31 +1,29 @@
 ### MobilityData
-  * GET worldwide mobility data (excludes records that have a subregion): 
+  * 1: GET mobility data for all countries, all dates (excludes records that have a subregion):
     https://pandemic-legacy.herokuapp.com/api/v1/mobility
 
-  * GET worldwide mobility data by date (excludes records that have a   subregion):
+  * 2: GET worldwide mobility data for all countries by date (excludes records that have a subregion):
     https://pandemic-legacy.herokuapp.com/api/v1/mobility/${date}
 
-  * GET documents by countryCode for all dates, excluding subregions:
+  * 3: GET documents by countryCode for all dates, excluding subregions:
     https://pandemic-legacy.herokuapp.com/api/v1/mobility/country/${countryCode}
 
-  * GET documents by countryCode for all dates, including subregions:
+  * 4: GET documents by countryCode for all dates, including subregions:
     https://pandemic-legacy.herokuapp.com/api/v1/mobility/countryWithSub/${countryCode}
 
-  * GET documents by countryCode for all dates, including subRegion1, excluding subRegion2:
-    https://pandemic-legacy.herokuapp.com/api/v1/mobility/subRegion/${countryCode}
+  * 5: GET documents by subRegion1 for all dates, excluding subRegion2:
+    https://pandemic-legacy.herokuapp.com/api/v1/mobility/countryBySub/${countryCode}/${subRegion1}
 
-  * GET documents by subRegion1, including subRegion2 if relevant:
-    https://pandemic-legacy.herokuapp.com/api/v1/mobility/mobilityWithSub2/${countryCode}/${subRegion1}
+  * 6: GET documents by subRegion1 for all dates, including subRegion2 if relevant:
+    https://pandemic-legacy.herokuapp.com/api/v1/mobility/subRegionWithSub2/${countryCode}/${subRegion1}
+
 
 ### CovidData
-  * GET documents for Worldwide only:
+  * 1: GET documents for Worldwide only, for all dates:
     https://pandemic-legacy.herokuapp.com/api/v1/covid/
 
-  * GET documents by countryCode for all dates, excluding subregions (NB: country is case sensitive!):
+  * 2: GET documents by countryCode for all dates, excluding subregions (NB: country is case sensitive!):
     https://pandemic-legacy.herokuapp.com/api/v1/covid/${countryCode}
 
-  * GET documents by countryCode for all dates, with subregions if relevant:
+  * 3: GET documents by countryCode for all dates, with subregions if relevant:
     https://pandemic-legacy.herokuapp.com/api/v1/covid/subRegion/${countryCode}
-
-  * GET worldwide mobility data by date (excludes records that have a subregion):
-    https://pandemic-legacy.herokuapp.com/api/v1/mobility/${date}
