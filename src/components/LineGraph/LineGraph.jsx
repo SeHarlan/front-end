@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import styles from './LineGraph.css';
 // import JSONdata from '../../data/daily-test.json';
-import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse } from 'd3';
+import * as d3 from 'd3';
+import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, bisector, event } from 'd3';
 import { useCovidData } from '../../hooks/covidHooks';
 import { useMobilityDataByDate } from '../../hooks/mobilityHooks';
 import { useResizeObserver } from '../../hooks/d3Hooks';
@@ -17,7 +18,7 @@ function LineGraph() {
   const { dateData, positiveData, recoveredData, deathData } = useCovidData();
   const covidData = { date: dateData, positive: positiveData, recovered: recoveredData, death: deathData };
   // const mobilityData = useMobilityDataByDate('2020-04-30T00:00:00.000+00:00');
-  const [checkedOptionsArray, setCheckedOptionsArray] = useState([]);
+  const [checkedOptionsArray, setCheckedOptionsArray] = useState(['positive']);
 
   const handleCheckbox = ({ target }) => {
     if(!checkedOptionsArray.includes(target.value)) 
@@ -29,7 +30,12 @@ function LineGraph() {
     const myKeys = filteredKeys(data);
     return myKeys.map((myKey, i) => 
       <div key={i}>
-        <input type='checkbox' id={myKey} name={myKey} value={myKey} onChange={handleCheckbox} />
+        <input type='checkbox' 
+          id={myKey} 
+          name={myKey} 
+          value={myKey} 
+          onChange={handleCheckbox} 
+          checked={checkedOptionsArray.includes(myKey)} />
         <label htmlFor={myKey}>{myKey}</label>
       </div>
     );
@@ -66,35 +72,39 @@ function LineGraph() {
 
     const svg = select(svgRef.current);
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
+    
+    // Define scaling
     const xScale = scaleLinear()
-      .domain([0, covidData[property].length - 1])
+      .domain([0, covidData['positive'].length - 1])
       .range([width, 0]);
     const yScale = scaleLinear()
       .domain([0, Math.max(...covidData['positive'])])
       .range([height, 0]);
   
+    // Define axis labels
     const xAxis = axisBottom(xScale)
       .ticks(covidData[property].length / 5)
       .tickFormat(index => formatDate(dateData[index]));
     const yAxis = axisRight(yScale)
       .ticks(covidData[property].length / 5);
 
+    // Add axis
     svg
       .select('.x-axis')
       .style('transform', `translateY(${height}px)`)
       .call(xAxis);
-
     svg
       .select('.y-axis')
       .style('transform', `translateX(${width}px)`)
       .call(yAxis);
-
     
+    // Define line values
     const myLine = line()
       .x((value, index) => xScale(index))
       .y((yScale))
       .curve(curveCardinal);
    
+    // Add line
     svg
       .selectAll('.graphLine')
       .data(filteredData(covidData, checkedOptionsArray))
@@ -106,13 +116,12 @@ function LineGraph() {
 
 
     // // Mouseover bubbles
-    //
     // const mouseG = svg.append('g')
     //   .attr('class', 'mouse-over-effects');
-    // const lines = document.getElementsByClassName('line');
-    // console.log('lines is: ', lines);
+    // const lines = document.getElementsByClassName('graphLine');
+    // console.log('lines:', lines);
     // const mousePerLine = mouseG.selectAll('.mouse-per-line')
-    //   .data([covidData['death']])
+    //   .data(filteredData(covidData, checkedOptionsArray))
     //   .enter()
     //   .append('g')
     //   .attr('class', 'mouse-per-line');
@@ -128,53 +137,75 @@ function LineGraph() {
     //   .attr('width', width) // can't catch mouse events on a g element
     //   .attr('height', height)
     //   .attr('fill', 'none')
-    //   .attr('pointer-events', 'all')
-    //   .on('mouseout', function() { // on mouse out hide line, circles and text
-    //     svg.select('.mouse-line')
-    //       .style('opacity', '0');
-    //     svg.selectAll('.mouse-per-line circle')
-    //       .style('opacity', '0');
-    //     svg.selectAll('.mouse-per-line text')
-    //       .style('opacity', '0');
-    //   })
-    //   .on('mouseover', function() { // on mouse in show line, circles and text
-    //     svg.select('.mouse-line')
-    //       .style('opacity', '1');
-    //     svg.selectAll('.mouse-per-line circle')
-    //       .style('opacity', '1');
-    //     svg.selectAll('.mouse-per-line text')
-    //       .style('opacity', '1');
-    //   })
-    //   .on('mousemove', function() { // mouse moving over canvas
-    //     const thisMouse = mouse(this);
-    //     svg.selectAll('.mouse-per-line')
-    //       .attr('transform', function(d, i) {
-    //         // console.log(width/mouse[0])
-    //         // const xDate = x.invert(mouse[0]),
-    //         //   bisect = svg.bisector(function(d) { return d.date; }).right;
-    //         // bisect(d.values, xDate);
-    //         let beginning = 0;
-    //         let end = lines[i].getTotalLength();
-    //         console.log('getTotalLength', lines[i].getTotalLength());
-    //         let target = null;
-    //         let pos;
-    //         // NOTE: Something is going wrong in here in interpreting the Y axis in mouse position
-    //         while(true){
-    //           target = Math.floor((beginning + end) / 2);
-    //           pos = lines[i].getPointAtLength(target);
-    //           // console.log('pos:', pos);
-    //           if((target === end || target === beginning) && pos.x !== thisMouse[0]) {
-    //             break;
-    //           }
-    //           if(pos.x > thisMouse[0]) end = target;
-    //           else if(pos.x < thisMouse[0]) beginning = target;
-    //           else break; //position found
+    //   .attr('pointer-events', 'all');
+
+    // // on mouse out hide line, circles and text
+    // mouseG.on('mouseout', function() { 
+    //   svg.selectAll('.mouse-per-line circle').style('opacity', '0');
+    //   svg.selectAll('.mouse-per-line text').style('opacity', '0');
+    // });
+
+    // // on mouse in show line, circles and text
+    // mouseG.on('mouseover', function() { 
+    //   svg.selectAll('.mouse-per-line circle').style('opacity', '1');
+    //   svg.selectAll('.mouse-per-line text').style('opacity', '1');
+    // });
+
+    // // mouse moving over canvas
+    // mouseG.on('mousemove', function() {
+    //   const thisMouse = mouse(this);
+    //   svg
+    //     .selectAll('.mouse-per-line')
+    //     .attr('transform', function(d, i) {
+    //       const offsetLeft = wrapperRef.current.offsetLeft;
+    //       const offsetTop = wrapperRef.current.offsetTop;
+    //       let x = event.pageX - offsetLeft;
+    //       let y = event.pageY - offsetTop;
+    //       let beginning = x;
+    //       let pathLength = lines[i].getTotalLength();
+    //       let end = pathLength;
+    //       let target;
+    //       let pos;
+    //       while(true) {
+    //         target = Math.floor((beginning + end) / 2);
+    //         pos = lines[i].getPointAtLength(target);
+    //         console.log('pos:', pos);
+    //         if((target === end || target === beginning) && pos.x !== x) {
+    //           break;
     //         }
-    //         // svg.select(this).select('text')
-    //         //   .text(y.invert(pos.y).toFixed(2));
-    //         return 'translate(' + thisMouse[0] + ',' + pos.y + ')';
-    //       });
-    //   });
+    //         if(pos.x > x) end = target;
+    //         else if(pos.x < x) beginning = target;
+    //         else break; //position found
+    //       }
+          
+    //       // var xDate = xScale.invert(mouse[0]),
+    //       // bisect = bisector(function(d) { return d.date; }).right;
+    //       // let idx = bisect(d.values, xDate);
+    //       // console.log('idx', idx);
+
+    //       d3.select(this)
+    //         .select('text')
+    //         .text(yScale.invert(y).toFixed(0));
+
+    //       // console.log('===');
+    //       // console.log('width and height', width, height);
+    //       // console.log('x is', x);
+    //       // console.log('pos.x is', pos.x);
+    //       // console.log('thisMouse[0] is', thisMouse[0]);
+    //       // console.log('x scaled is', xScale(x));
+    //       // console.log('x inverse is', xScale.invert(x));
+    //       // console.log('pos.x inverse is', xScale.invert(pos.x));
+    //       // console.log('---');
+    //       // console.log('y is', y);
+    //       // console.log('pos.y is', pos.y);
+    //       // console.log('thisMouse[1] is', thisMouse[1]);
+    //       // console.log('y inverse is', yScale.invert(y));
+    //       // console.log('pos.y inverse is', yScale.invert(pos.y));
+
+    //       return 'translate(' + x + ',' + pos.y + ')';
+    //     });
+    // });
+
 
   }, [covidData, checkedOptionsArray]);
 
@@ -187,7 +218,7 @@ function LineGraph() {
         </svg>
         {/* <select value={property} onChange={({ target }) => setProperty(target.value)}>
           {selectOptions(covidData)} */}
-          {/* <option value='positive'>Total Positive Cases</option>
+        {/* <option value='positive'>Total Positive Cases</option>
           <option value='recovered'>Current Cases</option>
           <option value='death'>Deaths</option> */}
         {/* </select> */}
