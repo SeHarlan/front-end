@@ -6,6 +6,7 @@ import Home from '../Home/Home';
 import { Header } from '../Header/Header';
 import { Footer } from '../Footer/Footer';
 import { individualCountry } from '../individualCountry/individualCountry';
+import ComparePage from '../ComparePage/ComparePage';
 import { HighScore } from '../HighScore/HighScore';
 
 export default function App() {
@@ -18,6 +19,8 @@ export default function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/country" component={individualCountry} />
+          <Route path="/compare" component={ComparePage} />
+          {/* <Route path="/search" component={search} /> */}
           <Route path="/highscore" component={HighScore} />
         </Switch>
         <Footer />
@@ -25,4 +28,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-  

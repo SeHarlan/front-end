@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchWorldMobilityData } from '../services/mobility';
+import { fetchWorldMobilityData, fetchMobilityDataByCountryCode } from '../services/mobility';
 import geoJson from '../data/World-map-lo-res.geo.json';
 
 export const useWorldMobilityData = (date) => {
@@ -67,8 +67,32 @@ export const useMobilityDataByCounty = (date, subRegion1, subRegion2) => {
   return mobilityData;
 };
 
-// TBDev'd: Hits backend route that gives mobility metrics over all time for a country by code (with filtered out subregions)
-export const useMobilityDataByCountryCode = (countryCode) => {};
+// Hits backend route that gives mobility metrics over all time for a country by code (with filtered out subregions)
+export const useMobilityDataByCountryCode = (countryCode) => {
+
+  const [mobilityData, setMobilityData] = useState(null);
+  console.log('fetching');
+
+  useEffect(() => {    
+    const mobilityDataTemp = {};
+    fetchMobilityDataByCountryCode(countryCode)
+      .then(res => {
+        const sortedRes = res.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+        mobilityDataTemp.date = sortedRes.map(item => item.date);
+        mobilityDataTemp.countryCode = sortedRes[0].countryCode;
+        mobilityDataTemp.countryName = sortedRes[0].countryName;
+        mobilityDataTemp.retailChange = sortedRes.map(item => item.retailChange ?? 0);
+        mobilityDataTemp.groceryChange = sortedRes.map(item => item.groceryChange ?? 0);
+        mobilityDataTemp.parksChange = sortedRes.map(item => item.parksChange ?? 0);
+        mobilityDataTemp.transitChange = sortedRes.map(item => item.transitChange ?? 0);
+        mobilityDataTemp.workplacesChange = sortedRes.map(item => item.workplacesChange ?? 0);
+        mobilityDataTemp.residentialChange = sortedRes.map(item => item.residentialChange ?? 0);
+        setMobilityData(mobilityDataTemp);
+      });
+  }, []);
+
+  return mobilityData;
+};
 
 // TBDev'd: Hits backend route that gives mobility metrics over all time for a country by name (with filtered out subregions)
 export const useMobilityDataByCountryName = (countryCode) => {};

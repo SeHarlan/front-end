@@ -1,48 +1,35 @@
 import React, { useRef, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import styles from './LineGraph.css';
-// import JSONdata from '../../data/daily-test.json';
-import * as d3 from 'd3';
-import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, bisector, event } from 'd3';
-import { useCovidData } from '../../hooks/covidHooks';
-import { useMobilityDataByDate } from '../../hooks/mobilityHooks';
+import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, scaleOrdinal, schemeCategory10 } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 
 
-function LineGraph() {
+function LineGraph({ dataset, yAxisConstraints }) {
   
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
-
-  const [property, setProperty] = useState('positive');
-  const { dateData, positiveData, recoveredData, deathData } = useCovidData();
-  const covidData = { date: dateData, positive: positiveData, recovered: recoveredData, death: deathData };
-  // const mobilityData = useMobilityDataByDate('2020-04-30T00:00:00.000+00:00');
-  const [checkedOptionsArray, setCheckedOptionsArray] = useState(['positive']);
+  const [checkedOptions, setCheckedOptions] = useState([]);
 
   const handleCheckbox = ({ target }) => {
-    if(!checkedOptionsArray.includes(target.value)) 
-      setCheckedOptionsArray(prevState => [...prevState, target.value]);
-    else setCheckedOptionsArray(checkedOptionsArray.filter(item => (item !== target.value)));
+    if(!checkedOptions.includes(target.value)) 
+      setCheckedOptions(prevState => [...prevState, target.value]);
+    else setCheckedOptions(checkedOptions.filter(item => (item !== target.value)));
   };
   
   const checkboxOptions = (data) => {
     const myKeys = filteredKeys(data);
     return myKeys.map((myKey, i) => 
       <div key={i}>
-        <input type='checkbox' 
-          id={myKey} 
-          name={myKey} 
-          value={myKey} 
-          onChange={handleCheckbox} 
-          checked={checkedOptionsArray.includes(myKey)} />
+        <input type='checkbox' id={myKey} name={myKey} value={myKey} onChange={handleCheckbox} checked={checkedOptions.includes(myKey)} />
         <label htmlFor={myKey}>{myKey}</label>
       </div>
     );
   };
   
   function formatDate(badDate) {
-    return badDate.toString().slice(5, 6) + '/' + badDate.toString().slice(6);
+    return badDate.toString().slice(6, 7) + '/' + badDate.toString().slice(8, 10);
   }
   
   const selectOptions = (data) => {
@@ -62,33 +49,38 @@ function LineGraph() {
 
   const filteredKeys = (data) => {
     const keys = Object.keys(data);
-    return keys.filter(item => item !== 'date');
+    // Refactor: Apparently, item !== ('date' || 'countryCode' || 'countryName') doesn't work?
+    return keys.filter(item => (item !== 'date' && item !== 'countryCode' && item !== 'countryName'));
   };
   
 
   useEffect(() => {
-    if(!dimensions) return;
-    if(!dateData || !positiveData || !recoveredData || !deathData) return;
+    if(!dataset || !dataset.date) {
+      console.log('No data, exiting useEffect()');
+      return;
+    }
 
     const svg = select(svgRef.current);
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
     
-    // Define scaling
+    // Define scales
     const xScale = scaleLinear()
-      .domain([0, covidData['positive'].length - 1])
-      .range([width, 0]);
+      .domain([0, dataset['date'].length - 1]) // range of data
+      .range([0, width]); // range of pixels
     const yScale = scaleLinear()
-      .domain([0, Math.max(...covidData['positive'])])
+      .domain([yAxisConstraints[0], yAxisConstraints[1]])
       .range([height, 0]);
+    const colorScale = scaleOrdinal(schemeCategory10)
+      .domain(filteredKeys(dataset));
   
-    // Define axis labels
+    // Define axis
     const xAxis = axisBottom(xScale)
-      .ticks(covidData[property].length / 5)
-      .tickFormat(index => formatDate(dateData[index]));
+      .ticks(dataset['date'].length / 5)
+      .tickFormat(index => formatDate(dataset.date[index]));
     const yAxis = axisRight(yScale)
-      .ticks(covidData[property].length / 5);
+      .ticks(height / 20);
 
-    // Add axis
+    // Draw axis on pre-existing elements
     svg
       .select('.x-axis')
       .style('transform', `translateY(${height}px)`)
@@ -97,22 +89,22 @@ function LineGraph() {
       .select('.y-axis')
       .style('transform', `translateX(${width}px)`)
       .call(yAxis);
-    
-    // Define line values
+
+    // Define line
     const myLine = line()
       .x((value, index) => xScale(index))
-      .y((yScale))
+      .y(yScale)
       .curve(curveCardinal);
-   
-    // Add line
+
+    // Draw line
     svg
-      .selectAll('.graphLine')
-      .data(filteredData(covidData, checkedOptionsArray))
+      .selectAll(`.graphLine-${dataset.countryCode}`)
+      .data(filteredData(dataset, checkedOptions))
       .join('path')
-      .attr('class', 'graphLine')
+      .attr('class', `graphLine-${dataset.countryCode}`)
       .attr('d', value => myLine(value))
       .attr('fill', 'none')
-      .attr('stroke', 'blue');
+      .attr('stroke', d => colorScale(d));
 
 
     // // Mouseover bubbles
@@ -207,7 +199,7 @@ function LineGraph() {
     // });
 
 
-  }, [covidData, checkedOptionsArray]);
+  }, [dataset, checkedOptions]);
 
   return (   
     <div className={styles.LineGraph}>
@@ -224,11 +216,17 @@ function LineGraph() {
         {/* </select> */}
       </div>
       <div className={styles.Controls}>
-        {checkboxOptions(covidData)}
+        {dataset && <>{checkboxOptions(dataset)}</> }
       </div>
 
     </div>
   );
 }
+
+LineGraph.propTypes = {
+  dataset: PropTypes.object.isRequired,
+  yAxisConstraints: PropTypes.array.isRequired
+};
+
 
 export default LineGraph;
