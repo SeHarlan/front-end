@@ -27,3 +27,6 @@
 
   * 3: GET documents by countryCode for all dates, with subregions if relevant:
     https://pandemic-legacy.herokuapp.com/api/v1/covid/subRegion/${countryCode}
+
+  * 4: GET documents by countryName for all dates, excluding subregions (NB: country is case sensitive!):
+    https://pandemic-legacy.herokuapp.com/api/v1/covid/countryByName/${countryName}

@@ -15,3 +15,9 @@ export const fetchCountryCovidData = (countryCode = '') => {
   return fetch(`https://pandemic-legacy.herokuapp.com/api/v1/covid/${countryCode}`)
     .then(res => res.json());
 };
+
+// fetch country-level covid data by countryCode
+export const fetchCountryNameCovidData = (countryName = '') => {
+  return fetch(`https://pandemic-legacy.herokuapp.com/api/v1/covid/${countryName}`)
+    .then(res => res.json());
+};
