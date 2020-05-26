@@ -27,7 +27,7 @@ export default function App() {
     <BrowserRouter>
       <Container maxWidth="xl" className={styles.root}>
         <CssBaseline />
-        <Header />
+        {/* <Header /> */}
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/country" component={individualCountry} />

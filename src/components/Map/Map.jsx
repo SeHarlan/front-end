@@ -3,13 +3,23 @@ import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider } from '@material-ui/core'; 
+import { Slider, Popover, Typography, Button, makeStyles } from '@material-ui/core'; 
 
 import style from './Map.css';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { setGlobalMobilityDataByDate } from '../../actions/actions';
-import { getMobilityDates } from '../../selectors/selectors';
+import { setGlobalMobilityDataByDate, setSelectedCountryCode } from '../../actions/actions';
+import { getMobilityDates, getSelectedCountryCode } from '../../selectors/selectors';
 // import { useIsMobile } from '../hooks/isMobile';
+
+const useStyles = makeStyles((theme) => ({
+  popover: {
+    pointerEvents: 'auto',
+  },
+  paper: {
+    padding: theme.spacing(1),
+  },
+}));
 
 const Map = ({ mapData, countryCode = '' }) => {
   const [property, setProperty] = useState('residentialChange');
@@ -17,14 +27,34 @@ const Map = ({ mapData, countryCode = '' }) => {
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
   const [dateIndex, setDateIndex] = useState(0);
+  const [selectedCountryName, setSelectedCountryName] = useState('test'); 
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const classes = useStyles();
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+  const open = Boolean(anchorEl);
 
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
   const dispatch = useDispatch();
-  const dates = useSelector(getMobilityDates);
   // const isMobile = useIsMobile();
+  const dates = useSelector(getMobilityDates);
+  const selectedCountryCode = useSelector(getSelectedCountryCode);
+
+  //this could be trimed down if we used redux for countryName
+  useEffect(() => {
+    if(!selectedCountryCode) return;
+    const countryData = mapData.features.find(country => country.mobilityData.countryCode === selectedCountryCode).mobilityData;
+    setSelectedCountryName(countryData.countryName);
+  }, [selectedCountryCode]);
 
   useEffect(() => {
     if(dates === []) return;
@@ -110,8 +140,9 @@ const Map = ({ mapData, countryCode = '' }) => {
       .selectAll('.country')
       .data(mapData.features)
       .join('path')
-      .on('click', clickedCountry => {
-        //code for when a country is clicked
+      .on('click', (country) => {
+        dispatch(setSelectedCountryCode(country.mobilityData.countryCode));
+        handlePopoverOpen(event);
       })
       .attr('class', 'country');
     
@@ -152,6 +183,21 @@ const Map = ({ mapData, countryCode = '' }) => {
   return (
     <div ref={wrapperRef} className={style.Map} >
       <svg ref={svgRef}></svg>
+
+      <Popover id="country-popover" 
+        className={classes.popover} 
+        classes={{ paper: classes.paper }} 
+        open={open} anchorEl={anchorEl} 
+        anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'center', horizontal: 'center' }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Typography>{selectedCountryName}</Typography>
+        <Button variant="contained" color="primary">Details</Button>
+        {/* <Button variant="contained" color="secondary" onClick={handlePopoverClose}>X</Button> */}
+      </Popover>
+
       <div ref={legendRef}>Map legend:</div>
       <select value={property} onChange={({ target }) => setProperty(target.value)}>
         <option value="residentialChange">Residential</option>
@@ -165,7 +211,7 @@ const Map = ({ mapData, countryCode = '' }) => {
         value={dateIndex} 
         min={0} 
         max={dates.length - 1} 
-        onChange={(event, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
+        onChange={(_, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
         valueLabelFormat={(index) => dates[index].slice(5)} />}
     </div>
   );

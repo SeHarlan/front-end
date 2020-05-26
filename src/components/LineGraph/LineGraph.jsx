@@ -101,10 +101,10 @@ function LineGraph({ dataSet }) {
 
     // Draw line
     svg
-      .selectAll(`.graphLine-${dataSet.countryName}`)
+      .selectAll(`.graphLine-${dataSet.countryName.replace(' ', '_').replace('\'', '')}`)
       .data(filteredData(dataSet, checkedOptions))
       .join('path')
-      .attr('class', `graphLine-${dataSet.countryName}`)
+      .attr('class', `graphLine-${dataSet.countryName.replace(' ', '_').replace('\'', '')}`)
       .attr('d', value => myLine(value))
       .attr('fill', 'none')
       .attr('stroke', d => colorScale(d));

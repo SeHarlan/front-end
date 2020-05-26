@@ -3,6 +3,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  
   svg {
     background-color: rgb(238, 229, 229);
     display: block;
@@ -29,4 +30,8 @@
   svg path:active {
     cursor: grabbing;
   }
+
+ #country-popover {
+   background-color: black;
+ }
 }
