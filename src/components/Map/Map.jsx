@@ -3,7 +3,12 @@ import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
+import { Slider } from '@material-ui/core'; 
+
 import style from './Map.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { setGlobalMobilityDataByDate } from '../../actions/actions';
+import { getMobilityDates } from '../../selectors/selectors';
 // import { useIsMobile } from '../hooks/isMobile';
 
 const Map = ({ mapData, countryCode = '' }) => {
@@ -11,12 +16,20 @@ const Map = ({ mapData, countryCode = '' }) => {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
+  const [dateIndex, setDateIndex] = useState(0);
 
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
+  const dispatch = useDispatch();
+  const dates = useSelector(getMobilityDates);
   // const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if(dates === []) return;
+    else dispatch(setGlobalMobilityDataByDate(dates[dateIndex]));
+  }, [dateIndex]);
   
   useEffect(() => {
     if(!mapData.features) return;
@@ -148,6 +161,12 @@ const Map = ({ mapData, countryCode = '' }) => {
         <option value="transitChange">Transit</option>
         <option value="workplacesChange">Workplace</option>
       </select>
+      {dates.length && <Slider 
+        value={dateIndex} 
+        min={0} 
+        max={dates.length - 1} 
+        onChange={(event, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
+        valueLabelFormat={(index) => dates[index].slice(5)} />}
     </div>
   );
 };

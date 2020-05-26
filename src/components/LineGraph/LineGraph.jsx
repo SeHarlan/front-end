@@ -228,7 +228,6 @@ function LineGraph({ dataSet }) {
 
 LineGraph.propTypes = {
   dataSet: PropTypes.object.isRequired,
-  yAxisConstraints: PropTypes.array.isRequired
 };
 
 
