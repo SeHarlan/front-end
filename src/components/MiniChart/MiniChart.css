@@ -8,7 +8,7 @@
     /* Sets container ratio to 2:1 to match SVG ratio defined in D3 */
     padding-bottom: 50%; 
     vertical-align: top;
-    overflow: visible;
+    overflow: hidden;
   }
 
   svg {
@@ -16,7 +16,17 @@
     position: absolute;
     top: 0;
     left: 0;
-    overflow: visible;
+    overflow: hidden;
+  
+    .chartBackground {
+      fill: blue;
+    }        
+    
+    .xAxis {
+      color: red;
+      font-size: 3em;
+    }
+  
   }
 
   h4 {

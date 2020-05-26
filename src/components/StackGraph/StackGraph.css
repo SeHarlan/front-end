@@ -1,17 +1,3 @@
-svg {
-  display: block;
-  overflow: visible;
-  width: 40rem;
-  margin-bottom: 10rem;
-  padding-bottom: 10rem;
-}
-.legend {
-  margin-top: 10rem;
-}
-svg rect.selection {
-  stroke: none;
-}
-
 .StackGraph {
   margin: 10 auto;
   display: flex;
@@ -21,4 +7,18 @@ svg rect.selection {
   height: 50vh;
   text-align: center;
   box-sizing: border-box;
+
+  svg {
+    display: block;
+    overflow: visible;
+    width: 40rem;
+    margin-bottom: 10rem;
+    padding-bottom: 10rem;
+  }
+  .legend {
+    margin-top: 10rem;
+  }
+  svg rect.selection {
+    stroke: none;
+  }
 }

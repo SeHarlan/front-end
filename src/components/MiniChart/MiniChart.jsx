@@ -6,7 +6,6 @@ import { useResizeObserver } from '../../hooks/d3Hooks';
 import { Typography, makeStyles } from '@material-ui/core';
 import { useStyles } from './MiniChart.styles.js';
 import styles from './MiniChart.css';
-import './MiniChartSVG.css';
 
 
 export function MiniChart({ dataset, property }) {
@@ -55,11 +54,11 @@ export function MiniChart({ dataset, property }) {
 
     // Draw axis on pre-existing elements
     svg
-      .select('.x-axis')
+      .select(`.${styles.xAxis}`)
       .style('transform', `translateY(${viewBoxHeight - margin.bottom}px)`)
       .call(xAxis);
     svg
-      .select('.y-axis')
+      .select(`.${styles.yAxis}`)
       .style('transform', `translateX(${viewBoxWidth - margin.right}px)`)
       .call(yAxis);
 
@@ -70,8 +69,8 @@ export function MiniChart({ dataset, property }) {
       .attr('y', margin.top)
       .attr('width', viewBoxWidth - margin.left - margin.right)
       .attr('height', viewBoxHeight - margin.top - margin.bottom)
-      .attr('fill', '#f6f6f6')
-      .attr('class', 'chartBackground');
+      // .attr('fill', '#f6f6f6')
+      .attr('class', styles.chartBackground);
 
     // Define line
     const myLine = line()
@@ -96,8 +95,8 @@ export function MiniChart({ dataset, property }) {
       <Typography variant="h5">{property.description}</Typography>
       <div ref={wrapperRef} className={styles.container}>
         <svg ref={svgRef}>
-          <g className='x-axis' />
-          <g className='y-axis' />
+          <g className={styles.xAxis} />
+          <g className={styles.yAxis} />
         </svg>
       </div>
     </div>

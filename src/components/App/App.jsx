@@ -12,6 +12,7 @@ import { About } from '../About/About';
 
 import { useDispatch } from 'react-redux';
 import { setMobilityDates, setGlobalMobilityDataByDate, setCovidChartData } from '../../actions/actions';
+import MiniChartsContainer from '../MiniChart/MiniChartsContainer';
 
 
 export default function App() {
@@ -37,6 +38,8 @@ export default function App() {
           <Route path="/compare" component={ComparePage} />
           <Route path="/highscore" component={HighScore} />
           <Route path="/about" component={About} />
+          {/* MiniCharts route is just for testing! */}
+          <Route path="/minicharts" component={MiniChartsContainer} />
         </Switch>
         <Footer />
       </Container>

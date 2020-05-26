@@ -16,28 +16,28 @@ export const Header = () => {
   const selectedCountryCode = useSelector(getSelectedCountryCode);
   const globalMapMobilityData = useSelector(getGlobalMapMobilityByDate);
   
-  const selectOptions = () => globalMapMobilityData.features
-    .filter(item => item.mobilityData.countryName != null)
+  const selectOptions = globalMapMobilityData?.features
+    ?.filter(item => item.mobilityData.countryName != null)
     .sort((a, b) => (a.mobilityData.countryName > b.mobilityData.countryName) ? 1 : -1)
     .map((item, i) => <option key={i} value={item.mobilityData.countryCode}>{item.mobilityData.countryName}</option>);
 
   return (
     <Grid container className={classes.root}>
       {/* <img alt="logo" src={logo} className={classes.image}/> */}
-      <Grid item xs={4} >
+      <Grid item xs={12} md={4}>
         <Typography variant="h3">Pandemic Legacy</Typography>
         <Typography variant="h4">Quarantine Mobility Metrics</Typography>
       </Grid>
 
-      <Grid item xs={4}>
+      <Grid item xs={12} md={4}>
         <Links />
       </Grid>
 
-      <Grid item xs={4}>
+      <Grid item xs={12} md={4}>
         { globalMapMobilityData.features &&
         <select value={selectedCountryCode} onChange={({ target }) => dispatch(setSelectedCountryCode(target.value))}>
           <option>Choose a country</option>
-          {selectOptions()}
+          {selectOptions}
         </select>
         }
 

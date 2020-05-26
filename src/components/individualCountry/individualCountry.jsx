@@ -23,22 +23,17 @@ export const individualCountry = () => {
       <Grid item xs={12} className={classes.header}>
         <Typography variant="h3" className={classes.title}>{countryCode}</Typography>
         <Map mapData={globalMapMobilityData} countryCode={countryCodeParam || countryCode}/>
-       </Grid>
+      </Grid>
 
-        <Grid item xs={12} className={classes.graph}>
-          { chartDataSet.date && <StackGraph data={chartDataSet} /> }
-        </Grid>
+      <Grid item xs={12} className={classes.graph}>
+        { chartDataSet.date && <StackGraph data={chartDataSet} /> }
+      </Grid>
 
 
-        <Grid item xs={12} lg={6} className={classes.graph}>
-          <MiniChartsContainer />
-        </Grid>
-
-        {/* <Grid item xs={12} className={classes.metrics}>
-          <Typography variant="h3" className={classes.title}>Metrics</Typography>
-        </Grid> */}
+      <Grid item xs={12} lg={6} className={classes.graph}>
+        <MiniChartsContainer />
+      </Grid>
     </Grid>
-  </Grid>
   );
 };
 
