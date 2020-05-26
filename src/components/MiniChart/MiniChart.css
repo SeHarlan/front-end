@@ -1,21 +1,26 @@
 .MiniChart {
-  text-align: center;
 
   .container {
-    width: 80%;
-    margin: 20px auto;
-  }
-
-  svg {
-    display: block;
+    text-align: left;
+    display: inline-block;
+    position: relative;
     width: 100%;
-    height: 400px;
-    background-color: #eee;
+    /* Sets container ratio to 2:1 to match SVG ratio defined in D3 */
+    padding-bottom: 50%; 
+    vertical-align: top;
     overflow: visible;
   }
 
-  .Controls {
-    margin-top: 40px;
+  svg {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: visible;
+  }
+
+  h4 {
+    margin-bottom: 0;
   }
 
 }

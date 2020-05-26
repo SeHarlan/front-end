@@ -1,76 +1,77 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import styles from './MiniChart.css';
+import * as d3 from 'd3';
 import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, scaleOrdinal, schemeCategory10, min, max } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
+import { Typography, makeStyles } from '@material-ui/core';
+import { useStyles } from './MiniChart.styles.js';
+import styles from './MiniChart.css';
+import './MiniChartSVG.css';
 
 
-export function MiniChart({ dataSet }) {
+export function MiniChart({ dataset, property }) {
   
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
-  const checkedOptions = 'retailChange';
+  const classes = useStyles();
  
   function formatDate(badDate) {
     return badDate.toString().slice(6, 7) + '/' + badDate.toString().slice(8, 10);
-  }
-  
-  const filteredData = (data, selectedKeys) => {
-    // Refactor this
-    const newArr = [];
-    selectedKeys.map(item => { 
-      if(data[item]); 
-      newArr.push(data[item]);
-    });
-    return newArr;
-  }; 
-
-  const filteredKeys = (data) => {
-    const keys = Object.keys(data);
-    // Refactor: Apparently, item !== ('date' || 'countryCode' || 'countryName') doesn't work?
-    return keys.filter(item => (item !== 'date' && item !== 'countryCode' && item !== 'countryName'));
-  };
-  
+  }  
 
   useEffect(() => {
-    if(!dataSet || !dataSet.date) {
+    if(!dataset || !dataset.date) {
       console.log('No data, exiting useEffect()');
       return;
     }
 
     const svg = select(svgRef.current);
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
-    
-    // Define scales
-    const yAxisMin = min(dataSet.totalCases ?? -100);
-    const yAxisMax = max(dataSet.totalCases ?? 100);
+    console.log({ width, height });
+    const viewBoxWidth = 500;
+    const viewBoxHeight = 250;
+    const margin = { top: 20, right: 40, bottom: 30, left: 0 };
 
+    svg
+      .attr('viewBox', `0, 0, ${viewBoxWidth}, ${viewBoxHeight}`)
+      .attr('preserveAspectRatio', 'xMinYMin meet');
+
+    // Define scales
     const xScale = scaleLinear()
-      .domain([0, dataSet['date'].length - 1]) // range of data
-      .range([0, width]); // range of pixels
+      .domain([0, dataset['date'].length - 1]) // range of data
+      .range([margin.left, viewBoxWidth - margin.right]); // range of pixels
     const yScale = scaleLinear()
-      .domain([yAxisMin, yAxisMax])
-      .range([height, 0]);
-    const colorScale = scaleOrdinal(schemeCategory10)
-      .domain(filteredKeys(dataSet));
+      .domain([-100, 100])
+      .range([viewBoxHeight - margin.bottom, margin.top]);
   
     // Define axis
     const xAxis = axisBottom(xScale)
-      .ticks(dataSet['date'].length / 5)
-      .tickFormat(index => formatDate(dataSet.date[index]));
+      .ticks(dataset['date'].length / 10)
+      .tickFormat(index => formatDate(dataset.date[index]));
     const yAxis = axisRight(yScale)
-      .ticks(height / 20);
+      .ticks(viewBoxHeight / 40);
+    
 
     // Draw axis on pre-existing elements
     svg
       .select('.x-axis')
-      .style('transform', `translateY(${height}px)`)
+      .style('transform', `translateY(${viewBoxHeight - margin.bottom}px)`)
       .call(xAxis);
     svg
       .select('.y-axis')
-      .style('transform', `translateX(${width}px)`)
+      .style('transform', `translateX(${viewBoxWidth - margin.right}px)`)
       .call(yAxis);
+
+    // Draw background
+    svg
+      .append('rect')
+      .attr('x', margin.left)
+      .attr('y', margin.top)
+      .attr('width', viewBoxWidth - margin.left - margin.right)
+      .attr('height', viewBoxHeight - margin.top - margin.bottom)
+      .attr('fill', '#f6f6f6')
+      .attr('class', 'chartBackground');
 
     // Define line
     const myLine = line()
@@ -80,18 +81,19 @@ export function MiniChart({ dataSet }) {
 
     // Draw line
     svg
-      .selectAll(`.graphLine-${dataSet.countryName}`)
-      .data(dataSet['retailChange'])
+      .selectAll('.graphLine')
+      .data([dataset[property.key]])
       .join('path')
-      .attr('class', `graphLine-${dataSet.countryName}`)
+      .attr('class', 'graphLine')
       .attr('d', value => myLine(value))
       .attr('fill', 'none')
-      .attr('stroke', d => colorScale(d));
+      .attr('stroke', 'red');
 
-  }, [dataSet, checkedOptions]);
+  }, [dataset]);
 
   return (   
     <div className={styles.MiniChart}>
+      <Typography variant="h5">{property.description}</Typography>
       <div ref={wrapperRef} className={styles.container}>
         <svg ref={svgRef}>
           <g className='x-axis' />
@@ -103,7 +105,8 @@ export function MiniChart({ dataSet }) {
 }
 
 MiniChart.propTypes = {
-  dataSet: PropTypes.object.isRequired
+  dataset: PropTypes.object.isRequired,
+  property: PropTypes.object.isRequired
 };
 
 
