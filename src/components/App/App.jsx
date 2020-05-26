@@ -12,7 +12,6 @@ import { About } from '../About/About';
 
 import { useDispatch } from 'react-redux';
 import { setMobilityDates, setGlobalMobilityDataByDate } from '../../actions/actions';
-import MiniCharts from '../MiniChart/MiniCharts';
 
 export default function App() {
   const styles = useStyles();
@@ -35,7 +34,6 @@ export default function App() {
           <Route path="/country/:countryCode" component={individualCountry} />
           <Route path="/compare" component={ComparePage} />
           <Route path="/highscore" component={HighScore} />
-          <Route path="/minicharts" component={MiniCharts} />
           <Route path="/about" component={About} />
         </Switch>
         <Footer />

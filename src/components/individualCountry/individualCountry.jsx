@@ -3,12 +3,10 @@ import { Grid, Typography } from '@material-ui/core';
 import { useStyles } from './individualCountry.styles';
 import Map from '../Map/Map';
 import { getGlobalMapMobilityByDate, getSelectedCountryCode } from '../../selectors/selectors';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-
 import StackGraph from '../StackGraph/StackGraph';
 import { getCovidChartData } from '../../selectors/selectors';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import MiniChartsContainer from '../MiniChart/MiniChartsContainer';
 
@@ -31,18 +29,16 @@ export const individualCountry = () => {
           <StackGraph dataSet={chartDataSet} />
         </Grid>
 
-        <Grid item xs={12} className={classes.metrics}>
 
         <Grid item xs={12} lg={6} className={classes.graph}>
           <MiniChartsContainer />
         </Grid>
 
-        <Grid item xs={12} className={classes.metrics}>
+        {/* <Grid item xs={12} className={classes.metrics}>
           <Typography variant="h3" className={classes.title}>Metrics</Typography>
-        </Grid>
-
-      </Grid>
+        </Grid> */}
     </Grid>
+  </Grid>
   );
 };
 
