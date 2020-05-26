@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
 import { useStyles } from './individualCountry.styles';
-import Map from '../Map/Map';
+// import Map from '../Map/Map';
 import { getGlobalMapMobilityByDate, getSelectedCountryCode } from '../../selectors/selectors';
 import { useParams } from 'react-router-dom';
 import StackGraph from '../StackGraph/StackGraph';
@@ -13,16 +13,16 @@ import MiniChartsContainer from '../MiniChart/MiniChartsContainer';
 
 export const individualCountry = () => {
   const classes = useStyles();
-
-  const globalMapMobilityData = useSelector(getGlobalMapMobilityByDate);
+  // const globalMapMobilityData = useSelector(getGlobalMapMobilityByDate);
   const { countryCode: countryCodeParam } = useParams();
   const countryCode = useSelector(getSelectedCountryCode);
+
   const chartDataSet = useSelector(getCovidChartData);
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.header}>
         <Typography variant="h3" className={classes.title}>{countryCode}</Typography>
-        <Map mapData={globalMapMobilityData} countryCode={countryCodeParam || countryCode}/>
+        {/* <Map mapData={globalMapMobilityData} countryCode={countryCodeParam || countryCode}/> */}
       </Grid>
 
       <Grid item xs={12} className={classes.graph}>

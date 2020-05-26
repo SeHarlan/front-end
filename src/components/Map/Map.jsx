@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator } from 'd3';
+import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator, set } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalMobilityDataByDate, setSelectedCountryCode } from '../../actions/actions';
 import { getMobilityDates, getSelectedCountryCode } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
-
 // import { useIsMobile } from '../hooks/isMobile';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,6 +29,7 @@ const Map = ({ mapData, countryCode = '' }) => {
   const [rotating, setRotating] = useState(false);
   const [dateIndex, setDateIndex] = useState(0);
   const [selectedCountryName, setSelectedCountryName] = useState('test'); 
+  const [selectedCountryData, setSelectedCountryData] = useState({});
 
   const classes = useStyles();
 
@@ -44,13 +44,12 @@ const Map = ({ mapData, countryCode = '' }) => {
   const open = Boolean(anchorEl);
   //PopOver
 
-
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
+  const wrapperHeight = dimensions?.height;
   const dispatch = useDispatch();
-
   const history = useHistory();
   // const isMobile = useIsMobile();
   const dates = useSelector(getMobilityDates);
@@ -61,6 +60,7 @@ const Map = ({ mapData, countryCode = '' }) => {
     if(!selectedCountryCode) return;
     const countryData = mapData.features.find(country => country.mobilityData.countryCode === selectedCountryCode).mobilityData;
     setSelectedCountryName(countryData.countryName);
+    setAnchorEl(wrapperRef);
   }, [selectedCountryCode]);
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .precision(100);
 
     
-
+    
     const selectedCountry = mapData.features
       .find(({ properties }) => properties.iso_a2 === countryCode);
     //Country Projection
@@ -150,6 +150,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .on('click', (country) => {
         dispatch(setSelectedCountryCode(country.mobilityData.countryCode));
         handlePopoverOpen(event);
+        setSelectedCountryData(country.mobilityData);
       })
       .attr('class', 'country');
     
@@ -191,23 +192,26 @@ const Map = ({ mapData, countryCode = '' }) => {
     <div ref={wrapperRef} className={style.Map} >
       <svg ref={svgRef}></svg>
 
-      <Popover id="country-popover" 
+      <Popover id={style.countryPopover} 
         className={classes.popover} 
         classes={{ paper: classes.paper }} 
-        open={open} anchorEl={anchorEl} 
+        open={open} 
+        anchorEl={anchorEl} 
         anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
-        transformOrigin={{ vertical: 'center', horizontal: 'center' }}
+        transformOrigin={{ vertical: wrapperHeight / 1.5, horizontal: 'center' }}
         onClose={handlePopoverClose}
         disableRestoreFocus
       >
         <Typography>{selectedCountryName}</Typography>
+        <Typography>
+          {property.replace('Change', '')} : {selectedCountryData[property]}
+        </Typography>
         <Button variant="contained" 
           color="primary" 
           onClick={(e) => {
             e.preventDefault();
             history.push(`/country/${selectedCountryCode}`);
           }}>Details</Button>
-
         {/* <Button variant="contained" color="secondary" onClick={handlePopoverClose}>X</Button> */}
       </Popover>
 

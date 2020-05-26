@@ -4,9 +4,10 @@ import LineGraph from '../LineGraph/LineGraph';
 // import { useWorldMobilityData } from '../../hooks/mobilityHooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGlobalMapMobilityByDate } from '../../selectors/selectors';
-import style from './Home.css';
+
 import { getCovidChartData, getSelectedCountryCode } from '../../selectors/selectors';
 import { setCovidChartData } from '../../actions/actions';
+import { Grid } from '@material-ui/core';
 
 
 
@@ -22,10 +23,14 @@ const Home = () => {
   }, [countryCode]);
 
   return (
-    <section className={style.Home}>
-      <Map mapData={globalMapMobilityData} />
-      <LineGraph dataSet={chartDataSet} />
-    </section>
+    <Grid container>
+      <Grid item xs={12}>
+        <Map mapData={globalMapMobilityData} />
+      </Grid>
+      <Grid item xs={12}>
+        <LineGraph dataSet={chartDataSet} />
+      </Grid>
+    </Grid>
   );
 };
 
