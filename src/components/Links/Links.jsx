@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Grid, Link } from '@material-ui/core';
 
@@ -10,41 +10,23 @@ import { useDispatch, useSelector } from 'react-redux';
 export const Links = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [searchedCountry, setSearchedCountry] = useState('');
   const selectedCountryCode = useSelector(getSelectedCountryCode);
   const globalMapMobilityData = useSelector(getGlobalMapMobilityByDate);
   
-  const selectOptions = () => globalMapMobilityData.features.map((item, i) => <option key={i} value={item.mobilityData.countryCode}>{item.mobilityData.countryName}</option>);
-
-  // const handleChange = ({ target }) => {
-  //   setSearchedCountry(target.value);
-  // };
-
-  // const handleSubmit = (event) => {
-  //   event.preventDefault();
-  //   dispatch(setSelectedCountryCode(searchedCountry));
-  //   setCovidChartData(fetchCountryNameCovidData(searchedCountry));
-  // };
+  const selectOptions = () => globalMapMobilityData.features
+    .filter(item => item.mobilityData.countryName != null)
+    .sort((a, b) => (a.mobilityData.countryName > b.mobilityData.countryName) ? 1 : -1)
+    .map((item, i) => <option key={i} value={item.mobilityData.countryCode}>{item.mobilityData.countryName}</option>);
 
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.links}>
-        {/* <form name="country" onSubmit={handleSubmit}> */}
-        {/* <input type="text" value={searchedCountry} onChange={handleChange} className={classes.search} placeholder="Search for country"/> */}
-        { console.log({ globalMapMobilityData })}
         { globalMapMobilityData.features &&
         <select value={selectedCountryCode} onChange={({ target }) => dispatch(setSelectedCountryCode(target.value))}>
-          {/* Or do this */}
-          {/* {globalMapMobilityData.features.map((item, i) => (
-            <option key={i} value={item.mobilityData.countryCode}>
-              {item.mobilityData.countryName}
-            </option>
-          ))} */}
+          <option>Choose a country</option>
           {selectOptions()}
         </select>
         }
-
-        {/* </form>       */}
         <Link className={classes.link} href="/highscore">High Score</Link>
         <Link className={classes.link} href="/">Home</Link>
         <Link className={classes.link} href="/country">Individual Country</Link>
