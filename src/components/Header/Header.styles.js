@@ -2,12 +2,12 @@ import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
   root: {
-    paddingTop: '1rem',
-    background: '#fff',
-    width: '100%',
-    height: '7rem',
-    boxShadow: '2px 2px 2px #0c7982',       
-    position: 'fixed',
+    // paddingTop: '1rem',
+    // background: '#fff',
+    // width: '100%',
+    // height: '7rem',
+    // boxShadow: '2px 2px 2px #0c7982',       
+    // position: 'fixed',
   },
   titleContainer: {
     display: 'flex',

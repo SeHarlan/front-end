@@ -1,16 +1,16 @@
 import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
-  root: {
-  },
-  links: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    color: theme.palette.primary.main,
-    marginTop: '-4rem',
-    marginRight: '4.5rem',        
-  },
+//   root: {
+//   },
+//   links: {
+//     display: 'flex',
+//     flexDirection: 'row',
+//     justifyContent: 'flex-end',
+//     color: theme.palette.primary.main,
+//     marginTop: '-4rem',
+//     marginRight: '4.5rem',        
+//   },
   link: {
     padding: '0 .4rem 0 .4rem',
     fontWeight: '550',
@@ -23,15 +23,5 @@ export const useStyles = makeStyles((theme) => ({
       color: theme.palette.common.blue.main,
     }
   },
-  search: {
-    padding: '0 .4rem 0 .4rem',
-    fontWeight: '550',
-    fontSize: '1.2rem',
-    height: '2rem',
-    width: '12rem',
-    borderRadius: '1rem',
-    color: theme.palette.common.green.main, 
-
-  }
-}
-));
+// }
+}));
