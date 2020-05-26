@@ -25,10 +25,6 @@ export const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   graph: {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '1rem'
   },
   metrics: {
     alignItems: 'center',
