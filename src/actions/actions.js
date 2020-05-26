@@ -1,7 +1,6 @@
 import { fetchWorldMobilityData, fetchMobilityDataByCountryCode } from '../services/mobility';
 import geoJson from '../data/World-map-lo-res.geo.json';
 import { fetchCountryCovidData } from '../services/covid';
-import { fetchMobilityDataByCountryCode } from '../services/mobility';
 
 
 export const SET_GLOBAL_MAP_MOBILITY_BY_DATE = 'SET_GLOBAL_MAP_MOBILITY_BY_DATE';
