@@ -10,6 +10,8 @@ import style from './Map.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalMobilityDataByDate, setSelectedCountryCode } from '../../actions/actions';
 import { getMobilityDates, getSelectedCountryCode } from '../../selectors/selectors';
+import { useHistory } from 'react-router-dom';
+
 // import { useIsMobile } from '../hooks/isMobile';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,9 +31,10 @@ const Map = ({ mapData, countryCode = '' }) => {
   const [dateIndex, setDateIndex] = useState(0);
   const [selectedCountryName, setSelectedCountryName] = useState('test'); 
 
-  const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
 
+  //PopOver
+  const [anchorEl, setAnchorEl] = useState(null);
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -39,15 +42,19 @@ const Map = ({ mapData, countryCode = '' }) => {
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
+  //PopOver
+
 
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
   const dispatch = useDispatch();
+
+  const history = useHistory();
   // const isMobile = useIsMobile();
   const dates = useSelector(getMobilityDates);
-  const selectedCountryCode = useSelector(getSelectedCountryCode);
+  const selectedCountryCode =  useSelector(getSelectedCountryCode);
 
   //this could be trimed down if we used redux for countryName
   useEffect(() => {
@@ -115,7 +122,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .style('fill', 'url(#linear-gradient)');
 
     
-    svg.call(drag()
+    if(!countryCode) svg.call(drag()
       .on('start', () => { setRotating(true);})
       .on('drag', () => {
 
@@ -194,7 +201,13 @@ const Map = ({ mapData, countryCode = '' }) => {
         disableRestoreFocus
       >
         <Typography>{selectedCountryName}</Typography>
-        <Button variant="contained" color="primary">Details</Button>
+        <Button variant="contained" 
+          color="primary" 
+          onClick={(e) => {
+            e.preventDefault();
+            history.push(`/country/${selectedCountryCode}`);
+          }}>Details</Button>
+
         {/* <Button variant="contained" color="secondary" onClick={handlePopoverClose}>X</Button> */}
       </Popover>
 
