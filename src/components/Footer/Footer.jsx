@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, Link } from '@material-ui/core';
 import { useStyles } from './Footer.styles';
 
 export const Footer = () => {
@@ -7,7 +7,8 @@ export const Footer = () => {
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.container} >
-        <Typography variant="h1" className={classes.title}>Footer</Typography>
+        <Link className={classes.link} href="/about">About</Link>
+        {/* <Typography variant="h1" className={classes.title}>Footer</Typography> */}
       </Grid>
     </Grid>
   );

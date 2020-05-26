@@ -8,6 +8,8 @@ import { Footer } from '../Footer/Footer';
 import { individualCountry } from '../individualCountry/individualCountry';
 import ComparePage from '../ComparePage/ComparePage';
 import { HighScore } from '../HighScore/HighScore';
+import { About } from '../About/About';
+
 import { useDispatch } from 'react-redux';
 import { setMobilityDates, setGlobalMobilityDataByDate } from '../../actions/actions';
 import MiniCharts from '../MiniChart/MiniCharts';
@@ -32,9 +34,9 @@ export default function App() {
           <Route exact path="/" component={Home} />
           <Route path="/country/:countryCode" component={individualCountry} />
           <Route path="/compare" component={ComparePage} />
-          {/* <Route path="/search" component={search} /> */}
           <Route path="/highscore" component={HighScore} />
           <Route path="/minicharts" component={MiniCharts} />
+          <Route path="/about" component={About} />
         </Switch>
         <Footer />
       </Container>
