@@ -64,7 +64,7 @@ const Map = ({ mapData, countryCode = '' }) => {
   }, [selectedCountryCode]);
 
   useEffect(() => {
-    if(dates === []) return;
+    if(!dates.length) return;
     else dispatch(setGlobalMobilityDataByDate(dates[dateIndex]));
   }, [dateIndex]);
   
@@ -149,7 +149,6 @@ const Map = ({ mapData, countryCode = '' }) => {
       .join('path')
       .on('click', (country) => {
         dispatch(setSelectedCountryCode(country.mobilityData.countryCode));
-        handlePopoverOpen(event);
         setSelectedCountryData(country.mobilityData);
       })
       .attr('class', 'country');
