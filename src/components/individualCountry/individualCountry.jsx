@@ -18,15 +18,15 @@ export const individualCountry = () => {
   const { countryCode: countryCodeParam } = useParams();
   const countryCode = useSelector(getSelectedCountryCode);
   const chartDataSet = useSelector(getCovidChartData);
-        
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.header}>
         <Typography variant="h3" className={classes.title}>{countryCode}</Typography>
         <Map mapData={globalMapMobilityData} countryCode={countryCodeParam || countryCode}/>
-      
+       </Grid>
+
         <Grid item xs={12} className={classes.graph}>
-          <StackGraph dataSet={chartDataSet} />
+          { chartDataSet.date && <StackGraph data={chartDataSet} /> }
         </Grid>
 
 

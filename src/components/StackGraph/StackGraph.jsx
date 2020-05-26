@@ -4,72 +4,31 @@ import styles from './StackGraph.css';
 import { select, max, scaleLinear, scaleBand, axisBottom, stackOrderAscending, stack, axisLeft } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 
-function StackGraph({ dataSet }) {
+function StackGraph({ data }) {
   const svgRef = useRef();
   const wrapperRef = useRef();
+  const legendRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
+  console.log(data);
 
+  const dataStructure = data.date.reduce((acc, date, i) => {
+    acc.push({ 
+      countryCode: data.countryCode,
+      countryName: data.countryName,
+      date,
+      newCases: data.newCases[i],
+      newDeaths: data.newDeaths[i],
+      newRecovered: data.newRecovered[i],
+      totalDeaths: data.totalDeaths[i],
+      totalCases: data.totalCases[i],
+      totalRecovered: data.totalRecovered[i]
+    });
+    return acc;
+  }, []);
   useEffect(() => {
     const svg = select(svgRef.current);
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
     
-    const data = [
-      {
-        countryCode: null,
-        countryName: 'Worldwide',
-        date: '2020-01-21T08:00:00.000Z',
-        id: 338996,
-        latitude: null,
-        longitude: null,
-        newCases: 51,
-        newDeaths: 10,
-        newRecovered: 50,
-        subRegion1: null,
-        subRegion2: null,
-        totalCases: 313,
-        totalDeaths: 320,
-        totalRecovered: 363,
-        __v: 0,
-        _id: '5ec57e71617e67711a139e4e'
-      },
-      {
-        countryCode: null,
-        countryName: 'Worldwide',
-        date: '2020-01-22T08:00:00.000Z',
-        id: 338996,
-        latitude: null,
-        longitude: null,
-        newCases: 51,
-        newDeaths: 40,
-        newRecovered: 24,
-        subRegion1: null,
-        subRegion2: null,
-        totalCases: 462,
-        totalDeaths: 60,
-        totalRecovered: 264,
-        __v: 0,
-        _id: '5ec57e71617e67711a139e4e'
-      },
-      {
-        countryCode: null,
-        countryName: 'Worldwide',
-        date: '2020-01-23T08:00:00.000Z',
-        id: 338996,
-        latitude: null,
-        longitude: null,
-        newCases: 514,
-        newDeaths: 246,
-        newRecovered: null,
-        subRegion1: null,
-        subRegion2: null,
-        totalCases: 313,
-        totalDeaths: 426,
-        totalRecovered: 266,
-        __v: 0,
-        _id: '5ec57e71617e67711a139e4e'
-      }
-    ];
-
     const keys = [
       'newCases',
       'newDeaths',
@@ -90,7 +49,7 @@ function StackGraph({ dataSet }) {
     const stackGenerator = stack()
       .keys(keys)
       .order(stackOrderAscending);
-    const layers = stackGenerator(data);
+    const layers = stackGenerator(dataStructure);
     const extent = [
       0,
       max(layers, layer => max(layer, sequence => sequence[1]))
@@ -100,7 +59,7 @@ function StackGraph({ dataSet }) {
 
     // scales
     const xScale = scaleBand()
-      .domain(data.map(d => d.date))
+      .domain(dataStructure.map(d => d.date))
       .range([0, width])
       .padding(0.25);
       //scale band given explicit years
@@ -128,7 +87,6 @@ function StackGraph({ dataSet }) {
     // create all layers of data, stack keys
     // data for rectangles is layer
 
-
     // axes
     const xAxis = axisBottom(xScale);
     svg
@@ -142,23 +100,38 @@ function StackGraph({ dataSet }) {
       .select('.y-axis')
       .call(yAxis);
 
-  }), [dataSet, dimensions];
+    const legend = select(legendRef.current)
+      .attr('class', 'legendColor');
+
+    // const legendText = [-100, -75, -50, -25, 0, 25, 50, 75, 100];
+
+    // const legends = legend.selectAll('span')
+    //   .data([-100, -75, -50, -25, 0, 25, 50, 75, 100]);
+
+    // keys.join('span')
+    //   .attr('class', 'legendSpan')
+    //   .style('background', (d) => colorScale(d))
+    // // .text(legendText.forEach(number => number));
+    //   .text((d, i) => legendText[i]);
+      
+  }), [data, dimensions];
 
   return (   
-    <div className={styles.LineGraph}>
+    <div className={styles.StackGraph}>
       <div ref={wrapperRef} className={styles.container}>
-        <svg ref={svgRef}>
-          <g className='x-axis' style={{ color: 'black' }}/>
+        <svg className="svg" ref={svgRef}>
+          <g className='x-axis'/>
           <g className='y-axis'/>
         </svg>
       </div>
+      <div className="legend" ref={legendRef}>Bar Chart legend:</div>
     </div>
   );
 }
 
 
 StackGraph.propTypes = {
-  dataSet: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired,
 };
 
 export default StackGraph;
