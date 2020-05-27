@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 import styles from './StackGraph.css';
 import { select, max, scaleLinear, scaleBand, axisBottom, stackOrderAscending, stack, axisLeft } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
+import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { useStyles } from './stackedGraph.styles';
 
 function formatDate(badDate) {
   return badDate.toString().slice(6, 7) + '/' + badDate.toString().slice(8, 10);
 }
 
 function StackGraph({ data }) {
+  const classes = useStyles();
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
@@ -30,7 +33,7 @@ function StackGraph({ data }) {
     });
     return acc;
   }, []);
-  console.log(dataStructure);
+
   useEffect(() => {
     
     const svg = select(svgRef.current);
@@ -119,7 +122,6 @@ function StackGraph({ data }) {
     // const legendText = [`Total ${selectedDropDownKey}`, `New ${selectedDropDownKey}`];
     const legendText = ['Total Cases', 'New Cases'];
     
-    console.log(selectedDropDownKey, 'key');
     const colorScale = scaleLinear()
       .domain([-100, 100])
       .range(['LightSeaGreen', 'Indigo']);
@@ -148,12 +150,20 @@ function StackGraph({ data }) {
       </div>
 
       <div className={styles.select}>
-        <select onChange={({ target }) => setSelectedDropDownKey(target.value)}>
-          <option value="">Compare Covid cases</option>
-          <option value="cases">Cases</option>
-          <option value="deaths">Deaths</option>
-          <option value="recovered">Recovered</option>
-        </select>      
+        <FormControl variant="filled" className={classes.formControl}>
+          <InputLabel id="covid-select-label">Covid Statistics</InputLabel>
+          <Select
+            labelId="covid-select-label"
+            id="covid-select"
+            value={selectedDropDownKey}
+            onChange={({ target }) => setSelectedDropDownKey(target.value)}
+          >
+            <MenuItem value="">Choose a Statistic</MenuItem>
+            <MenuItem value="cases">Cases</MenuItem>
+            <MenuItem value="deaths">Deaths</MenuItem>
+            <MenuItem value="recovered">Recovered</MenuItem>
+          </Select>
+        </FormControl>
       </div>
     </div>
   );

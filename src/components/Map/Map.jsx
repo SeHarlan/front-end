@@ -3,7 +3,7 @@ import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, makeStyles, withStyles } from '@material-ui/core'; 
+import { Slider, Popover, Typography, Button, makeStyles, withStyles, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'; 
 
 import style from './Map.css';
 
@@ -80,9 +80,9 @@ const Map = ({ mapData, countryCode = '' }) => {
 
   //PopOver
   const [anchorEl, setAnchorEl] = useState(null);
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handlePopoverOpen = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
@@ -104,7 +104,7 @@ const Map = ({ mapData, countryCode = '' }) => {
     if(!selectedCountryCode) return;
     const countryData = mapData.features.find(country => country.mobilityData.countryCode === selectedCountryCode).mobilityData;
     setSelectedCountryName(countryData.countryName);
-    setAnchorEl(wrapperRef);
+    setAnchorEl(wrapperRef.current);
   }, [selectedCountryCode]);
 
   useEffect(() => {
@@ -123,12 +123,14 @@ const Map = ({ mapData, countryCode = '' }) => {
       .domain([-100, 0, 100])
       .range(['blue', 'rgb(243, 240, 225)', 'green']);
 
+    const globePosition = [width / 2, height / 2.5];
+
     //globe Projection
     const projection = geoOrthographic()
-      .fitSize([width * 0.9, height * 0.9], mapData)
+      .fitSize([width / 1.4, height / 1.4], mapData)
       .center([0, 0])
       .rotate([rotateX, rotateY, 0])
-      .translate([width / 2, height / 2])
+      .translate(globePosition)
       .precision(100);
 
     
@@ -160,8 +162,8 @@ const Map = ({ mapData, countryCode = '' }) => {
       .selectAll('circle')
       .data(['spot'])
       .join('circle')
-      .attr('cx', width / 2)
-      .attr('cy', height / 2)
+      .attr('cx', globePosition[0])
+      .attr('cy', globePosition[1])
       .attr('r', projection.scale())
       .style('fill', 'url(#linear-gradient)');
 
@@ -241,13 +243,13 @@ const Map = ({ mapData, countryCode = '' }) => {
         open={open} 
         anchorEl={anchorEl} 
         anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
-        transformOrigin={{ vertical: wrapperHeight / 1.5, horizontal: 'center' }}
+        transformOrigin={{ vertical: wrapperHeight / 5, horizontal: 'center' }}
         onClose={handlePopoverClose}
         disableRestoreFocus
       >
         <Typography>{selectedCountryName}</Typography>
         <Typography>
-          {property.replace('Change', '')} : {selectedCountryData[property]}
+          {property.replace('Change', '')}: {selectedCountryData[property] || 'N/A'}
         </Typography>
         <Button variant="contained" 
           color="primary" 
@@ -259,14 +261,24 @@ const Map = ({ mapData, countryCode = '' }) => {
       </Popover>
 
       <div ref={legendRef}>Map legend:</div>
-      <select value={property} onChange={({ target }) => setProperty(target.value)}>
-        <option value="residentialChange">Residential</option>
-        <option value="groceryChange">Grocery</option>
-        <option value="parksChange">Parks</option>
-        <option value="retailChange">Retail</option>
-        <option value="transitChange">Transit</option>
-        <option value="workplacesChange">Workplace</option>
-      </select>
+
+      <FormControl variant="filled" className={classes.formControl}>
+        <InputLabel id="property-select-label">Change In</InputLabel>
+        <Select
+          labelId="property-select-label"
+          id="property-select"
+          value={property}
+          onChange={({ target }) => setProperty(target.value)}
+        >
+          <MenuItem value="residentialChange">Residential</MenuItem>
+          <MenuItem value="groceryChange">Grocery</MenuItem>
+          <MenuItem value="parksChange">Parks</MenuItem>
+          <MenuItem value="retailChange">Retail</MenuItem>
+          <MenuItem value="transitChange">Transit</MenuItem>
+          <MenuItem value="workplacesChange">Workplace</MenuItem>
+        </Select>
+      </FormControl>
+
       {dates.length && <SliderStyled 
         value={dateIndex} 
         min={0} 
