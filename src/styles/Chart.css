@@ -40,12 +40,28 @@
     }        
     
     .xAxis, .yAxis {
-      color: #666;
+      font-family: 'Roboto', Arial, Helvetica, sans-serif;
+      font-size: .9em;
+      color: #777;
+    }
+
+    .graphLine {
+      stroke-width: 5%;
     }
   }
 
   h4 {
     margin-bottom: 0;
   }
+}
 
+.chartOptions {
+  position: relative;
+  top: 80px;
+  left: 35px;
+  z-index: 9999;
+  
+ div + div {
+   margin-top: 5px;
+ }
 }

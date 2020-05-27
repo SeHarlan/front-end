@@ -28,7 +28,7 @@ export const useStyles = makeStyles((theme) => ({
     fontWeight: '550',
   },
   formControl: {
-    display: 'flex'
+    // display: 'flex'
   }
 }));
 

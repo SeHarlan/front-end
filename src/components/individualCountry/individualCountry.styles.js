@@ -2,12 +2,7 @@ import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: '10rem',
-    paddingBottom: '5rem',
+    padding: '2.5rem 0',
   },
   title: {
     fontSize: '1.6rem',
@@ -18,11 +13,6 @@ export const useStyles = makeStyles((theme) => ({
   heading: {
     fontSize: '1.2rem',
     color: theme.palette.common.blue.main,
-  },
-  header: {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'column',
   },
   graph: {
     margin: '2rem'

@@ -43,7 +43,7 @@ export const individualCountry = () => {
 
   return (
     <Grid container className={classes.root}>
-      <Grid item xs={12} className={classes.header}>
+      <Grid item xs={12}>
         {subregion
           ? <Typography variant="h3" className={classes.title}>{subregion}</Typography>
           : <Typography variant="h3" className={classes.title}>{countryCode}</Typography>

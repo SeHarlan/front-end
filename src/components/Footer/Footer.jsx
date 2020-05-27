@@ -5,10 +5,9 @@ import { useStyles } from './Footer.styles';
 export const Footer = () => {
   const classes = useStyles();
   return (
-    <Grid container className={classes.root}>
+    <Grid container className={classes.fullWidth}>
       <Grid item xs={12} className={classes.container} >
         <Link className={classes.link} href="/about">About</Link>
-        {/* <Typography variant="h1" className={classes.title}>Footer</Typography> */}
       </Grid>
     </Grid>
   );

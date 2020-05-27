@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from '../../styles/Chart.css';
 // import styles from '../MiniChart/MiniChart.styles';
-import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, scaleOrdinal, schemeCategory10, min, max } from 'd3';
+import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, scaleOrdinal, schemeCategory10, min, max, scaleLog } from 'd3';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -11,7 +11,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid, Switch } from '@material-ui/core';
+import { Typography, Grid, Switch, Chip, Avatar } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,30 +27,22 @@ function LineGraph({ dataset }) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
-  const [checkedOptions, setCheckedOptions] = useState([]);
+  const [checkedOptions, setCheckedOptions] = useState(['totalCases', 'totalDeaths']);
   const classes = useStyles();
-  const [checked, setChecked] = useState(true);
+  const [switchedToTotal, setSwitchedToTotal] = useState(true);
+  const [switchedToLog, setSwitchedToLog] = useState(false);
 
   const handleCheckbox = ({ target }) => {
     if(!checkedOptions.includes(target.value)) 
       setCheckedOptions(prevState => [...prevState, target.value]);
     else setCheckedOptions(checkedOptions.filter(item => (item !== target.value)));
   };
-  
-  const checkboxOptionsOLD = (data) => {
-    const myKeys = filteredKeys(data);
-    return myKeys.map((myKey, i) => 
-      <div key={i}>
-        <input type='checkbox' 
-          id={myKey} 
-          name={myKey} 
-          value={myKey} 
-          onChange={handleCheckbox} 
-          checked={checkedOptions.includes(myKey)}
-        />
-        <label htmlFor={myKey}>{myKey}</label>
-      </div>
-    );
+
+  const handleTotalSwitch = () => {
+    setSwitchedToTotal(!switchedToTotal);
+    if(switchedToTotal === true) 
+      setCheckedOptions(['newCases', 'newDeaths']);
+    else setCheckedOptions(['totalCases', 'totalDeaths']);
   };
 
   const checkboxOptions = (data) => {
@@ -98,10 +90,10 @@ function LineGraph({ dataset }) {
   };
 
 
-  useEffect(() => {
-    console.log('filtered keys: ', filteredKeys(dataset));
-    setCheckedOptions(filteredKeys(dataset));
-  }, [dataset]);
+  // useEffect(() => {
+  //   console.log('filtered keys: ', filteredKeys(dataset));
+  //   setCheckedOptions(filteredKeys(dataset));
+  // }, [dataset]);
 
   useEffect(() => {
     if(!dataset || !dataset.date) {
@@ -131,10 +123,15 @@ function LineGraph({ dataset }) {
     const xScale = scaleLinear()
       .domain([0, dataset['date'].length - 1]) // range of data
       .range([margin.left, width - margin.right]); // range of pixels
-    const yScale = scaleLinear()
+    let yScale = scaleLinear()
       .domain([yAxisMin, yAxisMax])
       .range([height - margin.bottom, margin.top]);
-    const colorScale = scaleOrdinal(schemeCategory10)
+    if(switchedToLog) {
+      yScale = scaleLog()
+        .domain([yAxisMin, yAxisMax])
+        .range([height - margin.bottom, margin.top]);
+    }
+    const colorScale = scaleOrdinal(['#FF8C00', '#8B0000'])
       .domain(filteredKeys(dataset));
   
     // Define axis
@@ -274,20 +271,31 @@ function LineGraph({ dataset }) {
     //     });
     // });
     }
-  }, [dataset, checkedOptions]);
+  }, [dataset, checkedOptions, switchedToLog]);
 
   return (
-    <>   
-      <Typography component="div">
-        <Grid component="label" container alignItems="center" spacing={1}>
-          <Grid item>Daily</Grid>
-          <Grid item>
-            <Switch checked={checked} onChange={() => setChecked(!checked)} name="checkedC" />
+    <>
+      <div className={styles.chartOptions}>
+        <Typography component="div">
+          <Grid component="label" container alignItems="center" spacing={0}>
+            <Grid item>Daily</Grid>
+            <Grid item>
+              <Switch checked={switchedToTotal} onChange={handleTotalSwitch} color="primary" size="small" />
+            </Grid>
+            <Grid item>Total</Grid>
           </Grid>
-          <Grid item>Cumulative</Grid>
-        </Grid>
-      </Typography>
-      
+        </Typography>
+
+        <Typography component="div">
+          <Grid component="label" container alignItems="center" spacing={0}>
+            <Grid item>Linear</Grid>
+            <Grid item>
+              <Switch checked={switchedToLog} onChange={() => setSwitchedToLog(!switchedToLog)} color="secondary" size="small" />
+            </Grid>
+            <Grid item>Logarithmic</Grid>
+          </Grid>
+        </Typography>
+      </div>  
       
       <div className={styles.Chart}>
         <div ref={wrapperRef} className={`${styles.container} ${styles.threeToOne}`}>
@@ -296,23 +304,14 @@ function LineGraph({ dataset }) {
             <g className={styles.yAxis} />
             <rect className={styles.chartBackground} />
           </svg>
-          {/* <select value={property} onChange={({ target }) => setProperty(target.value)}>
-          {selectOptions(covidData)} */}
-          {/* <option value='positive'>Total Positive Cases</option>
-          <option value='recovered'>Current Cases</option>
-          <option value='death'>Deaths</option> */}
-          {/* </select> */}
         </div>
       </div>
       <div>
         {dataset.date &&
          <div className={classes.root}> 
-           <FormControl component="fieldset" className={classes.formControl}>
-             <FormLabel component="legend">Assign responsibility</FormLabel>
-             <FormGroup>
-               {checkboxOptions(dataset)}
-             </FormGroup>
-           </FormControl>
+           <Chip variant="outlined" style={{ color:'darkorange', border: '1px solid darkorange' }} avatar={<Avatar style={{ backgroundColor:'darkorange' }}> </Avatar>} label="Positive Cases" />
+           <br />
+           <Chip variant="outlined" color="primary" avatar={<Avatar> </Avatar>} label="Deaths" />
          </div>
         }
       </div>
