@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getGlobalMapMobilityByDate } from '../../selectors/selectors';
 
 import { getCovidChartData, getSelectedCountryCode } from '../../selectors/selectors';
-import { setCovidChartData } from '../../actions/actions';
+import { setCovidChartData, setSelectedCountryCode, setSelectedCountryName } from '../../actions/actions';
 import { Grid, Typography } from '@material-ui/core';
 import styles from './Home.css';
 
@@ -22,6 +22,10 @@ export const Home = () => {
   useEffect(() => {
     dispatch(setCovidChartData(countryCode));
   }, [countryCode]);
+  useEffect(() => {
+    dispatch(setSelectedCountryName('Worldwide'));
+    dispatch(setSelectedCountryCode(''));
+  }, []);
 
   return (
     <>

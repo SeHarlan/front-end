@@ -9,7 +9,7 @@ import style from './Map.css';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalMobilityDataByDate, setSelectedCountryCode, setSelectedCountry } from '../../actions/actions';
-import { getMobilityDates, getSelectedCountryCode } from '../../selectors/selectors';
+import { getMobilityDates, getSelectedCountryCode, getSelectedCountryName } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
 import { useStyles } from './Map.styles';
 // import { useIsMobile } from '../hooks/isMobile';
@@ -55,8 +55,8 @@ const Map = ({ mapData, countryCode = '' }) => {
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
   const [dateIndex, setDateIndex] = useState(84); //hard coded index for now, would come from dates.length - 1
-  const [selectedCountryName, setSelectedCountryName] = useState('test'); 
   const [selectedCountryData, setSelectedCountryData] = useState({});
+  const selectedCountryName = useSelector(getSelectedCountryName);
 
   const classes = useStyles();
 
@@ -94,9 +94,7 @@ const Map = ({ mapData, countryCode = '' }) => {
 
   //this could be trimed down if we used redux for countryName
   useEffect(() => {
-    if(!selectedCountryCode) return;
-    const countryData = mapData.features.find(country => country.mobilityData.countryCode === selectedCountryCode).mobilityData;
-    setSelectedCountryName(countryData.countryName);
+    if(!selectedCountryCode) return setAnchorEl(null);
     setAnchorEl(wrapperRef.current);
   }, [selectedCountryCode]);
 
@@ -211,10 +209,14 @@ const Map = ({ mapData, countryCode = '' }) => {
       .join('path')
       .on('click', (country) => {
         const { countryCode, countryName } = country.mobilityData;
+        if(!countryCode || !countryName) return;
         dispatch(setSelectedCountry({ countryCode, countryName }));
         setSelectedCountryData(country.mobilityData);
       })
-      .attr('class', 'country');
+      .attr('class', 'country')
+      .classed(style.noData, function(d) {
+        return !d.mobilityData[property];
+      });
     
     if(rotating) {
       map
@@ -271,7 +273,7 @@ const Map = ({ mapData, countryCode = '' }) => {
         >
           <Typography variant="h4">{selectedCountryName}</Typography>
           <Typography>
-            {property.replace('Change', '')}: {selectedCountryData[property] || 'N/A'}
+            Travel to <b>{property.replace('Change', '')} locations</b> on this date was <b>{selectedCountryData[property] || 'N/A'}%</b> compared to a normal day in {selectedCountryName}.
           </Typography>
           <Button variant="contained" 
             color="primary" 
