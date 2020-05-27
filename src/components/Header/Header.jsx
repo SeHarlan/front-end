@@ -17,6 +17,10 @@ const useStyles = makeStyles((theme) => ({
   h1Title: {
     color: theme.palette.common.charcoal.main,
     fontWeight: 'bold',
+  },
+  h1TitleLink: {
+    color: theme.palette.primary.main,
+    fontWeight: 'bold',
     textDecoration: 'none',
   },
   h3Subtitle: {
@@ -42,7 +46,7 @@ export const Header = () => {
       {/* <img alt="logo" src={logo} className={classes.image}/> */}
 
       <Grid item xs={12} sm={9}>
-        <Link to='/'><Typography variant="h1" className={classes.h1Title}>Going Viral</Typography></Link>
+        <Typography variant="h1" className={classes.h1Title}><Link to='/' className={classes.h1TitleLink}>Going Viral</Link></Typography>
         <Typography variant="h3" className={classes.h3Subtitle}>Mobility in Times of Quarantine</Typography>
       </Grid>
 

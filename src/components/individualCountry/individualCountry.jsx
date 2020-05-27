@@ -33,7 +33,7 @@ export const individualCountry = () => {
 
   return (
     <Grid container className={classes.root}>
-      <Grid item xs={12} className={classes.header}>
+      <Grid item xs={12}>
         <Typography variant="h3" className={classes.title}>{countryCode}</Typography>
         {/* <Map mapData={globalMapMobilityData} countryCode={countryCodeParam || countryCode}/> */}
       </Grid>
