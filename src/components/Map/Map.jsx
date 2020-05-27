@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator, set } from 'd3';
+import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, makeStyles, withStyles, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'; 
+import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid } from '@material-ui/core'; 
 
 import style from './Map.css';
 
@@ -11,16 +11,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalMobilityDataByDate, setSelectedCountryCode } from '../../actions/actions';
 import { getMobilityDates, getSelectedCountryCode } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
+import { useStyles } from './Map.styles';
 // import { useIsMobile } from '../hooks/isMobile';
 
-const useStyles = makeStyles((theme) => ({
-  popover: {
-    pointerEvents: 'auto',
-  },
-  paper: {
-    padding: theme.spacing(1),
-  },
-}));
 const SliderStyled = withStyles({
   root: {
     height: 8
@@ -123,11 +116,12 @@ const Map = ({ mapData, countryCode = '' }) => {
       .domain([-100, 0, 100])
       .range(['blue', 'rgb(243, 240, 225)', 'green']);
 
-    const globePosition = [width / 2, height / 2.5];
 
+    const globePosition = [width / 2, height / 2];
+    const globeScale = 1;
     //globe Projection
     const projection = geoOrthographic()
-      .fitSize([width / 1.4, height / 1.4], mapData)
+      .fitSize([width * globeScale, height * globeScale], mapData)
       .center([0, 0])
       .rotate([rotateX, rotateY, 0])
       .translate(globePosition)
@@ -158,6 +152,28 @@ const Map = ({ mapData, countryCode = '' }) => {
       .attr('offset', '100%')
       .attr('stop-color', 'rgb(49, 167, 187)');
 
+    const drop_shadow = svg.append('defs').append('radialGradient')
+      .attr('id', 'drop_shadow')
+      .attr('cx', '50%')
+      .attr('cy', '50%');
+    drop_shadow.append('stop')
+      .attr('offset', '20%').attr('stop-color', '#000')
+      .attr('stop-opacity', '.5');
+    drop_shadow.append('stop')
+      .attr('offset', '100%').attr('stop-color', '#000')
+      .attr('stop-opacity', '0');  
+
+    if(!countryCode) svg
+      .selectAll('ellipse')
+      .data(['spot'])
+      .join('ellipse')
+      .attr('cx', globePosition[0] - (width / 20))
+      .attr('cy', globePosition[1] + (height / 2.06))
+      .attr('rx', projection.scale() * 1.1)
+      .attr('ry', projection.scale() * .25)
+      .attr('class', 'noclicks')
+      .style('fill', 'url(#drop_shadow)');
+
     if(!countryCode) svg
       .selectAll('circle')
       .data(['spot'])
@@ -166,6 +182,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .attr('cy', globePosition[1])
       .attr('r', projection.scale())
       .style('fill', 'url(#linear-gradient)');
+
 
     
     if(!countryCode) svg.call(drag()
@@ -216,77 +233,87 @@ const Map = ({ mapData, countryCode = '' }) => {
         .attr('d', country => pathGenerator(country));
     }
     
-    const legend = select(legendRef.current)
-      .attr('class', 'legendColor');
-
+    const legend = select(legendRef.current);
     const legendText = [-100, -75, -50, -25, 0, 25, 50, 75, 100];
-
-    const keys = legend.selectAll('span')
-      .data([-100, -75, -50, -25, 0, 25, 50, 75, 100]);
-
-    keys.join('span')
-      .attr('class', 'legendSpan')
+    legend.selectAll('span')
+      .data([-100, -75, -50, -25, 0, 25, 50, 75, 100])
+      .join('span')     
+      .attr('class', style.mapLegend)
       .style('background', (d) => colorScale(d))
-    // .text(legendText.forEach(number => number));
       .text((d, i) => legendText[i]);
       
   }, [mapData, dimensions, property]);
 
 
-  return (
-    <div ref={wrapperRef} className={style.Map} >
-      <svg ref={svgRef}></svg>
 
-      <Popover id={style.countryPopover} 
-        className={classes.popover} 
-        classes={{ paper: classes.paper }} 
-        open={open} 
-        anchorEl={anchorEl} 
-        anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
-        transformOrigin={{ vertical: wrapperHeight / 5, horizontal: 'center' }}
-        onClose={handlePopoverClose}
-        disableRestoreFocus
-      >
-        <Typography>{selectedCountryName}</Typography>
-        <Typography>
-          {property.replace('Change', '')}: {selectedCountryData[property] || 'N/A'}
-        </Typography>
-        <Button variant="contained" 
-          color="primary" 
-          onClick={(e) => {
-            e.preventDefault();
-            history.push(`/country/${selectedCountryCode}`);
-          }}>Details</Button>
-        {/* <Button variant="contained" color="secondary" onClick={handlePopoverClose}>X</Button> */}
-      </Popover>
-
-      <div ref={legendRef}>Map legend:</div>
-
-      <FormControl variant="filled" className={classes.formControl}>
-        <InputLabel id="property-select-label">Change In</InputLabel>
-        <Select
-          labelId="property-select-label"
-          id="property-select"
-          value={property}
-          onChange={({ target }) => setProperty(target.value)}
+  return (<>
+    <Grid container className={classes.mapContainer} alignItems="center" justify="center" spacing="2">
+      <Grid item xs={3} sm={2} >
+        <Paper elevation={2} className={classes.legendPaper}>
+          <div ref={legendRef} 
+            className={style.mapLegendContainer}
+          >Change in {property.replace('Change', '')} Mobility 
+          </div>
+          <p className={style.legendNoData}>No Data Available</p>
+        </Paper>
+      </Grid>
+    
+      <Grid item xs={9} sm={8}ref={wrapperRef} className={style.Map} >
+        <svg ref={svgRef} className={style.svgStyle}></svg>
+        <Popover id={style.countryPopover} 
+          className={classes.popover} 
+          classes={{ paper: classes.paper }} 
+          open={open} 
+          anchorEl={anchorEl} 
+          anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+          transformOrigin={{ vertical: wrapperHeight / 5, horizontal: 'center' }}
+          onClose={handlePopoverClose}
+          disableRestoreFocus
         >
-          <MenuItem value="residentialChange">Residential</MenuItem>
-          <MenuItem value="groceryChange">Grocery</MenuItem>
-          <MenuItem value="parksChange">Parks</MenuItem>
-          <MenuItem value="retailChange">Retail</MenuItem>
-          <MenuItem value="transitChange">Transit</MenuItem>
-          <MenuItem value="workplacesChange">Workplace</MenuItem>
-        </Select>
-      </FormControl>
+          <Typography variant="h4">{selectedCountryName}</Typography>
+          <Typography>
+            {property.replace('Change', '')}: {selectedCountryData[property] || 'N/A'}
+          </Typography>
+          <Button variant="contained" 
+            color="primary" 
+            onClick={(e) => {
+              e.preventDefault();
+              history.push(`/country/${selectedCountryCode}`);
+            }}>Details</Button>
+          {/* <Button variant="contained" color="secondary" onClick={handlePopoverClose}>X</Button> */}
+        </Popover>
+      </Grid>
+      
+      <Grid item xs={12} sm={2}>
+        <FormControl variant="filled" className={classes.formControl}>
+          <InputLabel id="property-select-label">Change In</InputLabel>
+          <Select
+            labelId="property-select-label"
+            id="property-select"
+            value={property}
+            onChange={({ target }) => setProperty(target.value)}
+          >
+            <MenuItem value="residentialChange">Residential</MenuItem>
+            <MenuItem value="groceryChange">Grocery</MenuItem>
+            <MenuItem value="parksChange">Parks</MenuItem>
+            <MenuItem value="retailChange">Retail</MenuItem>
+            <MenuItem value="transitChange">Transit</MenuItem>
+            <MenuItem value="workplacesChange">Workplace</MenuItem>
+          </Select>
+        </FormControl>
 
-      {dates.length && <SliderStyled 
-        value={dateIndex} 
-        min={0} 
-        max={dates.length - 1} 
-        onChange={(_, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
-        valueLabelFormat={(index) => dates[index].slice(5)}
-        marks={marks} />}
-    </div>
+      </Grid>
+      <Grid item xs={12}>
+        {dates.length && <SliderStyled 
+          value={dateIndex} 
+          min={0} 
+          max={dates.length - 1} 
+          onChange={(_, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
+          valueLabelFormat={(index) => dates[index].slice(5)}
+          marks={marks} />}
+      </Grid>
+    </Grid>
+  </>  
   );
 };
 

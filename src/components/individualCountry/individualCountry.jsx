@@ -3,6 +3,7 @@ import { Grid, Typography, FormControl, Input, InputLabel, Select, MenuItem } fr
 import { useStyles } from './individualCountry.styles';
 // import Map from '../Map/Map';
 import { getGlobalMapMobilityByDate, getSelectedCountryCode, getMobilitySubregionNames, getSelectedSubregion, getCovidSubData, getMobilitySubData } from '../../selectors/selectors';
+
 import { useParams } from 'react-router-dom';
 import StackGraph from '../StackGraph/StackGraph';
 import { getCovidChartData } from '../../selectors/selectors';
@@ -24,6 +25,7 @@ export const individualCountry = () => {
   const chartDataSet = useSelector(getCovidChartData);
   const stackGraphSubData = useSelector(getCovidSubData);
   const miniChartSubData = useSelector(getMobilitySubData);
+
 
   useEffect(() => {
     if(countryCode === '') return;

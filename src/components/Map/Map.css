@@ -4,31 +4,51 @@
   justify-content: center;
   align-items: center;
   
-  svg {
+  .svgStyle {
     background-color: none;
     display: block;
     width: 100%;
-    height: 50vh;
+    height: 40vh;
+    overflow: visible;
+    circle:hover {
+      cursor: grab;
+    }
+    path {
+      stroke: rgba(159, 142, 160, 0.1);
+    }
+    path:hover {
+      stroke: rgba(0, 0, 0, 0.3);
+      stroke-width: 0.6px;
+      cursor: pointer;
+    }
+    circle:active {
+      cursor: grabbing;
+    }
+    path:active {
+      cursor: grabbing;
+    }
   }
+  
 
-  svg circle:hover {
-    cursor: grab;
-  }
-  svg path {
-    stroke: rgba(159, 142, 160, 0.1);
-  }
-  svg path:hover {
-    stroke: rgba(0, 0, 0, 0.3);
-    stroke-width: 0.6px;
-    cursor: pointer;
-  }
+}
 
-  svg circle:active {
-    cursor: grabbing;
-  }
+.mapLegend {
+  color: seashell;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  font-size: 1rem;
+  padding: 0.3rem;
+}
+.mapLegendContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
 
-  svg path:active {
-    cursor: grabbing;
-  }
-
+.legendNoData {
+  color: seashell;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  font-size: 1rem;
+  padding: 0.3rem;
+  margin: 0;
+  background-color:rgba(150, 150, 150, 0.6);
 }

@@ -35,8 +35,6 @@ function StackGraph({ data }) {
     return acc;
   }, []);
 
-  console.log('dataStructure', dataStructure);
-
   useEffect(() => {
     
     const svg = select(svgRef.current);
