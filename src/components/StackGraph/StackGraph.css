@@ -1,5 +1,5 @@
 .StackGraph {
-  margin: 10 auto;
+  margin-bottom: 10rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -15,10 +15,29 @@
     margin-bottom: 10rem;
     padding-bottom: 10rem;
   }
-  .legend {
-    margin-top: 10rem;
+  .legendBox {
+    display: flex;
+    flex-direction: column;
+    margin-top: -28rem;
+  }
+  .legendSpan {
+    margin: 1rem;
+    padding: .5rem;
+    width: 5rem;
+    height: 2rem;
+    color: white;
+  }
+  .select {
+    margin-top: 25rem;
   }
   svg rect.selection {
     stroke: none;
+  }
+  .xAxis {
+    padding-top: 10rem;
+    font-size: 1em;
+  }
+  .yAxis {
+    font-size: 1em;
   }
 }

@@ -1,21 +1,26 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from './StackGraph.css';
 import { select, max, scaleLinear, scaleBand, axisBottom, stackOrderAscending, stack, axisLeft } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
+
+function formatDate(badDate) {
+  return badDate.toString().slice(6, 7) + '/' + badDate.toString().slice(8, 10);
+}
 
 function StackGraph({ data }) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
-  console.log(data);
+
+  const [selectedDropDownKey, setSelectedDropDownKey] = useState('cases');
 
   const dataStructure = data.date.reduce((acc, date, i) => {
     acc.push({ 
       countryCode: data.countryCode,
       countryName: data.countryName,
-      date,
+      date: date.slice(5, 10),
       newCases: data.newCases[i],
       newDeaths: data.newDeaths[i],
       newRecovered: data.newRecovered[i],
@@ -25,29 +30,32 @@ function StackGraph({ data }) {
     });
     return acc;
   }, []);
+  console.log(dataStructure);
   useEffect(() => {
+    
     const svg = select(svgRef.current);
     const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
     
     const keys = [
       'newCases',
-      'newDeaths',
-      'newRecovered',
       'totalCases',
+      'newDeaths',
       'totalDeaths',
-      'totalRecovered'];
+      'newRecovered',
+      'totalRecovered'
+    ];
 
     const colors = {
-      'newCases': 'DarkSeaGreen',
-      'newDeaths': 'DeepSkyBlue',
-      'newRecovered': 'DarkViolet',
-      'totalCases': 'DarkSlateBlue',
-      'totalDeaths': 'Aquamarine',
-      'totalRecovered': 'DarkCyan'
+      'newCases': 'Indigo',
+      'totalCases': 'LightSeaGreen',
+      'newDeaths': 'Indigo',
+      'totalDeaths': 'LightSeaGreen',
+      'newRecovered': 'Indigo',
+      'totalRecovered': 'LightSeaGreen'
     };
     // stacks / layers
     const stackGenerator = stack()
-      .keys(keys)
+      .keys(keys.filter(key => key.toLowerCase().includes(selectedDropDownKey)))
       .order(stackOrderAscending);
     const layers = stackGenerator(dataStructure);
     const extent = [
@@ -57,6 +65,7 @@ function StackGraph({ data }) {
       // second value of each array to calculate max
     ];
 
+    // "2020-04-16T07:00:00.000Z" .slice(0, 9)
     // scales
     const xScale = scaleBand()
       .domain(dataStructure.map(d => d.date))
@@ -73,6 +82,7 @@ function StackGraph({ data }) {
     // rendering
     svg
       .selectAll('.layer')
+      // .data(filteredData(data, checkedOptions))
       .data(layers)
       .join('g')
       .attr('class', 'layer')
@@ -88,43 +98,59 @@ function StackGraph({ data }) {
     // data for rectangles is layer
 
     // axes
-    const xAxis = axisBottom(xScale);
+    console.log(dataStructure['date']);
+    const xAxis = axisBottom(xScale)
+      .tickValues(xScale.domain().filter((_, i) => i % 8 === 0));
+    // .ticks(data.date.every(5));
+  
     svg
-      .select('.x-axis')
+      .select(`.${styles.xAxis}`)
       .attr('transform', `translate(0, ${height})`)
       .style('fill', 'black')
       .call(xAxis);
 
     const yAxis = axisLeft(yScale);
     svg
-      .select('.y-axis')
+      .select(`.${styles.yAxis}`)
       .call(yAxis);
 
     const legend = select(legendRef.current)
-      .attr('class', 'legendColor');
+      .attr('class', `${styles.legendBox}`);
 
-    // const legendText = [-100, -75, -50, -25, 0, 25, 50, 75, 100];
+    const legendText = [`Total ${selectedDropDownKey}`, `New ${selectedDropDownKey}`];
 
-    // const legends = legend.selectAll('span')
-    //   .data([-100, -75, -50, -25, 0, 25, 50, 75, 100]);
+    const colorScale = scaleLinear()
+      .domain([-100, 100])
+      .range(['LightSeaGreen', 'Indigo']);
 
-    // keys.join('span')
-    //   .attr('class', 'legendSpan')
-    //   .style('background', (d) => colorScale(d))
-    // // .text(legendText.forEach(number => number));
-    //   .text((d, i) => legendText[i]);
-      
-  }), [data, dimensions];
+    const legends = legend.selectAll('span')
+      .data([-100, 100]);
+
+    legends.join('span')
+      .attr('class', `${styles.legendSpan}`)
+      .style('background', (d) => colorScale(d))
+      .text(legendText.forEach(number => number))
+      .text((d, i) => legendText[i]);
+
+  }), [data, dimensions, selectedDropDownKey];
 
   return (   
     <div className={styles.StackGraph}>
       <div ref={wrapperRef} className={styles.container}>
         <svg className="svg" ref={svgRef}>
-          <g className='x-axis'/>
-          <g className='y-axis'/>
+          <g className={styles.xAxis} />
+          <g className={styles.yAxis} />
         </svg>
       </div>
-      <div className="legend" ref={legendRef}>Bar Chart legend:</div>
+      <div className={styles.legendBox} ref={legendRef}></div>
+      <div className={styles.select}>
+        <select onChange={({ target }) => setSelectedDropDownKey(target.value)}>
+          <option value="">Compare Covid cases</option>
+          <option value="cases">Cases</option>
+          <option value="deaths">Deaths</option>
+          <option value="recovered">Recovered</option>
+        </select>      
+      </div>
     </div>
   );
 }
