@@ -28,7 +28,7 @@ const Home = () => {
         <Map mapData={globalMapMobilityData} />
       </Grid>
       <Grid item xs={12}>
-        <LineGraph dataSet={chartDataSet} />
+        <LineGraph dataset={chartDataSet} />
       </Grid>
     </Grid>
   );
