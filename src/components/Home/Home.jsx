@@ -24,16 +24,20 @@ export const Home = () => {
   }, [countryCode]);
 
   return (
-    <Grid container justify="center" className={styles.Home}>
-      <Grid item xs={12}>
-        <Typography variant="h4" align="center">Change in Mobility</Typography>
-        <Map mapData={globalMapMobilityData} />
+    <>
+      <Grid container justify="center" className={styles.Home}>
+        <Grid item xs={12}>
+          {/* <Typography variant="h4" align="center">Change in Mobility</Typography> */}
+          <Map mapData={globalMapMobilityData} />
+        </Grid>
       </Grid>
-      <Grid item xs={12} sm={10}>
-        <Typography variant="h4" align="center" className={styles.subhead}>COVID Statistics {countryName ? `for ${countryName}` : 'Worldwide' }</Typography>
-        <LineGraph dataset={chartDataSet} />
+      <Grid container justify="center" className={styles.fullWidthLightBlue}>
+        <Grid item xs={12} sm={10}>
+          <Typography variant="h4" align="center" className={styles.subhead}>COVID Statistics {countryCode ? `for ${countryCode}` : 'Worldwide' }</Typography>
+          <LineGraph dataset={chartDataSet} />
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };
 
