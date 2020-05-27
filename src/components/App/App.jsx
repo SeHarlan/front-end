@@ -18,7 +18,7 @@ import MiniChartsContainer from '../MiniChart/MiniChartsContainer';
 export default function App() {
   const styles = useStyles();
 
-  const defaultDate = '2020-02-15';
+  const defaultDate = '2020-05-09';
 
   const dispatch = useDispatch();
   useEffect(() => {

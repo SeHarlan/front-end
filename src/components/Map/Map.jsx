@@ -3,7 +3,7 @@ import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, makeStyles } from '@material-ui/core'; 
+import { Slider, Popover, Typography, Button, makeStyles, withStyles } from '@material-ui/core'; 
 
 import style from './Map.css';
 
@@ -21,17 +21,62 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
   },
 }));
+const SliderStyled = withStyles({
+  root: {
+    height: 8
+  },
+  thumb: {
+    height: 20,
+    width: 20,
+    backgroundColor: '#fff',
+    border: '2px solid currentColor',
+    marginTop: -6,
+    marginLeft: -12
+  },
+  active: {},
+  valueLabel: {
+    left: 'calc(-50%)'
+  },
+  track: {
+    height: 8,
+    borderRadius: 4
+  },
+  rail: {
+    height: 8,
+    borderRadius: 4,
+    width: '100.5%'
+  },
+  mark: {
+    height: 8,
+    width: 2,
+    marginTop: 0
+  },
+})(Slider);
 
 const Map = ({ mapData, countryCode = '' }) => {
+  const dates = useSelector(getMobilityDates);
+  const selectedCountryCode =  useSelector(getSelectedCountryCode);
+
   const [property, setProperty] = useState('residentialChange');
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
-  const [dateIndex, setDateIndex] = useState(0);
+  const [dateIndex, setDateIndex] = useState(84); //hard coded index for now, would come from dates.length - 1
   const [selectedCountryName, setSelectedCountryName] = useState('test'); 
   const [selectedCountryData, setSelectedCountryData] = useState({});
 
   const classes = useStyles();
+
+  //use increments of 21 for more even markers
+  const marks = [
+    { value: 0, label: dates[0]?.slice(5) },
+    { value: 15, label: dates[15]?.slice(5) },
+    { value: 29, label: dates[29]?.slice(5) },
+    { value: 46, label: dates[46]?.slice(5) },
+    { value: 60, label: dates[60]?.slice(5) },
+    { value: 76, label: dates[76]?.slice(5) },
+    { value: 84, label: dates[84]?.slice(5) },
+  ];
 
   //PopOver
   const [anchorEl, setAnchorEl] = useState(null);
@@ -52,8 +97,7 @@ const Map = ({ mapData, countryCode = '' }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   // const isMobile = useIsMobile();
-  const dates = useSelector(getMobilityDates);
-  const selectedCountryCode =  useSelector(getSelectedCountryCode);
+  
 
   //this could be trimed down if we used redux for countryName
   useEffect(() => {
@@ -223,12 +267,13 @@ const Map = ({ mapData, countryCode = '' }) => {
         <option value="transitChange">Transit</option>
         <option value="workplacesChange">Workplace</option>
       </select>
-      {dates.length && <Slider 
+      {dates.length && <SliderStyled 
         value={dateIndex} 
         min={0} 
         max={dates.length - 1} 
         onChange={(_, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
-        valueLabelFormat={(index) => dates[index].slice(5)} />}
+        valueLabelFormat={(index) => dates[index].slice(5)}
+        marks={marks} />}
     </div>
   );
 };
