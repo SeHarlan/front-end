@@ -15,7 +15,6 @@ import { Typography, Grid, Switch, Chip, Avatar } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { getSelectedCountryName } from '../../selectors/selectors';
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
