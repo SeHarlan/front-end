@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Grid, Typography, FormControl, Input, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { Grid, Typography, FormControl, Input, InputLabel, Select, MenuItem, CircularProgress } from '@material-ui/core';
 import { useStyles } from './individualCountry.styles';
 // import Map from '../Map/Map';
 import { getGlobalMapMobilityByDate, getSelectedCountryCode, getMobilitySubregionNames, getSelectedSubregion, getCovidSubData, getMobilitySubData, getSelectedCountryName } from '../../selectors/selectors';
@@ -35,7 +35,6 @@ export const individualCountry = () => {
   useEffect(() => {
     if(subregion === '') return;
     dispatch(setCovidSubData(countryCode, subregion));
-    console.log('stackGraphSubData', stackGraphSubData);
     dispatch(setMobilitySubData(countryCode, subregion));
   }, [subregion]);
 
@@ -46,27 +45,27 @@ export const individualCountry = () => {
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12}>
-        {subregion
-          ? <Typography variant="h3" className={classes.title}>{subregion}</Typography>
-          : <Typography variant="h3" className={classes.title}>{countryName}</Typography>
-        }
+        <Typography variant="h3" className={classes.title}>{countryName}</Typography>
+        {subregion && <Typography variant="p" className={classes.title}>{subregion}</Typography>}
+        
         {/* <Map mapData={globalMapMobilityData} countryCode={countryCodeParam || countryCode}/> */}
       </Grid>
 
       <Grid item xs={12}>
-        { selectOptions.length &&
-      <FormControl variant="filled" className={classes.formControl}>
-        <InputLabel id="subregion-select-label">Subregion</InputLabel>
-        <Select
-          labelId="subregion-select-label"
-          id="subregion-select"
-          value={subregion}
-          onChange={({ target }) => dispatch(setSelectedSubregion(target.value))}
-        >
-          <MenuItem value="">Choose a Subregion</MenuItem>
-          {selectOptions}
-        </Select>
-      </FormControl>}
+        { !selectOptions.length 
+          ? <Typography variant="p">No Subregions Found</Typography>
+          : <FormControl variant="filled" className={classes.formControl}>
+            <InputLabel id="subregion-select-label">Subregion</InputLabel>
+            <Select
+              labelId="subregion-select-label"
+              id="subregion-select"
+              value={subregion}
+              onChange={({ target }) => dispatch(setSelectedSubregion(target.value))}
+            >
+              <MenuItem value="">Choose a Subregion</MenuItem>
+              {selectOptions}
+            </Select>
+          </FormControl>}
       </Grid>
       
       <Grid item xs={12} lg={10} className={classes.graph}>
