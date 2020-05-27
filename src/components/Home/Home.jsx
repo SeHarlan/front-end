@@ -30,7 +30,7 @@ export const Home = () => {
         <Map mapData={globalMapMobilityData} />
       </Grid>
       <Grid item xs={12} sm={10}>
-        <Typography variant="h4" align="center" className={styles.subhead}>COVID Statistics {countryName ? `for ${countryName}` : 'Worldwide' }</Typography>
+        <Typography variant="h4" align="center" className={styles.subhead}>COVID Statistics {countryCode ? `for ${countryCode}` : 'Worldwide' }</Typography>
         <LineGraph dataset={chartDataSet} />
       </Grid>
     </Grid>
