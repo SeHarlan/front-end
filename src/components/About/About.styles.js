@@ -3,16 +3,47 @@ import { makeStyles } from '@material-ui/core';
 export const useStyles = makeStyles((theme) => ({
   
   root: {
-    background: '#4ab19ab0',
-    height: '5rem',    
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',  
+    marginTop: '3rem',
+    marginBottom: '3rem'  
+  },
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: '1rem',
+    textAlign: 'center',
+    marginBottom: '1rem',
   },
   container: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    marginTop: '1rem',
+    textAlign: 'center',
+    padding: '1rem',
+    width: '35rem'
   },
   title: {
-    color: theme.palette.secondary.main, //white
-    fontSize: '1.3rem',
-  }
-}));
+    color: theme.palette.primary.main,
+    // color: '#3c6e71',
+    fontSize: '1.8rem',
+    fontWeight: '500'
+  },
+  link: {
+    fontWeight: '500',
+    fontSize: '1.6rem',
+    '&:hover': {
+      color: theme.palette.common.teal.main,
+    },
+    '&$focusVisible': {
+      color: theme.palette.common.teal.main,
+    }
+  },
+  h4: {
+    color: theme.palette.common.greenGray.main,
+  },
+
+}
+));

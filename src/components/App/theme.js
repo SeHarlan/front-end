@@ -24,6 +24,12 @@ export const theme = createMuiTheme({
       charcoal: {
         main: '#53565A',
       },
+      lightBlue: {
+        main: '#bbdefb'
+      },
+      greenGray: {
+        main: '#3c6e71'
+      }
     },
     primary: {
       main: '#2b499d' // darker globe blue
