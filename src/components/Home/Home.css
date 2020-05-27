@@ -6,3 +6,8 @@
     margin: 2rem 0;
   }
 }
+
+.fullWidthLightBlue {
+  background-color: #bbdefb;
+  padding: 2rem;
+}
