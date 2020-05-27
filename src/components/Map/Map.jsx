@@ -114,7 +114,7 @@ const Map = ({ mapData, countryCode = '' }) => {
     
     const colorScale = scaleLinear()
       .domain([-100, 0, 100])
-      .range(['blue', 'rgb(243, 240, 225)', 'green']);
+      .range(['#B71C1C', 'rgb(243, 240, 225)', '#1d7d0a']);
 
     const globePosition = [width / 2, height / 2];
     const globeScale = 1;
@@ -146,10 +146,10 @@ const Map = ({ mapData, countryCode = '' }) => {
       .attr('y2', '90%');
     linearGradient.append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', 'rgb(152, 233, 225)');
+      .attr('stop-color', '#2493C3');
     linearGradient.append('stop')
       .attr('offset', '100%')
-      .attr('stop-color', 'rgb(49, 167, 187)');
+      .attr('stop-color', '#2C4099');
 
     const drop_shadow = svg.append('defs').append('radialGradient')
       .attr('id', 'drop_shadow')
@@ -220,7 +220,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       map
         .attr('fill', country => country.mobilityData[property] 
           ? colorScale(country.mobilityData[property])
-          : 'rgba(150, 150, 150, 0.3)'
+          : '#dfe2e8'
         )
         .attr('d', country => pathGenerator(country));  
     } else {
@@ -228,15 +228,15 @@ const Map = ({ mapData, countryCode = '' }) => {
         .transition()
         .attr('fill', country => country.mobilityData[property] 
           ? colorScale(country.mobilityData[property])
-          : 'rgba(150, 150, 150, 0.3)'
+          : '#dfe2e8'
         )
         .attr('d', country => pathGenerator(country));
     }
     
     const legend = select(legendRef.current);
-    const legendText = [-100, -75, -50, -25, 0, 25, 50, 75, 100];
+    const legendText = [100, 75, 50, 25, 0, -25, -50, -75, -100];
     legend.selectAll('span')
-      .data([-100, -75, -50, -25, 0, 25, 50, 75, 100])
+      .data(legendText)
       .join('span')     
       .attr('class', style.mapLegend)
       .style('background', (d) => colorScale(d))
