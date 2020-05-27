@@ -1,6 +1,6 @@
-import { fetchMobilityDataByCountryCode, fetchWorldMobilityData, fetchMobilitySubregions } from '../services/mobility';
+import { fetchMobilityDataByCountryCode, fetchWorldMobilityData, fetchMobilitySubregions, fetchMobilitySubData } from '../services/mobility';
 import geoJson from '../data/World-map-lo-res.geo.json';
-import { fetchCountryCovidData } from '../services/covid';
+import { fetchCountryCovidData, fetchCovidSubData } from '../services/covid';
 
 
 export const SET_GLOBAL_MAP_MOBILITY_BY_DATE = 'SET_GLOBAL_MAP_MOBILITY_BY_DATE';
@@ -114,7 +114,6 @@ export const setMobilitySubregionNames = (countryCode) => dispatch => {
       }, []);
     })
     .then(subRegion1Names => {
-      console.log(subRegion1Names);
       dispatch({
         type: SET_MOBILITY_SUBREGION_NAMES,
         payload: subRegion1Names
@@ -124,7 +123,6 @@ export const setMobilitySubregionNames = (countryCode) => dispatch => {
 
 export const SET_COVID_SUBREGIONS = 'SET_COVID_SUBREGIONS';
 export const setCovidSubregions = (countryCode) => dispatch => {
-  // update once fetch is written
   return fetchCountryCovidData(countryCode)
     .then(res => ({
       date: res.map(item => item.date),
@@ -143,6 +141,52 @@ export const setCovidSubregions = (countryCode) => dispatch => {
       dispatch({
         type: SET_COVID_SUBREGIONS,
         payload: covidSubregions
+      });
+    });
+};
+export const SET_COVID_SUB_DATA = 'SET_COVID_SUB_DATA';
+export const setCovidSubData = (countryCode, subRegion1) => dispatch => {
+  return fetchCovidSubData(countryCode, subRegion1)
+    .then(res => ({
+      date: res.map(item => item.date),
+      countryCode: res[0].countryCode,
+      countryName: res[0].countryName,
+      subRegion1: res.map(item => item.subRegion1 ?? 0),
+      totalCases: res.map(item => item.totalCases ?? 0),
+      newCases: res.map(item => item.newCases ?? 0),
+      totalRecovered: res.map(item => item.totalRecovered ?? 0),
+      newRecovered: res.map(item => item.newRecovered ?? 0),
+      totalDeaths: res.map(item => item.totalDeaths ?? 0),
+      newDeaths: res.map(item => item.newDeaths ?? 0)
+    }))
+    .then(covidSubData => {
+      dispatch({
+        type: SET_COVID_SUB_DATA,
+        payload: covidSubData
+      });
+    });
+};
+
+export const SET_MOBILITY_SUB_DATA = 'SET_MOBILITY_SUB_DATA';
+export const setMobilitySubData = (countryCode, subRegion1) => dispatch => {
+  fetchMobilitySubData(countryCode, subRegion1)
+    .then(res => res.slice().sort((a, b) => new Date(a.date) - new Date(b.date)))
+    .then(sortedRes => ({
+      date: sortedRes.map(item => item.date),
+      countryCode: sortedRes[0].countryCode,
+      countryName: sortedRes[0].countryName,
+      subRegion1: sortedRes.map(item => item.subRegion1 ?? 0),
+      retailChange: sortedRes.map(item => item.retailChange ?? 0),
+      groceryChange: sortedRes.map(item => item.groceryChange ?? 0),
+      parksChange: sortedRes.map(item => item.parksChange ?? 0),
+      transitChange: sortedRes.map(item => item.transitChange ?? 0),
+      workplacesChange: sortedRes.map(item => item.workplacesChange ?? 0),
+      residentialChange: sortedRes.map(item => item.residentialChange ?? 0),
+    }))
+    .then(formattedRes => {
+      dispatch({
+        type: SET_MOBILITY_SUB_DATA,
+        payload: formattedRes
       });
     });
 };

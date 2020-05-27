@@ -27,3 +27,9 @@ export const fetchCovidSubregions = (countryCode = '') => {
   return fetch(`https://pandemic-legacy.herokuapp.com/api/v1/covid/subRegion/${countryCode}`)
     .then(res => res.json());
 };
+
+// fetch by subRegion1
+export const fetchCovidSubData = (countryCode, subRegion1) => {
+  return fetch(`https://pandemic-legacy.herokuapp.com/api/v1/covid/bySub/${countryCode}/${subRegion1}`)
+    .then(res => res.json());
+};

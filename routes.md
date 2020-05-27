@@ -64,6 +64,7 @@
 
   * 4: GET covid data
         -single country by countryCode
-        -includes subregions
+        -single subRegion by subRegion1
+        -excludes subRegion2
         -all dates
-    https://pandemic-legacy.herokuapp.com/api/v1/covid/countryByName/${countryName}
+    https://pandemic-legacy.herokuapp.com/api/v1/covid/bySub/${countryCode}/${subRegion1}

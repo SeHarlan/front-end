@@ -27,7 +27,7 @@ export const useCovidData = () => {
           return item.date.substr(0, 10);
           // const formattedDate = trimmedDate.replace(/\/, ''/);
         });
-        console.log(formattedDate);
+        console.log('formattedDate', formattedDate);
         setDateData(formattedDate);
         setPositiveData(resultObj.map(item => { if(item.totalCases) return item.totalCases; else return 0; }));
         setRecoveredData(resultObj.map(item => { if(item.totalRecovered) return item.totalRecovered; else return 0; }));
