@@ -1,32 +1,69 @@
 ### MobilityData
-  * 1: GET mobility data for all countries, all dates (excludes records that have a subregion):
+  * 1: GET mobility data
+        -all countries
+        -excludes subregions
+        -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/mobility
 
-  * 2: GET worldwide mobility data for all countries by date (excludes records that have a subregion):
+  * 2: GET mobility data
+        -all countries
+        -excludes subregions
+        -by date
     https://pandemic-legacy.herokuapp.com/api/v1/mobility/${date}
 
-  * 3: GET documents by countryCode for all dates, excluding subregions:
+  * 3: GET mobility data
+        -single country by countryCode
+        -excludes subregions
+        -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/mobility/country/${countryCode}
 
-  * 4: GET documents by countryCode for all dates, including subregions:
+  * 4: GET mobility data
+        -single country by countryCode
+        -includes subregions
+        -excludes subregions
+        -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/mobility/countryWithSub/${countryCode}
 
-  * 5: GET documents by subRegion1 for all dates, excluding subRegion2:
+  * 5: GET mobility data
+        -by subRegion1
+        -excludes subRegion2
+        -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/mobility/countryBySub/${countryCode}/${subRegion1}
 
-  * 6: GET documents by subRegion1 for all dates, including subRegion2 if relevant:
+  * 6: GET mobility data
+        -by subRegion1
+        -includes subRegion2
+        -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/mobility/subRegionWithSub2/${countryCode}/${subRegion1}
+
+    * 7: GET mobility data
+          -by countryCode
+          -one hard-coded date
+          -gets one document per subRegion1 name
+      https://pandemic-legacy.herokuapp.com/api/v1/mobility/names/${countryCode}
 
 
 ### CovidData
-  * 1: GET documents for Worldwide only, for all dates:
+  * 1: GET covid data
+        -worldwide numbers
+        -excludes country-level data
+        -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/covid/
 
-  * 2: GET documents by countryCode for all dates, excluding subregions (NB: country is case sensitive!):
+  * 2: GET covid data
+        -single country by countryCode
+        -excludes subregions
+        -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/covid/${countryCode}
 
-  * 3: GET documents by countryCode for all dates, with subregions if relevant:
+  * 3: GET covid data
+        -single country by countryCode
+        -includes subregions
+        -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/covid/subRegion/${countryCode}
 
-  * 4: GET documents by countryName for all dates, excluding subregions (NB: country is case sensitive!):
+  * 4: GET covid data
+        -single country by countryCode
+        -includes subregions
+        -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/covid/countryByName/${countryName}

@@ -24,10 +24,12 @@ export const Header = () => {
   return (
     <Grid container className={classes.root}>
       {/* <img alt="logo" src={logo} className={classes.image}/> */}
+
       <Grid item xs={12} md={4}>
         <Typography variant="h3">Pandemic Legacy</Typography>
         <Typography variant="h4">Quarantine Mobility Metrics</Typography>
       </Grid>
+
 
       <Grid item xs={12} md={4}>
         <Links />
@@ -40,7 +42,6 @@ export const Header = () => {
           {selectOptions}
         </select>
         }
-
       </Grid>
 
     </Grid>

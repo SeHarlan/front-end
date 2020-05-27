@@ -27,5 +27,4 @@ export const useStyles = makeStyles((theme) => ({
   graph: {
     margin: '2rem'
   },
-
 }));

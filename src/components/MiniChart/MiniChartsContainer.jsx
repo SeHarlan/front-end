@@ -8,7 +8,7 @@ import { MiniChart } from './MiniChart';
 
 export const MiniChartsContainer = () => {
 
-  const selectedCountryCode = 'US'; // Placeholder for now
+  const selectedCountryCode = ''; // Placeholder for now
   const mobilityData = useSelector(getMobilityChartData);
   const dispatch = useDispatch();
   const properties = [
