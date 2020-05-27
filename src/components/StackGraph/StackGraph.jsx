@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from '../../styles/Chart.css';
-import { select, max, scaleLinear, scaleBand, axisBottom, stackOrderAscending, stack, axisLeft } from 'd3';
-
+import { select, max, scaleLinear, scaleBand, axisBottom, stackOrderAscending, stack, axisLeft, axisRight } from 'd3';
+import { Chip, Avatar } from '@material-ui/core';
 import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import { useStyles } from './stackedGraph.styles';
+import { useStyles } from './StackGraph.styles';
 
 
 
@@ -15,15 +15,14 @@ function StackGraph({ data }) {
   const legendRef = useRef();
 
   const [selectedDropDownKey, setSelectedDropDownKey] = useState('cases');
-  console.log(data);
+
   const dataStructure = data.date.reduce((acc, date, i) => {
+    console.log(data.date);
     acc.push({ 
       countryCode: data.countryCode,
       countryName: data.countryName,
-
       subRegion1: data.subRegion1,
       date: date.slice(5, 10),
-
       newCases: data.newCases[i],
       newDeaths: data.newDeaths[i],
       newRecovered: data.newRecovered[i],
@@ -40,7 +39,7 @@ function StackGraph({ data }) {
 
     const width = 1000;
     const height = 500;
-    const margin = { top: 0, right: 0, bottom: 20, left: 0 };
+    const margin = { top: 0, right: 80, bottom: 20, left: 20 };
 
 
 
@@ -58,12 +57,12 @@ function StackGraph({ data }) {
     ];
 
     const colors = {
-      'newCases': 'Indigo',
-      'totalCases': 'LightSeaGreen',
-      'newDeaths': 'Indigo',
-      'totalDeaths': 'LightSeaGreen',
-      'newRecovered': 'Indigo',
-      'totalRecovered': 'LightSeaGreen'
+      'newCases': '#2b499d',
+      'totalCases': '#229c9a',
+      'newDeaths': '#2b499d',
+      'totalDeaths': '#229c9a',
+      'newRecovered': '#2b499d',
+      'totalRecovered': '#229c9a'
     };
     // stacks / layers
     const stackGenerator = stack()
@@ -111,7 +110,6 @@ function StackGraph({ data }) {
     // axes
     const xAxis = axisBottom(xScale)
       .tickValues(xScale.domain().filter((_, i) => i % 14 === 0));
-
   
     svg
       .select(`.${styles.xAxis}`)
@@ -119,29 +117,13 @@ function StackGraph({ data }) {
       // .style('fill', 'black')
       .call(xAxis);
 
-    const yAxis = axisLeft(yScale);
+    const yAxis = axisRight(yScale);
     svg
       .select(`.${styles.yAxis}`)
-      // .style('transform', `translateX(${width - margin.right}px)`)
+      .style('transform', `translateX(${width - margin.right}px)`)
+      // .attr('transform', 'rotate(90)')
+      // .style('text-anchor', 'start')
       .call(yAxis);
-
-    const legend = select(legendRef.current)
-      .attr('class', `${styles.legendBox}`);
-
-    // const legendText = [`Total ${selectedDropDownKey}`, `New ${selectedDropDownKey}`];
-    const legendText = ['Total Cases', 'New Cases'];
-    const colorScale = scaleLinear()
-      .domain([-100, 100])
-      .range(['LightSeaGreen', 'Indigo']);
-
-    const legends = legend.selectAll('span')
-      .data([-100, 100]);
-
-    legends.join('span')
-      .attr('class', `${styles.legendSpan}`)
-      .style('background', (d) => colorScale(d))
-      .text(legendText.forEach(number => number))
-      .text((d, i) => legendText[i]);
 
   }), [data, selectedDropDownKey];
 
@@ -153,23 +135,28 @@ function StackGraph({ data }) {
           <g className={styles.yAxis} />
         </svg>
       </div>
-      <div className={styles.legendBox} ref={legendRef}>
-      </div>
-      <div className={styles.select}>
-        <FormControl variant="filled" className={classes.formControl}>
-          <InputLabel id="covid-select-label">Covid Statistics</InputLabel>
-          <Select
-            labelId="covid-select-label"
-            id="covid-select"
-            value={selectedDropDownKey}
-            onChange={({ target }) => setSelectedDropDownKey(target.value)}
-          >
-            <MenuItem value="">Choose a Statistic</MenuItem>
-            <MenuItem value="cases">Cases</MenuItem>
-            <MenuItem value="deaths">Deaths</MenuItem>
-            <MenuItem value="recovered">Recovered</MenuItem>
-          </Select>
-        </FormControl>
+      <div className={classes.infoBox}>
+        <div className={classes.legend}> 
+          <Chip variant="outlined" style={{ color:'#229c9a', fontWeight: '500', border: '1px solid #229c9a' }} avatar={<Avatar style={{ backgroundColor:'#229c9a' }}> </Avatar>} label={`Total ${selectedDropDownKey}`} />
+          <br />
+          <Chip variant="outlined" color="primary" avatar={<Avatar> </Avatar>} label={`Daily ${selectedDropDownKey}`} />
+        </div>
+        <div className={styles.select}>
+          <FormControl variant="filled" className={classes.formControl}>
+            <InputLabel id="covid-select-label">Covid Statistics</InputLabel>
+            <Select
+              labelId="covid-select-label"
+              id="covid-select"
+              value={selectedDropDownKey}
+              onChange={({ target }) => setSelectedDropDownKey(target.value)}
+            >
+              <MenuItem value="">Choose a Statistic</MenuItem>
+              <MenuItem value="cases">Cases</MenuItem>
+              <MenuItem value="deaths">Deaths</MenuItem>
+              <MenuItem value="recovered">Recovered</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
       </div>
     </div>
   );
