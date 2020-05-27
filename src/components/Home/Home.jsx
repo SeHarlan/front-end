@@ -23,15 +23,13 @@ export const Home = () => {
   }, [countryCode]);
 
   return (
-    <Grid container alignItems="center">
+    <Grid container justify="center">
       <Grid item xs={12}>
         <Map mapData={globalMapMobilityData} />
       </Grid>
-      <Grid item sm={1}></Grid>
       <Grid item xs={12} sm={10}>
         <LineGraph dataset={chartDataSet} />
       </Grid>
-      <Grid item sm={1}></Grid>
     </Grid>
   );
 };

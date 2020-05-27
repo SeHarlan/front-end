@@ -17,24 +17,29 @@ export const theme = createMuiTheme({
       },
       green: {
         main: 'rgb(20,146,124)',
-      }
+      },
+      dust: {
+        main: '#e6e6e3',
+      },
+      charcoal: {
+        main: '#53565A',
+      },
     },
     primary: {
-      main: '#0f3568' //dark blue
+      main: '#b71c1c' //dark red
     },
     secondary: {
-      main: '#229c9a', //teal
+      main: '#53565A', //charcoal
     },
   },
   typography: {
-    fontFamily: 'Volkkorn',
-  },
-  overrides: {
-    MuiCssBaseline: {
-      '@global': {
-        '@font-face': ['Volkkorn'],
-      },
-    },
+  //   fontFamily: 'Volkkorn',
+    h1: { fontSize: '3rem' },
+    h2: { fontSize: '2.25rem' },
+    h3: { fontSize: '1.75rem' },
+    h4: { fontSize: '1.5rem' },
+    h5: { fontSize: '1.25rem' },
+    h6: { fontSize: '1rem' }
   }
 });
 

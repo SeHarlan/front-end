@@ -14,5 +14,11 @@ export const useStyles = makeStyles((theme) => ({
   title: {
     color: theme.palette.secondary.main, //white
     fontSize: '1.3rem',
-  }
+  },
+  fullWidth: {
+    backgroundColor: theme.palette.common.dust.main, 
+    width: 'calc(100% + 48px)',
+    margin: '0 -24px',
+    padding: '18px 24px',
+  },
 }));
