@@ -284,56 +284,41 @@ const Map = ({ mapData, countryCode = '' }) => {
       </Grid>
       
       <Grid item xs={12} sm={2}>
-        {/* <FormControl variant="filled" className={classes.formControl}>
-          <InputLabel id="property-select-label">Change In</InputLabel>
-          <Select
-            labelId="property-select-label"
-            id="property-select"
-            value={property}
-            onChange={({ target }) => setProperty(target.value)}
-          >
-            <MenuItem value="residentialChange">Residential</MenuItem>
-            <MenuItem value="groceryChange">Grocery</MenuItem>
-            <MenuItem value="parksChange">Parks</MenuItem>
-            <MenuItem value="retailChange">Retail</MenuItem>
-            <MenuItem value="transitChange">Transit</MenuItem>
-            <MenuItem value="workplacesChange">Workplace</MenuItem>
-          </Select>
-        </FormControl> */}
         <Paper elivation={2} className={classes.legendPaper}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Choose a Metric</FormLabel>
             <RadioGroup row aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
               <FormControlLabel
                 value="groceryChange"
-                control={<Radio color="secondary"/>}
+                control={<Radio color="primary"/>}
                 label="Grocery"
               />
               <FormControlLabel
                 value="parksChange"
-                control={<Radio color="secondary"/>}
+                control={<Radio color="primary"/>}
                 label="Parks"
               />
               <FormControlLabel
                 value="retailChange"
-                control={<Radio color="secondary"/>}
+                control={<Radio color="primary"/>}
                 label="Retail"
               />
               <FormControlLabel
                 value="transitChange"
-                control={<Radio color="secondary"/>}
+
+                control={<Radio color="primary"/>}
                 label="Transit"
               />
               <FormControlLabel
                 value="workplacesChange"
-                control={<Radio color="secondary"/>}
+                control={<Radio color="primary"/>}
                 label="Workplace"
               />
             </RadioGroup>
           </FormControl>
         </Paper>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={9}>
         {dates.length && <SliderStyled 
           value={dateIndex} 
           min={0} 
