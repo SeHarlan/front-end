@@ -98,10 +98,9 @@ function StackGraph({ data }) {
     // data for rectangles is layer
 
     // axes
-    console.log(dataStructure['date']);
     const xAxis = axisBottom(xScale)
       .tickValues(xScale.domain().filter((_, i) => i % 8 === 0));
-    // .ticks(data.date.every(5));
+
   
     svg
       .select(`.${styles.xAxis}`)
@@ -118,7 +117,7 @@ function StackGraph({ data }) {
       .attr('class', `${styles.legendBox}`);
 
     const legendText = [`Total ${selectedDropDownKey}`, `New ${selectedDropDownKey}`];
-
+    console.log(selectedDropDownKey, 'key');
     const colorScale = scaleLinear()
       .domain([-100, 100])
       .range(['LightSeaGreen', 'Indigo']);
@@ -142,7 +141,10 @@ function StackGraph({ data }) {
           <g className={styles.yAxis} />
         </svg>
       </div>
-      <div className={styles.legendBox} ref={legendRef}></div>
+      <div className={styles.legendBox} ref={legendRef}>
+      
+      </div>
+
       <div className={styles.select}>
         <select onChange={({ target }) => setSelectedDropDownKey(target.value)}>
           <option value="">Compare Covid cases</option>

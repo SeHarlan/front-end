@@ -53,7 +53,7 @@ export const individualCountry = () => {
         <StackGraph dataSet={chartDataSet} />
       </Grid>
 
-      <Grid item xs={12} className={classes.graph}>
+      <Grid item xs={12} lg={10} className={classes.graph}>
         { chartDataSet.date && <StackGraph data={chartDataSet} /> }
       </Grid>
 

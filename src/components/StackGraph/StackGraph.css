@@ -11,9 +11,6 @@
   svg {
     display: block;
     overflow: visible;
-    width: 40rem;
-    margin-bottom: 10rem;
-    padding-bottom: 10rem;
   }
   .legendBox {
     display: flex;
