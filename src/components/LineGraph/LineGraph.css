@@ -2,16 +2,14 @@
   text-align: center;
 
   .container {
-    width: 80%;
-    margin: 20px auto;
+    
   }
 
   svg {
-    display: block;
-    width: 100%;
-    height: 400px;
-    background-color: #eee;
-    overflow: visible;
+
+    .chartBackground {
+      fill: #f6f6f6;
+    }        
   }
 
   .Controls {

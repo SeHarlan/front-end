@@ -23,7 +23,7 @@ export const theme = createMuiTheme({
       main: '#0f3568' //dark blue
     },
     secondary: {
-      main: '#FFF', //white
+      main: '#229c9a', //teal
     },
   },
   typography: {

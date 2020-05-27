@@ -1,0 +1,51 @@
+.Chart {
+
+  .container {
+    text-align: center;
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    /* Sets container ratio to 2:1. Should match SVG ratio defined in D3 */
+    padding-bottom: 50%; 
+    vertical-align: top;
+    overflow: hidden;
+  }
+  /* Append optional class to container for other ratios */
+  .oneToOne {
+    padding-bottom: 100%; 
+  }
+
+  /* Default ratio */
+  .twoToOne {
+    padding-bottom: 50%; 
+  }
+
+  .threeToOne {
+    padding-bottom: 33%; 
+  }
+
+  .fourToOne {
+    padding-bottom: 25%; 
+  }
+
+  svg {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+  
+    .chartBackground {
+      fill: #f6f6f6;
+    }        
+    
+    .xAxis, .yAxis {
+      color: #666;
+    }
+  }
+
+  h4 {
+    margin-bottom: 0;
+  }
+
+}

@@ -1,16 +1,35 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import styles from './LineGraph.css';
+import styles from '../../styles/Chart.css';
+// import styles from '../MiniChart/MiniChart.styles';
 import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, scaleOrdinal, schemeCategory10, min, max } from 'd3';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Checkbox from '@material-ui/core/Checkbox';
 import { useResizeObserver } from '../../hooks/d3Hooks';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography, Grid, Switch } from '@material-ui/core';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+  },
+  formControl: {
+    margin: theme.spacing(3),
+  },
+}));
 
-function LineGraph({ dataSet }) {
+function LineGraph({ dataset }) {
   
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
   const [checkedOptions, setCheckedOptions] = useState([]);
+  const classes = useStyles();
+  const [checked, setChecked] = useState(true);
 
   const handleCheckbox = ({ target }) => {
     if(!checkedOptions.includes(target.value)) 
@@ -18,20 +37,45 @@ function LineGraph({ dataSet }) {
     else setCheckedOptions(checkedOptions.filter(item => (item !== target.value)));
   };
   
-  const checkboxOptions = (data) => {
+  const checkboxOptionsOLD = (data) => {
     const myKeys = filteredKeys(data);
     return myKeys.map((myKey, i) => 
       <div key={i}>
-        <input type='checkbox' id={myKey} name={myKey} value={myKey} onChange={handleCheckbox} checked={checkedOptions.includes(myKey)} />
+        <input type='checkbox' 
+          id={myKey} 
+          name={myKey} 
+          value={myKey} 
+          onChange={handleCheckbox} 
+          checked={checkedOptions.includes(myKey)}
+        />
         <label htmlFor={myKey}>{myKey}</label>
       </div>
     );
   };
+
+  const checkboxOptions = (data) => {
+    const myKeys = filteredKeys(data);
+    return myKeys.map((myKey, i) => 
+      <FormControlLabel 
+        key={i} 
+        control={
+          <Checkbox 
+            checked={checkedOptions.includes(myKey)} 
+            onChange={handleCheckbox}
+            id={myKey} 
+            name={myKey} 
+            value={myKey}
+          />}
+        label={myKey} />
+    );
+  };
   
-  function formatDate(badDate) {
-    return badDate.toString().slice(6, 7) + '/' + badDate.toString().slice(8, 10);
-  }
-  
+  const formattedDate = (badDate) => 
+    badDate.toString().slice(6, 7) + '/' + badDate.toString().slice(8, 10);
+
+  const formattedCountryName = (badName) => 
+    badName.replace(' ', '_').replace('\'', '');
+
   const selectOptions = (data) => {
     const myKeys = filteredKeys(data);
     return myKeys.map((myKey, i) => <option key={i} value={myKey}>{myKey}</option>);
@@ -52,46 +96,75 @@ function LineGraph({ dataSet }) {
     // Refactor: Apparently, item !== ('date' || 'countryCode' || 'countryName') doesn't work?
     return keys.filter(item => (item !== 'date' && item !== 'countryCode' && item !== 'countryName'));
   };
-  
+
 
   useEffect(() => {
-    if(!dataSet || !dataSet.date) {
+    console.log('filtered keys: ', filteredKeys(dataset));
+    setCheckedOptions(filteredKeys(dataset));
+  }, [dataset]);
+
+  useEffect(() => {
+    if(!dataset || !dataset.date) {
       console.log('No data, exiting useEffect()');
       return;
     }
 
     const svg = select(svgRef.current);
-    const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
-    
+
+    // Setup variables and viewBox for responsive display
+    // const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
+    // const { width } = dimensions || wrapperRef.current.getBoundingClientRect();
+    // const height = width / 2;
+    const width = 1000;
+    const height = 333;
+    // Refactor: Add additional margin style per intended display size of chart
+    const margin = { top: 0, right: 100, bottom: 50, left: 10 };
+
+    svg
+      .attr('viewBox', `0, 0, ${width}, ${height}`)
+      .attr('preserveAspectRatio', 'xMinYMin meet');
+
     // Define scales
-    const yAxisMin = min(dataSet.totalCases ?? -100);
-    const yAxisMax = max(dataSet.totalCases ?? 100);
+    const yAxisMin = min(dataset.totalCases ?? -100);
+    const yAxisMax = max(dataset.totalCases ?? 100);
 
     const xScale = scaleLinear()
-      .domain([0, dataSet['date'].length - 1]) // range of data
-      .range([0, width]); // range of pixels
+      .domain([0, dataset['date'].length - 1]) // range of data
+      .range([margin.left, width - margin.right]); // range of pixels
     const yScale = scaleLinear()
       .domain([yAxisMin, yAxisMax])
-      .range([height, 0]);
+      .range([height - margin.bottom, margin.top]);
     const colorScale = scaleOrdinal(schemeCategory10)
-      .domain(filteredKeys(dataSet));
+      .domain(filteredKeys(dataset));
   
     // Define axis
-    const xAxis = axisBottom(xScale)
-      .ticks(dataSet['date'].length / 5)
-      .tickFormat(index => formatDate(dataSet.date[index]));
-    const yAxis = axisRight(yScale)
-      .ticks(height / 20);
+    const xAxis = axisBottom()
+      .scale(xScale)
+      .ticks(dataset['date'].length / 5)
+      .tickFormat(index => formattedDate(dataset.date[index]));
+    const yAxis = axisRight()
+      .scale(yScale)
+      .ticks(height / 40);
 
     // Draw axis on pre-existing elements
     svg
-      .select('.x-axis')
-      .style('transform', `translateY(${height}px)`)
+      .select(`.${styles.xAxis}`)
+      .style('transform', `translateY(${height - margin.bottom}px)`)
       .call(xAxis);
     svg
-      .select('.y-axis')
-      .style('transform', `translateX(${width}px)`)
+      .select(`.${styles.yAxis}`)
+      .style('transform', `translateX(${width - margin.right}px)`)
       .call(yAxis);
+
+    // Draw background
+    svg
+      .select(`.${styles.chartBackground}`)  
+      .attr('x', margin.left)
+      .attr('y', margin.top)
+      .attr('width', width - margin.left - margin.right)
+      .attr('height', height - margin.top - margin.bottom)
+      .attr('fill', 'none')
+      .attr('class', styles.chartBackground);
 
     // Define line
     const myLine = line()
@@ -101,15 +174,15 @@ function LineGraph({ dataSet }) {
 
     // Draw line
     svg
-      .selectAll(`.graphLine-${dataSet.countryName.replace(' ', '_').replace('\'', '')}`)
-      .data(filteredData(dataSet, checkedOptions))
+      .selectAll('.graphLine')
+      .data(filteredData(dataset, checkedOptions))
       .join('path')
-      .attr('class', `graphLine-${dataSet.countryName.replace(' ', '_').replace('\'', '')}`)
+      .attr('class', 'graphLine')
       .attr('d', value => myLine(value))
       .attr('fill', 'none')
       .attr('stroke', d => colorScale(d));
 
-
+    function justHereToFoldBadMouseoverCode() {
     // // Mouseover bubbles
     // const mouseG = svg.append('g')
     //   .attr('class', 'mouse-over-effects');
@@ -134,100 +207,121 @@ function LineGraph({ dataSet }) {
     //   .attr('fill', 'none')
     //   .attr('pointer-events', 'all');
 
-    // // on mouse out hide line, circles and text
-    // mouseG.on('mouseout', function() { 
-    //   svg.selectAll('.mouse-per-line circle').style('opacity', '0');
-    //   svg.selectAll('.mouse-per-line text').style('opacity', '0');
-    // });
+      // // on mouse out hide line, circles and text
+      // mouseG.on('mouseout', function() { 
+      //   svg.selectAll('.mouse-per-line circle').style('opacity', '0');
+      //   svg.selectAll('.mouse-per-line text').style('opacity', '0');
+      // });
 
-    // // on mouse in show line, circles and text
-    // mouseG.on('mouseover', function() { 
-    //   svg.selectAll('.mouse-per-line circle').style('opacity', '1');
-    //   svg.selectAll('.mouse-per-line text').style('opacity', '1');
-    // });
+      // // on mouse in show line, circles and text
+      // mouseG.on('mouseover', function() { 
+      //   svg.selectAll('.mouse-per-line circle').style('opacity', '1');
+      //   svg.selectAll('.mouse-per-line text').style('opacity', '1');
+      // });
 
-    // // mouse moving over canvas
-    // mouseG.on('mousemove', function() {
-    //   const thisMouse = mouse(this);
-    //   svg
-    //     .selectAll('.mouse-per-line')
-    //     .attr('transform', function(d, i) {
-    //       const offsetLeft = wrapperRef.current.offsetLeft;
-    //       const offsetTop = wrapperRef.current.offsetTop;
-    //       let x = event.pageX - offsetLeft;
-    //       let y = event.pageY - offsetTop;
-    //       let beginning = x;
-    //       let pathLength = lines[i].getTotalLength();
-    //       let end = pathLength;
-    //       let target;
-    //       let pos;
-    //       while(true) {
-    //         target = Math.floor((beginning + end) / 2);
-    //         pos = lines[i].getPointAtLength(target);
-    //         console.log('pos:', pos);
-    //         if((target === end || target === beginning) && pos.x !== x) {
-    //           break;
-    //         }
-    //         if(pos.x > x) end = target;
-    //         else if(pos.x < x) beginning = target;
-    //         else break; //position found
-    //       }
+      // // mouse moving over canvas
+      // mouseG.on('mousemove', function() {
+      //   const thisMouse = mouse(this);
+      //   svg
+      //     .selectAll('.mouse-per-line')
+      //     .attr('transform', function(d, i) {
+      //       const offsetLeft = wrapperRef.current.offsetLeft;
+      //       const offsetTop = wrapperRef.current.offsetTop;
+      //       let x = event.pageX - offsetLeft;
+      //       let y = event.pageY - offsetTop;
+      //       let beginning = x;
+      //       let pathLength = lines[i].getTotalLength();
+      //       let end = pathLength;
+      //       let target;
+      //       let pos;
+      //       while(true) {
+      //         target = Math.floor((beginning + end) / 2);
+      //         pos = lines[i].getPointAtLength(target);
+      //         console.log('pos:', pos);
+      //         if((target === end || target === beginning) && pos.x !== x) {
+      //           break;
+      //         }
+      //         if(pos.x > x) end = target;
+      //         else if(pos.x < x) beginning = target;
+      //         else break; //position found
+      //       }
           
-    //       // var xDate = xScale.invert(mouse[0]),
-    //       // bisect = bisector(function(d) { return d.date; }).right;
-    //       // let idx = bisect(d.values, xDate);
-    //       // console.log('idx', idx);
+      //       // var xDate = xScale.invert(mouse[0]),
+      //       // bisect = bisector(function(d) { return d.date; }).right;
+      //       // let idx = bisect(d.values, xDate);
+      //       // console.log('idx', idx);
 
-    //       d3.select(this)
-    //         .select('text')
-    //         .text(yScale.invert(y).toFixed(0));
+      //       d3.select(this)
+      //         .select('text')
+      //         .text(yScale.invert(y).toFixed(0));
 
-    //       // console.log('===');
-    //       // console.log('width and height', width, height);
-    //       // console.log('x is', x);
-    //       // console.log('pos.x is', pos.x);
-    //       // console.log('thisMouse[0] is', thisMouse[0]);
-    //       // console.log('x scaled is', xScale(x));
-    //       // console.log('x inverse is', xScale.invert(x));
-    //       // console.log('pos.x inverse is', xScale.invert(pos.x));
-    //       // console.log('---');
-    //       // console.log('y is', y);
-    //       // console.log('pos.y is', pos.y);
-    //       // console.log('thisMouse[1] is', thisMouse[1]);
-    //       // console.log('y inverse is', yScale.invert(y));
-    //       // console.log('pos.y inverse is', yScale.invert(pos.y));
+      //       // console.log('===');
+      //       // console.log('width and height', width, height);
+      //       // console.log('x is', x);
+      //       // console.log('pos.x is', pos.x);
+      //       // console.log('thisMouse[0] is', thisMouse[0]);
+      //       // console.log('x scaled is', xScale(x));
+      //       // console.log('x inverse is', xScale.invert(x));
+      //       // console.log('pos.x inverse is', xScale.invert(pos.x));
+      //       // console.log('---');
+      //       // console.log('y is', y);
+      //       // console.log('pos.y is', pos.y);
+      //       // console.log('thisMouse[1] is', thisMouse[1]);
+      //       // console.log('y inverse is', yScale.invert(y));
+      //       // console.log('pos.y inverse is', yScale.invert(pos.y));
 
     //       return 'translate(' + x + ',' + pos.y + ')';
     //     });
     // });
+    }
+  }, [dataset, checkedOptions]);
 
-
-  }, [dataSet, checkedOptions]);
-
-  return (   
-    <div className={styles.LineGraph}>
-      <div ref={wrapperRef} className={styles.container}>
-        <svg ref={svgRef}>
-          <g className='x-axis' />
-          <g className='y-axis' />
-        </svg>
-        {/* <select value={property} onChange={({ target }) => setProperty(target.value)}>
+  return (
+    <>   
+      <Typography component="div">
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>Daily</Grid>
+          <Grid item>
+            <Switch checked={checked} onChange={() => setChecked(!checked)} name="checkedC" />
+          </Grid>
+          <Grid item>Cumulative</Grid>
+        </Grid>
+      </Typography>
+      
+      
+      <div className={styles.Chart}>
+        <div ref={wrapperRef} className={`${styles.container} ${styles.threeToOne}`}>
+          <svg ref={svgRef}>
+            <g className={styles.xAxis} />
+            <g className={styles.yAxis} />
+            <rect className={styles.chartBackground} />
+          </svg>
+          {/* <select value={property} onChange={({ target }) => setProperty(target.value)}>
           {selectOptions(covidData)} */}
-        {/* <option value='positive'>Total Positive Cases</option>
+          {/* <option value='positive'>Total Positive Cases</option>
           <option value='recovered'>Current Cases</option>
           <option value='death'>Deaths</option> */}
-        {/* </select> */}
+          {/* </select> */}
+        </div>
       </div>
-      <div className={styles.Controls}>
-        {dataSet && <>{checkboxOptions(dataSet)}</> }
+      <div>
+        {dataset.date &&
+         <div className={classes.root}> 
+           <FormControl component="fieldset" className={classes.formControl}>
+             <FormLabel component="legend">Assign responsibility</FormLabel>
+             <FormGroup>
+               {checkboxOptions(dataset)}
+             </FormGroup>
+           </FormControl>
+         </div>
+        }
       </div>
-
-    </div>
+    </>
   );
 }
 
 LineGraph.propTypes = {
-  dataSet: PropTypes.object.isRequired,
+  dataset: PropTypes.object.isRequired,
 };
 
 
