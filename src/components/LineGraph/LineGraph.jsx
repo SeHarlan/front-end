@@ -29,8 +29,9 @@ function LineGraph({ dataset }) {
   
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const dimensions = useResizeObserver(wrapperRef);
-  const [checkedOptions, setCheckedOptions] = useState(['totalCases', 'totalDeaths']);
+  const dailyKeys = ['totalCases', 'totalCurrentCases', 'totalDeaths'];
+  const totalKeys = ['newCases', 'newDeaths'];
+  const [checkedOptions, setCheckedOptions] = useState(dailyKeys);
   const classes = useStyles();
   const [switchedToTotal, setSwitchedToTotal] = useState(true);
   const [switchedToLog, setSwitchedToLog] = useState(false);
@@ -47,8 +48,8 @@ function LineGraph({ dataset }) {
   const handleTotalSwitch = () => {
     setSwitchedToTotal(!switchedToTotal);
     if(switchedToTotal === true) 
-      setCheckedOptions(['newCases', 'newDeaths']);
-    else setCheckedOptions(['totalCases', 'totalDeaths']);
+      setCheckedOptions(totalKeys);
+    else setCheckedOptions(dailyKeys);
   };
 
   const checkboxOptions = (data) => {
@@ -123,17 +124,25 @@ function LineGraph({ dataset }) {
       .attr('preserveAspectRatio', 'xMinYMin meet');
 
     // Define scales
-    const yAxisMin = min(dataset.totalCases ?? -100);
-    const yAxisMax = max(dataset.totalCases ?? 100);
-
+    let yAxisMin;
+    let yAxisMax;
+    if(switchedToTotal) {
+      yAxisMin = min(dataset.totalCases ?? -100);
+      yAxisMax = max(dataset.totalCases ?? 100);
+    } else {
+      yAxisMin = min(dataset.newCases ?? -100);
+      yAxisMax = max(dataset.newCases ?? 100);
+    }
     const xScale = scaleLinear()
       .domain([0, dataset['date'].length - 1]) // range of data
       .range([margin.left, width - margin.right]); // range of pixels
-    let yScale = scaleLinear()
-      .domain([yAxisMin, yAxisMax])
-      .range([height - margin.bottom, margin.top]);
+    let yScale;
     if(switchedToLog) {
       yScale = scaleLog()
+        .domain([yAxisMin, yAxisMax])
+        .range([height - margin.bottom, margin.top]);
+    } else {
+      yScale = scaleLinear()
         .domain([yAxisMin, yAxisMax])
         .range([height - margin.bottom, margin.top]);
     }
@@ -145,9 +154,11 @@ function LineGraph({ dataset }) {
       .scale(xScale)
       .ticks(dataset['date'].length / 5)
       .tickFormat(index => formattedDate(dataset.date[index]));
+    const ticks = switchedToLog ? [5, 'e'] : [height / 40];
     const yAxis = axisRight()
       .scale(yScale)
-      .ticks(height / 40);
+      .ticks(...ticks)
+      .tickFormat(d => d);
 
     // Draw axis on pre-existing elements
     svg
@@ -281,27 +292,28 @@ function LineGraph({ dataset }) {
 
   return (
     <>
-      <Typography variant="h3">{countryName}</Typography>
-      <div className={styles.chartOptions}>
-        <Typography component="div">
-          <Grid component="label" container alignItems="center" spacing={0}>
-            <Grid item>Daily</Grid>
-            <Grid item>
-              <Switch checked={switchedToTotal} onChange={handleTotalSwitch} color="primary" size="small" />
+      <div className={styles.chartOptionsContainer}>
+        <div className={styles.chartOptions}>
+          <Typography component="div">
+            <Grid component="label" container alignItems="center" spacing={0}>
+              <Grid item>Daily</Grid>
+              <Grid item>
+                <Switch checked={switchedToTotal} onChange={handleTotalSwitch} color="primary" size="small" />
+              </Grid>
+              <Grid item>Total</Grid>
             </Grid>
-            <Grid item>Total</Grid>
-          </Grid>
-        </Typography>
+          </Typography>
 
-        <Typography component="div">
-          <Grid component="label" container alignItems="center" spacing={0}>
-            <Grid item>Linear</Grid>
-            <Grid item>
-              <Switch checked={switchedToLog} onChange={() => setSwitchedToLog(!switchedToLog)} color="secondary" size="small" />
+          <Typography component="div">
+            <Grid component="label" container alignItems="center" spacing={0}>
+              <Grid item>Linear</Grid>
+              <Grid item>
+                <Switch checked={switchedToLog} onChange={() => setSwitchedToLog(!switchedToLog)} color="secondary" size="small" />
+              </Grid>
+              <Grid item>Logarithmic</Grid>
             </Grid>
-            <Grid item>Logarithmic</Grid>
-          </Grid>
-        </Typography>
+          </Typography>
+        </div>
       </div>  
       
       <div className={styles.Chart}>
