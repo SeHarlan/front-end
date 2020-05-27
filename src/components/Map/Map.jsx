@@ -3,7 +3,7 @@ import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'; 
+import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, CircularProgress } from '@material-ui/core'; 
 
 import style from './Map.css';
 
@@ -12,7 +12,7 @@ import { setGlobalMobilityDataByDate, setSelectedCountryCode, setSelectedCountry
 import { getMobilityDates, getSelectedCountryCode, getSelectedCountryName } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
 import { useStyles } from './Map.styles';
-// import { useIsMobile } from '../hooks/isMobile';
+import { useIsMobile } from '../../hooks/isMobile';
 
 const SliderStyled = withStyles({
   root: {
@@ -89,10 +89,8 @@ const Map = ({ mapData, countryCode = '' }) => {
   const wrapperHeight = dimensions?.height;
   const dispatch = useDispatch();
   const history = useHistory();
-  // const isMobile = useIsMobile();
+  const isMobile = useIsMobile();
   
-
-  //this could be trimed down if we used redux for countryName
   useEffect(() => {
     if(!selectedCountryCode) return setAnchorEl(null);
     setAnchorEl(wrapperRef.current);
@@ -260,7 +258,10 @@ const Map = ({ mapData, countryCode = '' }) => {
       </Grid>
     
       <Grid item xs={9} sm={8}ref={wrapperRef} className={style.Map} >
-        <svg ref={svgRef} className={style.svgStyle}></svg>
+        { !mapData.features 
+          ? <CircularProgress /> 
+          : <svg ref={svgRef} className={style.svgStyle}></svg>
+        }
         <Popover id={style.countryPopover} 
           className={classes.popover} 
           classes={{ paper: classes.paper }} 
@@ -289,7 +290,7 @@ const Map = ({ mapData, countryCode = '' }) => {
         <Paper elivation={2} className={classes.legendPaper}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Choose a Metric</FormLabel>
-            <RadioGroup row aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+            <RadioGroup row={isMobile} aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
               <FormControlLabel
                 value="groceryChange"
                 control={<Radio color="primary"/>}
