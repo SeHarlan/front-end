@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSelectedCountryCode, getGlobalMapMobilityByDate, getSelectedCountryName } from '../../selectors/selectors';
-import { setSelectedCountryCode, setSelectedCountryName, setSelectedCountry } from '../../actions/actions';
+import { setSelectedCountryCode, setSelectedCountryName, setSelectedCountry, setSelectedSubregion } from '../../actions/actions';
 import { Grid, Typography, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 // import { useStyles } from './Header.styles';
@@ -76,6 +76,7 @@ export const Header = () => {
                 countryName
               };
               dispatch(setSelectedCountry(toDispatch));
+              dispatch(setSelectedSubregion(''));
             }}
           >
             <MenuItem value={JSON.stringify({

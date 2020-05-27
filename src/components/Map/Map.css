@@ -20,7 +20,7 @@
     }
     path:hover {
       stroke: rgba(0, 0, 0, 0.3);
-      stroke-width: 0.6px;
+      stroke-width: 0.7px;
       cursor: pointer;
     }
     circle:active {
@@ -28,6 +28,11 @@
     }
     path:active {
       cursor: grabbing;
+    }
+    .noData:hover {
+      stroke: inherit;
+      stroke-width: inherit;
+      cursor: grab
     }
   }
   

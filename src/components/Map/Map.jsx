@@ -3,16 +3,16 @@ import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'; 
+import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, CircularProgress } from '@material-ui/core'; 
 
 import style from './Map.css';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalMobilityDataByDate, setSelectedCountryCode, setSelectedCountry } from '../../actions/actions';
-import { getMobilityDates, getSelectedCountryCode } from '../../selectors/selectors';
+import { getMobilityDates, getSelectedCountryCode, getSelectedCountryName } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
 import { useStyles } from './Map.styles';
-// import { useIsMobile } from '../hooks/isMobile';
+import { useIsMobile } from '../../hooks/isMobile';
 
 const SliderStyled = withStyles({
   root: {
@@ -55,8 +55,8 @@ const Map = ({ mapData, countryCode = '' }) => {
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
   const [dateIndex, setDateIndex] = useState(84); //hard coded index for now, would come from dates.length - 1
-  const [selectedCountryName, setSelectedCountryName] = useState('test'); 
   const [selectedCountryData, setSelectedCountryData] = useState({});
+  const selectedCountryName = useSelector(getSelectedCountryName);
 
   const classes = useStyles();
 
@@ -89,14 +89,10 @@ const Map = ({ mapData, countryCode = '' }) => {
   const wrapperHeight = dimensions?.height;
   const dispatch = useDispatch();
   const history = useHistory();
-  // const isMobile = useIsMobile();
+  const isMobile = useIsMobile();
   
-
-  //this could be trimed down if we used redux for countryName
   useEffect(() => {
-    if(!selectedCountryCode) return;
-    const countryData = mapData.features.find(country => country.mobilityData.countryCode === selectedCountryCode).mobilityData;
-    setSelectedCountryName(countryData.countryName);
+    if(!selectedCountryCode) return setAnchorEl(null);
     setAnchorEl(wrapperRef.current);
   }, [selectedCountryCode]);
 
@@ -211,10 +207,14 @@ const Map = ({ mapData, countryCode = '' }) => {
       .join('path')
       .on('click', (country) => {
         const { countryCode, countryName } = country.mobilityData;
+        if(!countryCode || !countryName) return;
         dispatch(setSelectedCountry({ countryCode, countryName }));
         setSelectedCountryData(country.mobilityData);
       })
-      .attr('class', 'country');
+      .attr('class', 'country')
+      .classed(style.noData, function(d) {
+        return !d.mobilityData[property];
+      });
     
     if(rotating) {
       map
@@ -258,7 +258,10 @@ const Map = ({ mapData, countryCode = '' }) => {
       </Grid>
     
       <Grid item xs={9} sm={8}ref={wrapperRef} className={style.Map} >
-        <svg ref={svgRef} className={style.svgStyle}></svg>
+        { !mapData.features 
+          ? <CircularProgress /> 
+          : <svg ref={svgRef} className={style.svgStyle}></svg>
+        }
         <Popover id={style.countryPopover} 
           className={classes.popover} 
           classes={{ paper: classes.paper }} 
@@ -271,7 +274,7 @@ const Map = ({ mapData, countryCode = '' }) => {
         >
           <Typography variant="h4">{selectedCountryName}</Typography>
           <Typography>
-            {property.replace('Change', '')}: {selectedCountryData[property] || 'N/A'}
+            Travel to <b>{property.replace('Change', '')} locations</b> on this date was <b>{selectedCountryData[property] || 'N/A'}%</b> compared to a normal day in {selectedCountryName}.
           </Typography>
           <Button variant="contained" 
             color="primary" 
@@ -287,7 +290,7 @@ const Map = ({ mapData, countryCode = '' }) => {
         <Paper elivation={2} className={classes.legendPaper}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Choose a Metric</FormLabel>
-            <RadioGroup row aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+            <RadioGroup row={isMobile} aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
               <FormControlLabel
                 value="groceryChange"
                 control={<Radio color="primary"/>}
