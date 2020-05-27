@@ -3,7 +3,7 @@ import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid } from '@material-ui/core'; 
+import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'; 
 
 import style from './Map.css';
 
@@ -50,7 +50,7 @@ const Map = ({ mapData, countryCode = '' }) => {
   const dates = useSelector(getMobilityDates);
   const selectedCountryCode =  useSelector(getSelectedCountryCode);
 
-  const [property, setProperty] = useState('residentialChange');
+  const [property, setProperty] = useState('retailChange');
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
@@ -284,7 +284,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       </Grid>
       
       <Grid item xs={12} sm={2}>
-        <FormControl variant="filled" className={classes.formControl}>
+        {/* <FormControl variant="filled" className={classes.formControl}>
           <InputLabel id="property-select-label">Change In</InputLabel>
           <Select
             labelId="property-select-label"
@@ -299,8 +299,39 @@ const Map = ({ mapData, countryCode = '' }) => {
             <MenuItem value="transitChange">Transit</MenuItem>
             <MenuItem value="workplacesChange">Workplace</MenuItem>
           </Select>
-        </FormControl>
-
+        </FormControl> */}
+        <Paper elivation={2} className={classes.legendPaper}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Choose a Metric</FormLabel>
+            <RadioGroup row aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+              <FormControlLabel
+                value="groceryChange"
+                control={<Radio color="secondary"/>}
+                label="Grocery"
+              />
+              <FormControlLabel
+                value="parksChange"
+                control={<Radio color="secondary"/>}
+                label="Parks"
+              />
+              <FormControlLabel
+                value="retailChange"
+                control={<Radio color="secondary"/>}
+                label="Retail"
+              />
+              <FormControlLabel
+                value="transitChange"
+                control={<Radio color="secondary"/>}
+                label="Transit"
+              />
+              <FormControlLabel
+                value="workplacesChange"
+                control={<Radio color="secondary"/>}
+                label="Workplace"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Paper>
       </Grid>
       <Grid item xs={12}>
         {dates.length && <SliderStyled 

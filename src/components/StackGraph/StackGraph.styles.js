@@ -8,4 +8,14 @@ export const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  infoBox: {
+    display: 'flex',
+    flexDirection: 'row'
+
+  },
+  legend: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '1rem'
+  }
 }));
