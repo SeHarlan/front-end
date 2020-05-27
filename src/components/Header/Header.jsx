@@ -26,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
   h3Subtitle: {
     color: theme.palette.common.charcoal.main, 
   },
+  formControl: {
+    backgroundColor: 'white',
+  }
 }));
 
 export const Header = () => {
