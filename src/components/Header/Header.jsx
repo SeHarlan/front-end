@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   fullWidth: {
-    backgroundColor: theme.palette.common.dust.main, 
+    backgroundColor: 'none', 
     width: 'calc(100% + 48px)',
     margin: '0 -24px',
     padding: '18px 24px',
@@ -50,18 +50,18 @@ export const Header = () => {
     >{item.mobilityData.countryName}</MenuItem>);
 
   return (
-    <Grid container alignItems='center' className={classes.fullWidth}>
+    <Grid container justify='center' alignItems='center' className={classes.fullWidth}>
       {/* <img alt="logo" src={logo} className={classes.image}/> */}
 
-      <Grid item xs={12} sm={9}>
-        <Typography variant="h1" className={classes.h1Title}><Link to='/' className={classes.h1TitleLink}>Going Viral</Link></Typography>
-        <Typography variant="h3" className={classes.h3Subtitle}>Mobility in Times of Quarantine</Typography>
+      <Grid item sm={3} />
+      <Grid item xs={12} sm={6} className={classes.fullWidthWhite}>
+        <Typography variant="h1" align="center" className={classes.h1Title}><Link to='/' className={classes.h1TitleLink}>Going Viral</Link></Typography>
+        <Typography variant="h3" align="center" className={classes.h3Subtitle}>Mobility in Times of Quarantine</Typography>
       </Grid>
-
       <Grid item xs={12} sm={3}>
         { globalMapMobilityData.features &&
         <FormControl variant="outlined" size="small" fullWidth className={classes.formControl}>
-          <InputLabel id="country-select-label">Choose a Country</InputLabel>
+          {/* <InputLabel id="country-select-label">Choose a Country</InputLabel> */}
           <Select
             labelId="country-select-label"
             id="country-select"
@@ -78,7 +78,10 @@ export const Header = () => {
               dispatch(setSelectedCountry(toDispatch));
             }}
           >
-            <MenuItem value=""><em>Choose a Country</em></MenuItem>
+            <MenuItem value={JSON.stringify({
+              countryCode: '',
+              countryName: 'Worldwide'
+            })}>Choose a Country</MenuItem>
             {selectOptions}          
           </Select>
         </FormControl>
