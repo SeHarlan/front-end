@@ -16,16 +16,19 @@ export const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   heading: {
-    color: theme.palette.common.blue.main,
+    // color: theme.palette.common.blue.main,
     textShadow: '1px 1px 1px #87a3d0',
     fontSize: '1.55rem',
     fontWeight: '550',
   },
   title: {
-    color: theme.palette.common.green.main, 
+    // color: theme.palette.common.green.main, 
     textShadow: '1px 1px 2px #87a3d0',
     fontSize: '2.4rem',
     fontWeight: '550',
+  },
+  formControl: {
+    display: 'flex'
   }
 }));
 
