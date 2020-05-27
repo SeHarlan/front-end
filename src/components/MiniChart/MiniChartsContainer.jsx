@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Grid } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { getSelectedCountryCode, getMobilityChartData } from '../../selectors/selectors';
+import { getSelectedCountryCode, getMobilityChartData, getMobilitySubData } from '../../selectors/selectors';
 import { setMobilityChartDataByCountryCode } from '../../actions/actions';
 import { MiniChart } from './MiniChart';
 
@@ -10,6 +10,7 @@ export const MiniChartsContainer = () => {
 
   const selectedCountryCode = useSelector(getSelectedCountryCode);
   const mobilityData = useSelector(getMobilityChartData);
+  const miniChartSubData = useSelector(getMobilitySubData);
   const dispatch = useDispatch();
   const properties = [
     { key: 'retailChange', description: 'Retail and recreation' },
@@ -25,13 +26,15 @@ export const MiniChartsContainer = () => {
     dispatch(setMobilityChartDataByCountryCode(selectedCountryCode));
   }, [selectedCountryCode]);
 
-
   return (
     <>
       <Grid container spacing={3}>
         { properties.map((property, i) => 
           <Grid item xs={6} sm={4} key={i}>
-            <MiniChart dataset={mobilityData} property={property} />
+            { miniChartSubData.date
+              ? <MiniChart dataset={miniChartSubData} property={property} />
+              : <MiniChart dataset={mobilityData} property={property} />
+            }
           </Grid>
         )}
       </Grid>
