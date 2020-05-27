@@ -3,13 +3,8 @@ import PropTypes from 'prop-types';
 import styles from '../../styles/Chart.css';
 // import styles from '../MiniChart/MiniChart.styles';
 import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, scaleOrdinal, schemeCategory10, min, max, scaleLog } from 'd3';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
-import { useResizeObserver } from '../../hooks/d3Hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Switch, Chip, Avatar } from '@material-ui/core';
 import { useSelector } from 'react-redux';
@@ -19,8 +14,8 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
-  formControl: {
-    margin: theme.spacing(3),
+  chipMargin: {
+    marginRight: '10px',
   },
 }));
 
@@ -34,8 +29,8 @@ function LineGraph({ dataset }) {
   const classes = useStyles();
   const [switchedToTotal, setSwitchedToTotal] = useState(true);
   const [switchedToLog, setSwitchedToLog] = useState(false);
-  
   const countryName = useSelector(getSelectedCountryName);
+  const myColorScale = ['#229C9A', '#2b499d', '#46a1fe'];
 
 
   const handleCheckbox = ({ target }) => {
@@ -132,6 +127,7 @@ function LineGraph({ dataset }) {
       yAxisMin = min(dataset.newCases ?? -100);
       yAxisMax = max(dataset.newCases ?? 100);
     }
+    const maxData = yAxisMax;
     const xScale = scaleLinear()
       .domain([0, dataset['date'].length - 1]) // range of data
       .range([margin.left, width - margin.right]); // range of pixels
@@ -145,7 +141,7 @@ function LineGraph({ dataset }) {
         .domain([yAxisMin, yAxisMax])
         .range([height - margin.bottom, margin.top]);
     }
-    const colorScale = scaleOrdinal(['#FF8C00', '#8B0000'])
+    const colorScale = scaleOrdinal(myColorScale)
       .domain(filteredKeys(dataset));
   
     // Define axis
@@ -157,6 +153,7 @@ function LineGraph({ dataset }) {
     const yAxis = axisRight()
       .scale(yScale)
       .ticks(...ticks)
+      // .ticks(Math.floor(maxData / 10), '~s')
       .tickFormat(d => d);
 
     // Draw axis on pre-existing elements
@@ -307,7 +304,7 @@ function LineGraph({ dataset }) {
             <Grid component="label" container alignItems="center" spacing={0}>
               <Grid item>Linear</Grid>
               <Grid item>
-                <Switch checked={switchedToLog} onChange={() => setSwitchedToLog(!switchedToLog)} color="secondary" size="small" />
+                <Switch checked={switchedToLog} onChange={() => setSwitchedToLog(!switchedToLog)} color="primary" size="small" />
               </Grid>
               <Grid item>Logarithmic</Grid>
             </Grid>
@@ -327,9 +324,13 @@ function LineGraph({ dataset }) {
       <div>
         {dataset.date &&
          <div className={classes.root}> 
-           <Chip variant="outlined" style={{ color:'darkorange', border: '1px solid darkorange' }} avatar={<Avatar style={{ backgroundColor:'darkorange' }}> </Avatar>} label="Positive Cases" />
+           {/* Refactor: Map through these instead */}
+           <Chip variant="outlined" className={classes.chipMargin} style={{ color: `${myColorScale[1]}`, border: `1px solid ${myColorScale[1]}`, backgroundColor: 'white' }} avatar={<Avatar style={{ backgroundColor:`${myColorScale[1]}` }}> </Avatar>} label="Total Cases" />
            <br />
-           <Chip variant="outlined" color="primary" avatar={<Avatar> </Avatar>} label="Deaths" />
+           <Chip variant="outlined" className={classes.chipMargin} style={{ color: `${myColorScale[2]}`, border: `1px solid ${myColorScale[2]}`, backgroundColor: 'white' }} avatar={<Avatar style={{ backgroundColor:`${myColorScale[2]}` }}> </Avatar>} label="Current Cases" />
+           <br />
+           <Chip variant="outlined" className={classes.chipMargin} style={{ color: `${myColorScale[0]}`, border: `1px solid ${myColorScale[0]}`, backgroundColor: 'white' }} avatar={<Avatar style={{ backgroundColor:`${myColorScale[0]}` }}> </Avatar>} label="Deaths" />
+           <br />
          </div>
         }
       </div>
