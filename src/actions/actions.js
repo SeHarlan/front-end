@@ -64,7 +64,8 @@ export const setCovidChartData = (countryCode) => dispatch => {
       totalRecovered: res.map(item => item.totalRecovered ?? 0),
       newRecovered: res.map(item => item.newRecovered ?? 0),
       totalDeaths: res.map(item => item.totalDeaths ?? 0),
-      newDeaths: res.map(item => item.newDeaths ?? 0)
+      newDeaths: res.map(item => item.newDeaths ?? 0),
+      totalCurrentCases: res.map(item => (item.totalCases ?? 0) - (item.totalRecovered ?? 0))
     }))
     .then(covidData => {
       dispatch({

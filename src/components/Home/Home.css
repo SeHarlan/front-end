@@ -1,0 +1,8 @@
+.Home {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+
+  .subhead {
+    margin: 2rem 0;
+  }
+}

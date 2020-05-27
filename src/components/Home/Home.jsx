@@ -7,7 +7,8 @@ import { getGlobalMapMobilityByDate } from '../../selectors/selectors';
 
 import { getCovidChartData, getSelectedCountryCode } from '../../selectors/selectors';
 import { setCovidChartData } from '../../actions/actions';
-import { Grid } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
+import styles from './Home.css';
 
 
 
@@ -23,11 +24,13 @@ export const Home = () => {
   }, [countryCode]);
 
   return (
-    <Grid container justify="center">
+    <Grid container justify="center" className={styles.Home}>
       <Grid item xs={12}>
+        <Typography variant="h4" align="center">Change in Mobility</Typography>
         <Map mapData={globalMapMobilityData} />
       </Grid>
       <Grid item xs={12} sm={10}>
+        <Typography variant="h4" align="center" className={styles.subhead}>COVID Statistics {countryName ? `for ${countryName}` : 'Worldwide' }</Typography>
         <LineGraph dataset={chartDataSet} />
       </Grid>
     </Grid>
