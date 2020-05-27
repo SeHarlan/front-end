@@ -81,6 +81,20 @@ export const setSelectedCountryCode = (countryCode) => dispatch => {
     payload: countryCode.toUpperCase()
   });
 };
+export const SET_SELECTED_COUNTRY_NAME = 'SET_SELECTED_COUNTRY_NAME';
+export const setSelectedCountryName = (countryName) => dispatch => {
+  dispatch({
+    type: SET_SELECTED_COUNTRY_NAME,
+    payload: countryName
+  });
+};
+export const SET_SELECTED_COUNTRY = 'SET_SELECTED_COUNTRY';
+export const setSelectedCountry = ({ countryName, countryCode }) => dispatch => {
+  dispatch({
+    type: SET_SELECTED_COUNTRY,
+    payload: { countryName, countryCode }
+  });
+};
 
 export const SET_SELECTED_SUBREGION = 'SET_SELECTED_SUBREGION';
 export const setSelectedSubregion = (subregion) => dispatch => {

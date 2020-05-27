@@ -10,6 +10,9 @@ export const getMobilityChartData = state => state.reducer.mobilityChartData;
 // returns currently selected countryCode
 export const getSelectedCountryCode = state => state.reducer.selectedCountryCode;
 
+//returns currentyl selected countryCode
+export const getSelectedCountryName = state => state.reducer.selectedCountryName;
+
 // returns currently selected subregion
 export const getSelectedSubregion = state => state.reducer.selectedSubregion;
 

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Grid, Typography, FormControl, Input, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { useStyles } from './individualCountry.styles';
 // import Map from '../Map/Map';
-import { getGlobalMapMobilityByDate, getSelectedCountryCode, getMobilitySubregionNames, getSelectedSubregion, getCovidSubData, getMobilitySubData } from '../../selectors/selectors';
+import { getGlobalMapMobilityByDate, getSelectedCountryCode, getMobilitySubregionNames, getSelectedSubregion, getCovidSubData, getMobilitySubData, getSelectedCountryName } from '../../selectors/selectors';
 
 import { useParams } from 'react-router-dom';
 import StackGraph from '../StackGraph/StackGraph';
@@ -20,12 +20,12 @@ export const individualCountry = () => {
   // const globalMapMobilityData = useSelector(getGlobalMapMobilityByDate);
   const { countryCode: countryCodeParam } = useParams();
   const countryCode = useSelector(getSelectedCountryCode) || countryCodeParam;
+  const countryName = useSelector(getSelectedCountryName);
   const subregion = useSelector(getSelectedSubregion);
   const subRegionNames = useSelector(getMobilitySubregionNames);
   const chartDataSet = useSelector(getCovidChartData);
   const stackGraphSubData = useSelector(getCovidSubData);
   const miniChartSubData = useSelector(getMobilitySubData);
-
 
   useEffect(() => {
     if(countryCode === '') return;
@@ -48,7 +48,7 @@ export const individualCountry = () => {
       <Grid item xs={12}>
         {subregion
           ? <Typography variant="h3" className={classes.title}>{subregion}</Typography>
-          : <Typography variant="h3" className={classes.title}>{countryCode}</Typography>
+          : <Typography variant="h3" className={classes.title}>{countryName}</Typography>
         }
         {/* <Map mapData={globalMapMobilityData} countryCode={countryCodeParam || countryCode}/> */}
       </Grid>

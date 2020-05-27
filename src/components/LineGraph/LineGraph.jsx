@@ -12,6 +12,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Switch, Chip, Avatar } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import { getSelectedCountryName } from '../../selectors/selectors';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,6 +34,9 @@ function LineGraph({ dataset }) {
   const classes = useStyles();
   const [switchedToTotal, setSwitchedToTotal] = useState(true);
   const [switchedToLog, setSwitchedToLog] = useState(false);
+  
+  const countryName = useSelector(getSelectedCountryName);
+
 
   const handleCheckbox = ({ target }) => {
     if(!checkedOptions.includes(target.value)) 
@@ -275,6 +281,7 @@ function LineGraph({ dataset }) {
 
   return (
     <>
+      <Typography variant="h3">{countryName}</Typography>
       <div className={styles.chartOptions}>
         <Typography component="div">
           <Grid component="label" container alignItems="center" spacing={0}>

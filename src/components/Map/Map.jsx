@@ -8,7 +8,7 @@ import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabe
 import style from './Map.css';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setGlobalMobilityDataByDate, setSelectedCountryCode } from '../../actions/actions';
+import { setGlobalMobilityDataByDate, setSelectedCountryCode, setSelectedCountry } from '../../actions/actions';
 import { getMobilityDates, getSelectedCountryCode } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
 import { useStyles } from './Map.styles';
@@ -116,7 +116,6 @@ const Map = ({ mapData, countryCode = '' }) => {
       .domain([-100, 0, 100])
       .range(['blue', 'rgb(243, 240, 225)', 'green']);
 
-
     const globePosition = [width / 2, height / 2];
     const globeScale = 1;
     //globe Projection
@@ -211,7 +210,8 @@ const Map = ({ mapData, countryCode = '' }) => {
       .data(mapData.features)
       .join('path')
       .on('click', (country) => {
-        dispatch(setSelectedCountryCode(country.mobilityData.countryCode));
+        const { countryCode, countryName } = country.mobilityData;
+        dispatch(setSelectedCountry({ countryCode, countryName }));
         setSelectedCountryData(country.mobilityData);
       })
       .attr('class', 'country');
@@ -244,10 +244,9 @@ const Map = ({ mapData, countryCode = '' }) => {
       
   }, [mapData, dimensions, property]);
 
-
-
   return (<>
-    <Grid container className={classes.mapContainer} alignItems="center" justify="center" spacing="2">
+    <Grid container className={classes.mapContainer} alignItems="center" justify="center" spacing={2}>
+
       <Grid item xs={3} sm={2} >
         <Paper elevation={2} className={classes.legendPaper}>
           <div ref={legendRef} 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getSelectedCountryCode, getGlobalMapMobilityByDate } from '../../selectors/selectors';
-import { setSelectedCountryCode } from '../../actions/actions';
+import { getSelectedCountryCode, getGlobalMapMobilityByDate, getSelectedCountryName } from '../../selectors/selectors';
+import { setSelectedCountryCode, setSelectedCountryName, setSelectedCountry } from '../../actions/actions';
 import { Grid, Typography, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 // import { useStyles } from './Header.styles';
@@ -33,13 +33,21 @@ export const Header = () => {
 
   const dispatch = useDispatch();
   const selectedCountryCode = useSelector(getSelectedCountryCode);
+  const selectedCountryName = useSelector(getSelectedCountryName);
   const globalMapMobilityData = useSelector(getGlobalMapMobilityByDate);
   // const theme = useTheme();
   
   const selectOptions = globalMapMobilityData?.features
     ?.filter(item => item.mobilityData.countryName != null)
     .sort((a, b) => (a.mobilityData.countryName > b.mobilityData.countryName) ? 1 : -1)
-    .map((item, i) => <MenuItem key={i} value={item.mobilityData.countryCode}>{item.mobilityData.countryName}</MenuItem>);
+    .map((item) => <MenuItem 
+      key={item.mobilityData.countryName}  
+      name={item.mobilityData.countryName}
+      value={JSON.stringify({
+        countryCode: item.mobilityData.countryCode,
+        countryName: item.mobilityData.countryName
+      })}
+    >{item.mobilityData.countryName}</MenuItem>);
 
   return (
     <Grid container alignItems='center' className={classes.fullWidth}>
@@ -57,8 +65,18 @@ export const Header = () => {
           <Select
             labelId="country-select-label"
             id="country-select"
-            value={selectedCountryCode}
-            onChange={({ target }) => dispatch(setSelectedCountryCode(target.value))}
+            value={JSON.stringify({
+              countryCode: selectedCountryCode,
+              countryName: selectedCountryName
+            })}
+            onChange={({ target }) => {
+              const { countryCode, countryName } = JSON.parse(target.value);
+              const toDispatch = {
+                countryCode,
+                countryName
+              };
+              dispatch(setSelectedCountry(toDispatch));
+            }}
           >
             <MenuItem value=""><em>Choose a Country</em></MenuItem>
             {selectOptions}          

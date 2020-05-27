@@ -1,4 +1,4 @@
-import { SET_GLOBAL_MAP_MOBILITY_BY_DATE, SET_COVID_CHART_DATA, SET_SELECTED_COUNTRY_CODE, SET_SELECTED_SUBREGION, SET_MOBILITY_CHART_DATA, SET_MOBILITY_DATES, SET_MOBILITY_SUBREGION_NAMES, SET_COVID_SUBREGIONS, SET_COVID_SUB_DATA, SET_MOBILITY_SUB_DATA } from '../actions/actions';
+import { SET_GLOBAL_MAP_MOBILITY_BY_DATE, SET_COVID_CHART_DATA, SET_SELECTED_COUNTRY_CODE, SET_SELECTED_SUBREGION, SET_MOBILITY_CHART_DATA, SET_MOBILITY_DATES, SET_MOBILITY_SUBREGION_NAMES, SET_COVID_SUBREGIONS, SET_COVID_SUB_DATA, SET_MOBILITY_SUB_DATA, SET_SELECTED_COUNTRY_NAME, SET_SELECTED_COUNTRY } from '../actions/actions';
 
 const initialState = {
   globalMapMobilityByDate: {},
@@ -8,7 +8,8 @@ const initialState = {
   mobilityChartData: {},
   mobilitySubregionNames: [],
   covidSubData: {},
-  mobilitySubData: {}
+  mobilitySubData: {},
+  selectedCountryName: 'Worldwide'
 };
 
 export default function reducer(state = initialState, { type, payload }) {
@@ -19,8 +20,12 @@ export default function reducer(state = initialState, { type, payload }) {
       return { ...state, covidChartData: payload };
     case SET_MOBILITY_CHART_DATA:
       return { ...state, mobilityChartData: payload };
+    case SET_SELECTED_COUNTRY:
+      return { ...state, selectedCountryCode: payload.countryCode, selectedCountryName: payload.countryName };
     case SET_SELECTED_COUNTRY_CODE:
       return { ...state, selectedCountryCode: payload };
+    case SET_SELECTED_COUNTRY_NAME:
+      return { ...state, selectedCountryName: payload };
     case SET_SELECTED_SUBREGION:
       return { ...state, selectedSubregion: payload };
     case SET_MOBILITY_DATES: 

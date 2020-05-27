@@ -13,6 +13,7 @@ function StackGraph({ data }) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
+
   const [selectedDropDownKey, setSelectedDropDownKey] = useState('cases');
   console.log(data);
   const dataStructure = data.date.reduce((acc, date, i) => {
@@ -36,9 +37,11 @@ function StackGraph({ data }) {
   useEffect(() => {
 
     const svg = select(svgRef.current);
+
     const width = 1000;
     const height = 500;
     const margin = { top: 0, right: 0, bottom: 20, left: 0 };
+
 
 
     svg
@@ -127,7 +130,6 @@ function StackGraph({ data }) {
 
     // const legendText = [`Total ${selectedDropDownKey}`, `New ${selectedDropDownKey}`];
     const legendText = ['Total Cases', 'New Cases'];
-
     const colorScale = scaleLinear()
       .domain([-100, 100])
       .range(['LightSeaGreen', 'Indigo']);
