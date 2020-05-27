@@ -116,7 +116,9 @@ function StackGraph({ data }) {
     const legend = select(legendRef.current)
       .attr('class', `${styles.legendBox}`);
 
-    const legendText = [`Total ${selectedDropDownKey}`, `New ${selectedDropDownKey}`];
+    // const legendText = [`Total ${selectedDropDownKey}`, `New ${selectedDropDownKey}`];
+    const legendText = ['Total Cases', 'New Cases'];
+    
     console.log(selectedDropDownKey, 'key');
     const colorScale = scaleLinear()
       .domain([-100, 100])
