@@ -92,7 +92,7 @@ export const setSelectedSubregion = (subregion) => dispatch => {
 
 export const SET_MOBILITY_DATES = 'SET_MOBILITY_DATES';
 export const setMobilityDates = () => dispatch => {
-  return fetchMobilityDataByCountryCode('')
+  return fetchMobilityDataByCountryCode('CA')
     .then(res => res.map(item => item.date.slice(0, 10)))
     .then(dates => {
       dispatch({

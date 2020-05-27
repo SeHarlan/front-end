@@ -11,9 +11,9 @@ export const Links = () => {
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.links}>
-        <Link className={classes.link} href="/highscore">High Score</Link>
+        {/* <Link className={classes.link} href="/highscore">High Score</Link> */}
         <Link className={classes.link} href="/">Home</Link>
-        <Link className={classes.link} href="/country">Individual Country</Link>
+        {/* <Link className={classes.link} href="/country">Individual Country</Link> */}
       </Grid>
     </Grid>
   );
