@@ -61,7 +61,7 @@ export const individualCountry = () => {
           labelId="subregion-select-label"
           id="subregion-select"
           value={subregion}
-          nChange={({ target }) => dispatch(setSelectedSubregion(target.value))}
+          onChange={({ target }) => dispatch(setSelectedSubregion(target.value))}
         >
           <MenuItem value="">Choose a Subregion</MenuItem>
           {selectOptions}
@@ -71,8 +71,8 @@ export const individualCountry = () => {
       
       <Grid item xs={12} lg={10} className={classes.graph}>
         { stackGraphSubData.date 
-          ? <StackGraph data={stackGraphSubData} />
-          : <StackGraph data={chartDataSet} />
+          ? stackGraphSubData.date ? <StackGraph data={stackGraphSubData}/> : null
+          : chartDataSet.date ? <StackGraph data={chartDataSet} /> : null
         }
         {/* { chartDataSet.date && <StackGraph data={chartDataSet} /> } */}
       </Grid>

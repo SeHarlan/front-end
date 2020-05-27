@@ -13,10 +13,8 @@ function StackGraph({ data }) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
-  // const dimensions = useResizeObserver(wrapperRef);
-
   const [selectedDropDownKey, setSelectedDropDownKey] = useState('cases');
-
+  console.log(data);
   const dataStructure = data.date.reduce((acc, date, i) => {
     acc.push({ 
       countryCode: data.countryCode,
@@ -36,12 +34,11 @@ function StackGraph({ data }) {
   }, []);
 
   useEffect(() => {
-    
+
     const svg = select(svgRef.current);
-    // const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
     const width = 1000;
     const height = 500;
-    const margin = { top: 0, right: 0, bottom: 10, left: 10 };
+    const margin = { top: 0, right: 0, bottom: 20, left: 0 };
 
 
     svg
@@ -77,11 +74,10 @@ function StackGraph({ data }) {
       // second value of each array to calculate max
     ];
 
-    // "2020-04-16T07:00:00.000Z" .slice(0, 9)
     // scales
     const xScale = scaleBand()
       .domain(dataStructure.map(d => d.date))
-      .range([margin.left, width - margin.right]) // 0, 10 range of pixels       .range([0, width])
+      .range([margin.left, width - margin.right]) // 0, 10 range of pixels      
 
       .padding(0.25);
       //scale band given explicit years
@@ -89,8 +85,7 @@ function StackGraph({ data }) {
     const yScale = scaleLinear()
       .domain(extent)
       .range([height - margin.bottom, margin.top]); // 10, 0
-      //origin of svg at top is 0       .range([height, 0]);
-
+      //origin of svg at top is 0       
     // scale linear continuous range of values
 
     // rendering
