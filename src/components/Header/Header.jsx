@@ -6,7 +6,6 @@ import { Grid, Typography, FormControl, InputLabel, Select, MenuItem } from '@ma
 
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useStyles } from './Header.styles';
-import { Link } from 'react-router-dom';
 
 // const useStyles = makeStyles((theme) => ({
 //   fullWidth: {
@@ -55,9 +54,6 @@ export const Header = () => {
 
   return (
     <Grid container justify='center' alignItems='center' className={classes.fullWidth}>
-      {/* <Grid className={classes.imageContainer}> */}
-      {/* <img alt="logo" src={logo} className={classes.image}/> */}
-      {/* </Grid> */}
       <Grid item sm={3} />
       <Grid item xs={12} sm={6} className={classes.fullWidthWhite}>
         <Typography variant="h1" align="center" className={classes.title}><Link to='/' className={classes.h1TitleLink}>Going Viral</Link></Typography>
