@@ -18,9 +18,21 @@ export const useStyles = makeStyles((theme) => ({
   legendPaper: {
     padding: theme.spacing(1),
     textAlign: 'center',
+    boxShadow: '0 0 0'
   },
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
   },
+  arrow: {
+    width: '3rem',
+    zIndex: 3
+  },
+  dragLabel: {
+    zIndex: 5,
+    backgroundColor: 'rgba(240, 240, 240, 0.7)',
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    position: 'absolute'
+  }
 }));

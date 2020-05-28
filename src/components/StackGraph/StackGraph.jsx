@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from '../../styles/Chart.css';
 import { select, max, scaleLinear, scaleBand, axisBottom, stackOrderAscending, stack, axisLeft, axisRight } from 'd3';
-import { Chip, Avatar } from '@material-ui/core';
+import { Chip, Avatar, Typography, Grid } from '@material-ui/core';
 import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { useStyles } from './StackGraph.styles';
 import { useSelector } from 'react-redux';
@@ -132,38 +132,41 @@ function StackGraph({ data }) {
   }), [data, selectedDropDownKey, selectedSubregion, selectedCountryCode];
 
   return (   
-    <div className={styles.Chart}>
-      <div ref={wrapperRef} className={`${styles.container} ${styles.fourToOne}`}>
-        <svg className="svg" ref={svgRef}>
-          <g className={styles.xAxis} />
-          <g className={styles.yAxis} />
-        </svg>
-      </div>
-      <div className={classes.infoBox}>
-        <div className={classes.legend}> 
-          <Chip variant="outlined" style={{ color:'#229c9a', fontWeight: '500', border: '1px solid #229c9a', marginRight: '10px' }} avatar={<Avatar style={{ backgroundColor:'#229c9a' }}> </Avatar>} label={`Total ${selectedDropDownKey}`} />
-          <br />
-          <Chip variant="outlined" color="primary" avatar={<Avatar> </Avatar>} label={`Daily ${selectedDropDownKey}`} />
+    <Grid container className={styles.Chart} alignItems="center" direction="row-reverse" justify="space-between">
+      <Grid item xs={12}>
+        <div ref={wrapperRef} className={`${styles.container} ${styles.fourToOne}`}>
+          <svg className="svg" ref={svgRef}>
+            <g className={styles.xAxis} />
+            <g className={styles.yAxis} />
+          </svg>
         </div>
-        <div className={styles.select}>
-          <FormControl variant="outlined" size="small" className={classes.formControl}>
-            <InputLabel id="covid-select-label">Statistics</InputLabel>
-            <Select
-              label="Statistics"
-              labelId="covid-select-label"
-              id="covid-select"
-              value={selectedDropDownKey}
-              onChange={({ target }) => setSelectedDropDownKey(target.value)}
-            >
-              {/* <MenuItem value="">Choose a Statistic</MenuItem> */}
-              <MenuItem value="cases">Cases</MenuItem>
-              <MenuItem value="deaths">Deaths</MenuItem>
-              <MenuItem value="recovered">Recovered</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
-      </div>
-    </div>
+
+      </Grid>
+      <Grid item xs={5} className={classes.legend}>   
+        <Chip variant="outlined" style={{ color:'#229c9a', fontWeight: '500', border: '1px solid #229c9a', marginRight: '10px' }} avatar={<Avatar style={{ backgroundColor:'#229c9a' }}> </Avatar>} label={`Total ${selectedDropDownKey}`} />
+        <br />
+        <Chip variant="outlined" color="primary" avatar={<Avatar> </Avatar>} label={`Daily ${selectedDropDownKey}`} />
+      </Grid>
+      <Grid item xs={5} className={classes.formContainer}>
+        <FormControl variant="outlined" size="small" className={classes.formControl}>
+          <InputLabel id="covid-select-label">Statistics</InputLabel>
+          <Select
+            label="Statistics"
+            labelId="covid-select-label"
+            id="covid-select"
+            value={selectedDropDownKey}
+            onChange={({ target }) => setSelectedDropDownKey(target.value)}
+          >
+            {/* <MenuItem value="">Choose a Statistic</MenuItem> */}
+            <MenuItem value="cases">Cases</MenuItem>
+            <MenuItem value="deaths">Deaths</MenuItem>
+            <MenuItem value="recovered">Recovered</MenuItem>
+          </Select>
+        </FormControl>
+      </Grid>
+
+      
+    </Grid>
   );
 }
 

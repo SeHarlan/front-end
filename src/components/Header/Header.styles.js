@@ -41,6 +41,10 @@ export const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     fontWeight: 'bold',
     textDecoration: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
+
   },
   formControl: {
     backgroundColor: 'white',
