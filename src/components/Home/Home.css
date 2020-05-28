@@ -2,13 +2,16 @@
   padding-top: 2rem;
   padding-bottom: 2rem;
 
-  .subhead {
-    margin: 2rem 0;
-  }
 }
 
 .fullWidthLightBlue {
-  background-color: #bbdefb;
+  width: calc(100% + 48px) !important;
+  background-color: rgba(43,73,157,0.1);
+  margin: 0 -24px;
   padding: 2rem;
-  box-shadow: 0 -3px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 -3px 5px rgba(0, 0, 0, 0.1);
+
+  .subhead {
+    margin: 0 0 2rem 0;
+  }
 }

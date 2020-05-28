@@ -28,7 +28,7 @@ export default function App() {
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" style={{ background: 'linear-gradient(180deg, rgba(43,73,157,0.15) 0%, rgba(255,255,255,1) 300px)' }}>
           <Header />
           <Switch>
             <Route exact path="/" component={Home} />
