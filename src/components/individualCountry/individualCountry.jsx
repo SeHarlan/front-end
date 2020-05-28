@@ -58,14 +58,14 @@ export const individualCountry = () => {
 
   return (
     <Grid container justify="center" className={classes.root}>
-      <Grid item xs={12}>
-        <Typography variant="h3" className={classes.title}>{countryName}</Typography>
-        {subregion && <Typography variant="h4" className={classes.title}>{subregion}</Typography>}
+      <Grid item xs={12} md={10}>
+        <Typography variant="h3" color="primary" className={classes.title}>{countryName}</Typography>
+        {/* {subregion && <Typography variant="h4" color="secondary" className={classes.title}>{subregion}</Typography>} */}
         
         {/* <Map mapData={globalMapMobilityData} countryCode={countryCodeParam || countryCode}/> */}
       </Grid>
 
-      <Grid item xs={12}>
+      <Grid item xs={12} md={10}>
         { !selectOptions.length 
           ? <Typography variant="body1">No Subregions Found</Typography>
           : <FormControl variant="outlined" size="small" className={classes.formControl}>
@@ -83,11 +83,11 @@ export const individualCountry = () => {
           </FormControl>}
       </Grid>
       
-      <Grid item xs={12} lg={10} className={classes.graph}>
+      <Grid item xs={12} md={10} className={classes.graph}>
         { stackGraphDataSet && <StackGraph data={stackGraphDataSet} />}
       </Grid>
 
-      <Grid item xs={12} lg={10} className={classes.graph}>
+      <Grid item xs={12} md={10} className={classes.graph}>
         <MiniChartsContainer />
       </Grid>
 
