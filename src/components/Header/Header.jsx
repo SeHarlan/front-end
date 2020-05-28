@@ -57,7 +57,7 @@ export const Header = () => {
       <Grid item sm={3} />
       <Grid item xs={12} sm={6} className={classes.fullWidthWhite}>
         <Typography variant="h1" align="center" className={classes.title}><Link to='/' className={classes.h1TitleLink}>Going Viral</Link></Typography>
-        <Typography variant="h3" align="center" className={classes.subtitle}>Mobility in Times of Quarantine</Typography>
+        <Typography variant="h3" align="center" className={classes.subtitle}>Pandemic-Related Mobility Metrics</Typography>
       </Grid>
       <Grid item xs={12} sm={3}>
         { globalMapMobilityData.features && (location.pathname !== '/about') &&

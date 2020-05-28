@@ -254,7 +254,7 @@ const Map = ({ mapData, countryCode = '' }) => {
           >% increase in travel to {property.replace('Change', '')} locations 
           </div>
           <p className={style.legendNoData}>No Data Available</p>
-          <div>% increase in travel to {property.replace('Change', '')} locations</div>
+          <div>% decrease in travel to {property.replace('Change', '')} locations</div>
         </Paper>
       </Grid>
     
