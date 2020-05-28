@@ -7,7 +7,7 @@ export const Footer = () => {
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.container} >
-        <Link className={classes.link} href="/about">About</Link>
+        <Link className={classes.link} href="/about">About the data</Link>
       </Grid>
     </Grid>
   );

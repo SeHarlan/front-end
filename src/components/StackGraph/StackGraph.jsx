@@ -5,6 +5,8 @@ import { select, max, scaleLinear, scaleBand, axisBottom, stackOrderAscending, s
 import { Chip, Avatar } from '@material-ui/core';
 import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { useStyles } from './StackGraph.styles';
+import { useSelector } from 'react-redux';
+import { getSelectedCountryCode, getSelectedSubregion } from '../../selectors/selectors';
 
 
 
@@ -16,8 +18,10 @@ function StackGraph({ data }) {
 
   const [selectedDropDownKey, setSelectedDropDownKey] = useState('cases');
 
-  const dataStructure = data.date.reduce((acc, date, i) => {
-    console.log(data.date);
+  const selectedCountryCode = useSelector(getSelectedCountryCode);
+  const selectedSubregion = useSelector(getSelectedSubregion);
+
+  const dataStructure = data?.date?.reduce((acc, date, i) => {
     acc.push({ 
       countryCode: data.countryCode,
       countryName: data.countryName,
@@ -34,7 +38,7 @@ function StackGraph({ data }) {
   }, []);
 
   useEffect(() => {
-
+    if(!dataStructure) return;
     const svg = select(svgRef.current);
 
     const width = 1000;
@@ -125,7 +129,7 @@ function StackGraph({ data }) {
       // .style('text-anchor', 'start')
       .call(yAxis);
 
-  }), [data, selectedDropDownKey];
+  }), [data, selectedDropDownKey, selectedSubregion, selectedCountryCode];
 
   return (   
     <div className={styles.Chart}>
@@ -142,15 +146,16 @@ function StackGraph({ data }) {
           <Chip variant="outlined" color="primary" avatar={<Avatar> </Avatar>} label={`Daily ${selectedDropDownKey}`} />
         </div>
         <div className={styles.select}>
-          <FormControl variant="filled" className={classes.formControl}>
-            <InputLabel id="covid-select-label">Covid Statistics</InputLabel>
+          <FormControl variant="outlined" size="small" className={classes.formControl}>
+            <InputLabel id="covid-select-label">Statistics</InputLabel>
             <Select
+              label="Statistics"
               labelId="covid-select-label"
               id="covid-select"
               value={selectedDropDownKey}
               onChange={({ target }) => setSelectedDropDownKey(target.value)}
             >
-              <MenuItem value="">Choose a Statistic</MenuItem>
+              {/* <MenuItem value="">Choose a Statistic</MenuItem> */}
               <MenuItem value="cases">Cases</MenuItem>
               <MenuItem value="deaths">Deaths</MenuItem>
               <MenuItem value="recovered">Recovered</MenuItem>

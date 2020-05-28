@@ -36,7 +36,8 @@ export const theme = createMuiTheme({
       // main: '#b71c1c' //dark red
     },
     secondary: {
-      main: '#53565A', //charcoal
+      // main: '#53565A', //charcoal
+      main: '#229c9a', //teal
     },
   },
   typography: {

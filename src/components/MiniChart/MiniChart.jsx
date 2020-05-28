@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, scaleOrdinal, schemeCategory10, min, max } from 'd3';
+import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, scaleOrdinal, schemeCategory10, min, max, extent, axisTop, axisLeft } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import { Typography, makeStyles } from '@material-ui/core';
 import styles from '../../styles/Chart.css';
@@ -10,7 +10,7 @@ export function MiniChart({ dataset, property }) {
   
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const dimensions = useResizeObserver(wrapperRef);
+  const myColorScale = ['#46a1fe', '#229C9A', '#2b499d'];
  
   function formatDate(badDate) {
     return badDate.toString().slice(6, 7) + '/' + badDate.toString().slice(8, 10);
@@ -43,7 +43,9 @@ export function MiniChart({ dataset, property }) {
     const yScale = scaleLinear()
       .domain([-100, 100])
       .range([height - margin.bottom, margin.top]);
-  
+    const colorScale = scaleOrdinal(myColorScale)
+      .domain(extent(myColorScale));
+
     // Define axis
     const xAxis = axisBottom(xScale)
       .ticks(dataset['date'].length / 10)
@@ -72,6 +74,28 @@ export function MiniChart({ dataset, property }) {
       .attr('fill', 'none')
       .attr('class', styles.chartBackground);
 
+    // Define and draw gridlines
+    const gridlinesScale = scaleLinear()
+      .domain([-100, 100])
+      .range([height - margin.bottom, margin.top]);
+    const gridlines = axisLeft()
+      .tickFormat('')
+      .ticks(1)
+      .tickSize(-(width - margin.left - margin.right))
+      .scale(gridlinesScale);
+    svg.select(`.${styles.gridLines}`)
+      .attr('class', styles.gridLines)
+      .call(gridlines);
+
+    // Define and draw zeroLine
+    svg.select(`.${styles.zeroLine}`)
+      .attr('x1', margin.left)
+      .attr('y1', ((height - margin.top - margin.bottom) / 2) + margin.top)
+      .attr('x2', (width - margin.right))
+      .attr('y2', (height - margin.top - margin.bottom) / 2 + margin.top)
+      // .style('transform', `translateY(${margin.top}px)`)
+      .attr('class', styles.zeroLine);
+
     // Define line
     const myLine = line()
       .x((value, index) => xScale(index))
@@ -80,13 +104,13 @@ export function MiniChart({ dataset, property }) {
 
     // Draw line
     svg
-      .selectAll('.graphLine')
+      .selectAll(`.${styles.graphLine}`)
       .data([dataset[property.key]])
       .join('path')
-      .attr('class', 'graphLine')
+      .attr('class', `${styles.graphLine}`)
       .attr('d', value => myLine(value))
       .attr('fill', 'none')
-      .attr('stroke', 'red');
+      .attr('stroke', d => colorScale(d));
 
   }, [dataset]);
 
@@ -95,9 +119,11 @@ export function MiniChart({ dataset, property }) {
       <Typography variant="h5">{property.description}</Typography>
       <div ref={wrapperRef} className={styles.container}>
         <svg ref={svgRef}>
+          <rect className={styles.chartBackground} />
+          <g className={styles.gridLines} />
+          <line className={styles.zeroLine} />
           <g className={styles.xAxis} />
           <g className={styles.yAxis} />
-          <rect className={styles.chartBackground} />
         </svg>
       </div>
     </div>
