@@ -8,13 +8,9 @@ export const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
-  infoBox: {
-    display: 'flex',
-    flexDirection: 'row'
-
-  },
   legend: {
     display: 'flex',
-    margin: '1rem'
+    justifyContent: 'center',
+    margin: '1rem',
   }
 }));

@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'; 
 
 import style from './Map.css';
+import leftArrow from '../../assets/RotateLeft.png';
+import rightArrow from '../../assets/RotateRight.png';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalMobilityDataByDate, setSelectedCountryCode, setSelectedCountry } from '../../actions/actions';
@@ -51,6 +53,7 @@ const Map = ({ mapData, countryCode = '' }) => {
   const selectedCountryCode =  useSelector(getSelectedCountryCode);
 
   const [property, setProperty] = useState('retailChange');
+  const [clicked, setClicked] = useState(false);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
@@ -60,15 +63,12 @@ const Map = ({ mapData, countryCode = '' }) => {
 
   const classes = useStyles();
 
-  //use increments of 21 for more even markers
   const marks = [
-    { value: 0, label: dates[0]?.slice(5) },
-    { value: 15, label: dates[15]?.slice(5) },
-    { value: 29, label: dates[29]?.slice(5) },
-    { value: 46, label: dates[46]?.slice(5) },
-    { value: 60, label: dates[60]?.slice(5) },
-    { value: 76, label: dates[76]?.slice(5) },
-    { value: 84, label: dates[84]?.slice(5) },
+    { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
+    { value: 21, label: dates[21]?.slice(5).replace('-', '/') },
+    { value: 42, label: dates[42]?.slice(5).replace('-', '/') },
+    { value: 63, label: dates[63]?.slice(5).replace('-', '/') },
+    { value: 84, label: dates[84]?.slice(5).replace('-', '/') },
   ];
 
   //PopOver
@@ -185,9 +185,11 @@ const Map = ({ mapData, countryCode = '' }) => {
 
     
     if(!countryCode) svg.call(drag()
-      .on('start', () => { setRotating(true);})
+      .on('start', () => { 
+        setRotating(true);
+        setClicked(true);
+      })
       .on('drag', () => {
-
         const rotate = projection.rotate();
         const sensitivity = 50 / projection.scale();
 
@@ -253,13 +255,23 @@ const Map = ({ mapData, countryCode = '' }) => {
             className={style.mapLegendContainer}
           >Percent increase or decrease in travel to {property.replace('Change', '')} locations* 
           </div>
-          <p className={style.legendNoData}>No Data Available</p>
+
+          <p className={style.legendNoData}>{isMobile ? 'N/A' : 'No Data Available'}</p>
           <p>*compared to baseline, pre-pandemic measurements</p>
+
         </Paper>
       </Grid>
     
       <Grid item xs={9} sm={8}ref={wrapperRef} className={style.Map} >
-        <svg ref={svgRef} className={style.svgStyle}></svg>
+        { !mapData.features 
+          ? <CircularProgress /> 
+          : (<> 
+            {!clicked && <Typography variant="body1" className={classes.dragLabel}>Click and drag to rotate</Typography>}
+            {/* {!clicked && <img src={leftArrow} alt="arrow" className={classes.arrow}/> } */}
+            <svg ref={svgRef} className={style.svgStyle}></svg>
+          </>)
+        }
+
         <Popover id={style.countryPopover} 
           className={classes.popover} 
           classes={{ paper: classes.paper }} 
@@ -287,8 +299,10 @@ const Map = ({ mapData, countryCode = '' }) => {
       <Grid item xs={12} sm={2}>
         <Paper elivation={2} className={classes.legendPaper}>
           <FormControl component="fieldset">
-            <FormLabel component="legend">Choose a Metric</FormLabel>
-            <RadioGroup row aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+
+            {/* <FormLabel component="legend">Choose a Metric</FormLabel> */}
+            <RadioGroup row={isMobile} aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+
               <FormControlLabel
                 value="groceryChange"
                 control={<Radio color="primary"/>}
