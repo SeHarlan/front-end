@@ -30,7 +30,7 @@ export const MiniChartsContainer = () => {
     <>
       <Grid container spacing={3}>
         { properties.map((property, i) => 
-          <Grid item xs={6} sm={4} key={i}>
+          <Grid item xs={12} sm={6} lg={4} key={i}>
             { miniChartSubData.date
               ? <MiniChart dataset={miniChartSubData} property={property} />
               : <MiniChart dataset={mobilityData} property={property} />

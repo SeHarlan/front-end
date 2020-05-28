@@ -46,7 +46,18 @@
     }
 
     .graphLine {
-      stroke-width: 5%;
+      stroke-width: 1.5;
+    }
+
+    .gridLines {
+      color: transparent;
+    }
+
+    .zeroLine {
+      stroke: lightgray;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-dasharray: 1, 5;
     }
   }
 
