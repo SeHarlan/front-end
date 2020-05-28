@@ -6,7 +6,6 @@ import { Grid, Typography, FormControl, InputLabel, Select, MenuItem } from '@ma
 
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useStyles } from './Header.styles';
-import { Link } from 'react-router-dom';
 
 // const useStyles = makeStyles((theme) => ({
 //   fullWidth: {
