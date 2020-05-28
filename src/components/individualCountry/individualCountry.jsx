@@ -30,6 +30,12 @@ export const individualCountry = () => {
 
   
   useEffect(() => {
+    if(!countryCode) {
+      dispatch(setSelectedCountryCode(countryCodeParam));
+    }
+  }, []);
+  
+  useEffect(() => {
     if(countryCode === '') return;
     console.log(chartDataSet);
     if(countryName === 'Worldwide' || chartDataSet.countryName !== 'Worldwide') {
@@ -78,9 +84,7 @@ export const individualCountry = () => {
       </Grid>
       
       <Grid item xs={12} lg={10} className={classes.graph}>
-
         { stackGraphDataSet && <StackGraph data={stackGraphDataSet} />}
-
       </Grid>
 
       <Grid item xs={12} lg={10} className={classes.graph}>

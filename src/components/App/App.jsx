@@ -28,7 +28,6 @@ export default function App() {
     dispatch(setCovidChartData());
   }, []);
 
-  // style={{ background: 'linear-gradient(180deg, rgba(43,73,157,0.15) 0%, rgba(255,255,255,1) 300px)' }}
   useEffect(() => {
     if(!countryCode) return;
     dispatch(setCovidChartData(countryCode));
