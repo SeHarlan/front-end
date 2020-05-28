@@ -42,8 +42,8 @@ function StackGraph({ data }) {
     const svg = select(svgRef.current);
 
     const width = 1000;
-    const height = 500;
-    const margin = { top: 0, right: 80, bottom: 20, left: 20 };
+    const height = 250;
+    const margin = { top: 5, right: 80, bottom: 20, left: 20 };
 
 
 
@@ -133,7 +133,7 @@ function StackGraph({ data }) {
 
   return (   
     <div className={styles.Chart}>
-      <div ref={wrapperRef} className={styles.container}>
+      <div ref={wrapperRef} className={`${styles.container} ${styles.fourToOne}`}>
         <svg className="svg" ref={svgRef}>
           <g className={styles.xAxis} />
           <g className={styles.yAxis} />
@@ -141,7 +141,7 @@ function StackGraph({ data }) {
       </div>
       <div className={classes.infoBox}>
         <div className={classes.legend}> 
-          <Chip variant="outlined" style={{ color:'#229c9a', fontWeight: '500', border: '1px solid #229c9a' }} avatar={<Avatar style={{ backgroundColor:'#229c9a' }}> </Avatar>} label={`Total ${selectedDropDownKey}`} />
+          <Chip variant="outlined" style={{ color:'#229c9a', fontWeight: '500', border: '1px solid #229c9a', marginRight: '10px' }} avatar={<Avatar style={{ backgroundColor:'#229c9a' }}> </Avatar>} label={`Total ${selectedDropDownKey}`} />
           <br />
           <Chip variant="outlined" color="primary" avatar={<Avatar> </Avatar>} label={`Daily ${selectedDropDownKey}`} />
         </div>
