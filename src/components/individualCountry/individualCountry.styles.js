@@ -5,7 +5,6 @@ export const useStyles = makeStyles((theme) => ({
     padding: '2.5rem 0',
   },
   title: {
-    fontSize: '1.6rem',
     color: theme.palette.common.green.main,
     paddingBottom: '.5rem',
     fontWeight: '550'
