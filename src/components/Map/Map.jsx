@@ -251,9 +251,10 @@ const Map = ({ mapData, countryCode = '' }) => {
         <Paper elevation={2} className={classes.legendPaper}>
           <div ref={legendRef} 
             className={style.mapLegendContainer}
-          >Change in {property.replace('Change', '')} Mobility 
+          >% increase in travel to {property.replace('Change', '')} locations 
           </div>
           <p className={style.legendNoData}>No Data Available</p>
+          <div>% increase in travel to {property.replace('Change', '')} locations</div>
         </Paper>
       </Grid>
     

@@ -21,7 +21,7 @@ function StackGraph({ data }) {
   const selectedCountryCode = useSelector(getSelectedCountryCode);
   const selectedSubregion = useSelector(getSelectedSubregion);
 
-  const dataStructure = data?.date.reduce((acc, date, i) => {
+  const dataStructure = data?.date?.reduce((acc, date, i) => {
     acc.push({ 
       countryCode: data.countryCode,
       countryName: data.countryName,
@@ -38,7 +38,7 @@ function StackGraph({ data }) {
   }, []);
 
   useEffect(() => {
-
+    if(!dataStructure) return;
     const svg = select(svgRef.current);
 
     const width = 1000;
@@ -146,15 +146,16 @@ function StackGraph({ data }) {
           <Chip variant="outlined" color="primary" avatar={<Avatar> </Avatar>} label={`Daily ${selectedDropDownKey}`} />
         </div>
         <div className={styles.select}>
-          <FormControl variant="filled" className={classes.formControl}>
-            <InputLabel id="covid-select-label">Covid Statistics</InputLabel>
+          <FormControl variant="outlined" size="small" className={classes.formControl}>
+            <InputLabel id="covid-select-label">Statistics</InputLabel>
             <Select
+              label="Statistics"
               labelId="covid-select-label"
               id="covid-select"
               value={selectedDropDownKey}
               onChange={({ target }) => setSelectedDropDownKey(target.value)}
             >
-              <MenuItem value="">Choose a Statistic</MenuItem>
+              {/* <MenuItem value="">Choose a Statistic</MenuItem> */}
               <MenuItem value="cases">Cases</MenuItem>
               <MenuItem value="deaths">Deaths</MenuItem>
               <MenuItem value="recovered">Recovered</MenuItem>
