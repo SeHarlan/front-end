@@ -23,44 +23,19 @@ function LineGraph({ dataset }) {
   
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const dailyKeys = ['totalCases', 'totalCurrentCases', 'totalDeaths'];
-  const totalKeys = ['newCases', 'newDeaths'];
-  const [checkedOptions, setCheckedOptions] = useState(dailyKeys);
   const classes = useStyles();
+  const myColorScale = ['#2b499d', '#229C9A', '#46a1fe'];
+  const dailyKeys = ['totalCases', 'totalCurrentCases', 'totalDeaths'];
+  const totalKeys = ['newCases', 'newRecovered', 'newDeaths'];
+  const [checkedOptions, setCheckedOptions] = useState([]);
   const [switchedToTotal, setSwitchedToTotal] = useState(true);
   const [switchedToLog, setSwitchedToLog] = useState(false);
-  const countryName = useSelector(getSelectedCountryName);
-  const myColorScale = ['#229C9A', '#2b499d', '#46a1fe'];
 
-
-  const handleCheckbox = ({ target }) => {
-    if(!checkedOptions.includes(target.value)) 
-      setCheckedOptions(prevState => [...prevState, target.value]);
-    else setCheckedOptions(checkedOptions.filter(item => (item !== target.value)));
-  };
 
   const handleTotalSwitch = () => {
     setSwitchedToTotal(!switchedToTotal);
-    if(switchedToTotal === true) 
-      setCheckedOptions(totalKeys);
+    if(switchedToTotal === true) setCheckedOptions(totalKeys);
     else setCheckedOptions(dailyKeys);
-  };
-
-  const checkboxOptions = (data) => {
-    const myKeys = filteredKeys(data);
-    return myKeys.map((myKey, i) => 
-      <FormControlLabel 
-        key={i} 
-        control={
-          <Checkbox 
-            checked={checkedOptions.includes(myKey)} 
-            onChange={handleCheckbox}
-            id={myKey} 
-            name={myKey} 
-            value={myKey}
-          />}
-        label={myKey} />
-    );
   };
   
   const formattedDate = (badDate) => 
@@ -68,11 +43,6 @@ function LineGraph({ dataset }) {
 
   const formattedCountryName = (badName) => 
     badName.replace(' ', '_').replace('\'', '');
-
-  const selectOptions = (data) => {
-    const myKeys = filteredKeys(data);
-    return myKeys.map((myKey, i) => <option key={i} value={myKey}>{myKey}</option>);
-  };
 
   const filteredData = (data, selectedKeys) => {
     // Refactor this
@@ -84,20 +54,14 @@ function LineGraph({ dataset }) {
     return newArr;
   }; 
 
-  const filteredKeys = (data) => {
-    const keys = Object.keys(data);
-    // Refactor: Apparently, item !== ('date' || 'countryCode' || 'countryName') doesn't work?
-    return keys.filter(item => (item !== 'date' && item !== 'countryCode' && item !== 'countryName'));
-  };
-
-
-  // useEffect(() => {
-  //   console.log('filtered keys: ', filteredKeys(dataset));
-  //   setCheckedOptions(filteredKeys(dataset));
-  // }, [dataset]);
-
+  // Define initial set of keys to graph based on Switch state
   useEffect(() => {
-    if(!dataset || !dataset.date) {
+    setCheckedOptions(switchedToTotal ? dailyKeys : totalKeys);
+  }, []);
+
+  // Render the chart
+  useEffect(() => {
+    if(!dataset || !dataset.date || !checkedOptions) {
       console.log('No data, exiting useEffect()');
       return;
     }
@@ -118,17 +82,23 @@ function LineGraph({ dataset }) {
       .attr('preserveAspectRatio', 'xMinYMin meet');
 
     // Define scales
-    let yAxisMin;
+    let yAxisMin = 0;
     let yAxisMax;
-    if(switchedToTotal) {
-      yAxisMin = min(dataset.totalCases ?? -100);
-      yAxisMax = max(dataset.totalCases ?? 100);
-    } else {
-      yAxisMin = min(dataset.newCases ?? -100);
-      yAxisMax = max(dataset.newCases ?? 100);
+    if(switchedToTotal) yAxisMax = max(dataset.totalCases);
+    else yAxisMax = max(dataset.newCases);
+    if(switchedToLog) {
+      if(switchedToTotal) {
+        yAxisMin = min(dataset.totalCases);
+        yAxisMax = max(dataset.totalCases);
+      } else {
+        yAxisMin = min(dataset.newCases);
+        yAxisMax = max(dataset.newCases);
+      }
     }
-    const maxData = yAxisMax;
     const xScale = scaleLinear()
+      // This is getting closer, I think? 
+      // See https://bl.ocks.org/hitarth19/0295f89b15da5ec03bc1a20644182ce8
+      // .domain([min(dataset.date), max(dataset.date)])
       .domain([0, dataset['date'].length - 1]) // range of data
       .range([margin.left, width - margin.right]); // range of pixels
     let yScale;
@@ -142,12 +112,12 @@ function LineGraph({ dataset }) {
         .range([height - margin.bottom, margin.top]);
     }
     const colorScale = scaleOrdinal(myColorScale)
-      .domain(filteredKeys(dataset));
+      .domain(checkedOptions);
   
     // Define axis
     const xAxis = axisBottom()
       .scale(xScale)
-      .ticks(dataset['date'].length / 5)
+      .ticks(10)
       .tickFormat(index => formattedDate(dataset.date[index]));
     const ticks = switchedToLog ? [5, 'e'] : [height / 40];
     const yAxis = axisRight()
@@ -192,98 +162,6 @@ function LineGraph({ dataset }) {
       .attr('fill', 'none')
       .attr('stroke', d => colorScale(d));
 
-    function justHereToFoldBadMouseoverCode() {
-    // // Mouseover bubbles
-    // const mouseG = svg.append('g')
-    //   .attr('class', 'mouse-over-effects');
-    // const lines = document.getElementsByClassName('graphLine');
-    // console.log('lines:', lines);
-    // const mousePerLine = mouseG.selectAll('.mouse-per-line')
-    //   .data(filteredData(covidData, checkedOptionsArray))
-    //   .enter()
-    //   .append('g')
-    //   .attr('class', 'mouse-per-line');
-    // mousePerLine.append('circle')
-    //   .attr('r', 4)
-    //   .style('stroke', 'red')
-    //   .style('fill', 'none')
-    //   .style('stroke-width', '1px')
-    //   .style('opacity', '0');
-    // mousePerLine.append('text')
-    //   .attr('transform', 'translate(10,3)');
-    // mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-    //   .attr('width', width) // can't catch mouse events on a g element
-    //   .attr('height', height)
-    //   .attr('fill', 'none')
-    //   .attr('pointer-events', 'all');
-
-      // // on mouse out hide line, circles and text
-      // mouseG.on('mouseout', function() { 
-      //   svg.selectAll('.mouse-per-line circle').style('opacity', '0');
-      //   svg.selectAll('.mouse-per-line text').style('opacity', '0');
-      // });
-
-      // // on mouse in show line, circles and text
-      // mouseG.on('mouseover', function() { 
-      //   svg.selectAll('.mouse-per-line circle').style('opacity', '1');
-      //   svg.selectAll('.mouse-per-line text').style('opacity', '1');
-      // });
-
-      // // mouse moving over canvas
-      // mouseG.on('mousemove', function() {
-      //   const thisMouse = mouse(this);
-      //   svg
-      //     .selectAll('.mouse-per-line')
-      //     .attr('transform', function(d, i) {
-      //       const offsetLeft = wrapperRef.current.offsetLeft;
-      //       const offsetTop = wrapperRef.current.offsetTop;
-      //       let x = event.pageX - offsetLeft;
-      //       let y = event.pageY - offsetTop;
-      //       let beginning = x;
-      //       let pathLength = lines[i].getTotalLength();
-      //       let end = pathLength;
-      //       let target;
-      //       let pos;
-      //       while(true) {
-      //         target = Math.floor((beginning + end) / 2);
-      //         pos = lines[i].getPointAtLength(target);
-      //         console.log('pos:', pos);
-      //         if((target === end || target === beginning) && pos.x !== x) {
-      //           break;
-      //         }
-      //         if(pos.x > x) end = target;
-      //         else if(pos.x < x) beginning = target;
-      //         else break; //position found
-      //       }
-          
-      //       // var xDate = xScale.invert(mouse[0]),
-      //       // bisect = bisector(function(d) { return d.date; }).right;
-      //       // let idx = bisect(d.values, xDate);
-      //       // console.log('idx', idx);
-
-      //       d3.select(this)
-      //         .select('text')
-      //         .text(yScale.invert(y).toFixed(0));
-
-      //       // console.log('===');
-      //       // console.log('width and height', width, height);
-      //       // console.log('x is', x);
-      //       // console.log('pos.x is', pos.x);
-      //       // console.log('thisMouse[0] is', thisMouse[0]);
-      //       // console.log('x scaled is', xScale(x));
-      //       // console.log('x inverse is', xScale.invert(x));
-      //       // console.log('pos.x inverse is', xScale.invert(pos.x));
-      //       // console.log('---');
-      //       // console.log('y is', y);
-      //       // console.log('pos.y is', pos.y);
-      //       // console.log('thisMouse[1] is', thisMouse[1]);
-      //       // console.log('y inverse is', yScale.invert(y));
-      //       // console.log('pos.y inverse is', yScale.invert(pos.y));
-
-    //       return 'translate(' + x + ',' + pos.y + ')';
-    //     });
-    // });
-    }
   }, [dataset, checkedOptions, switchedToLog]);
 
   return (
@@ -300,7 +178,7 @@ function LineGraph({ dataset }) {
             </Grid>
           </Typography>
 
-          <Typography component="div">
+          {/* <Typography component="div">
             <Grid component="label" container alignItems="center" spacing={0}>
               <Grid item>Linear</Grid>
               <Grid item>
@@ -308,7 +186,7 @@ function LineGraph({ dataset }) {
               </Grid>
               <Grid item>Logarithmic</Grid>
             </Grid>
-          </Typography>
+          </Typography> */}
         </div>
       </div>  
       
@@ -325,11 +203,11 @@ function LineGraph({ dataset }) {
         {dataset.date &&
          <div className={classes.root}> 
            {/* Refactor: Map through these instead */}
-           <Chip variant="outlined" className={classes.chipMargin} style={{ color: `${myColorScale[1]}`, border: `1px solid ${myColorScale[1]}`, backgroundColor: 'white' }} avatar={<Avatar style={{ backgroundColor:`${myColorScale[1]}` }}> </Avatar>} label="Total Cases" />
+           <Chip variant="outlined" className={classes.chipMargin} style={{ color: `${myColorScale[0]}`, border: `1px solid ${myColorScale[0]}`, backgroundColor: 'white' }} avatar={<Avatar style={{ backgroundColor:`${myColorScale[0]}` }}> </Avatar>} label="Total Cases" />
            <br />
-           <Chip variant="outlined" className={classes.chipMargin} style={{ color: `${myColorScale[2]}`, border: `1px solid ${myColorScale[2]}`, backgroundColor: 'white' }} avatar={<Avatar style={{ backgroundColor:`${myColorScale[2]}` }}> </Avatar>} label="Current Cases" />
+           <Chip variant="outlined" className={classes.chipMargin} style={{ color: `${myColorScale[1]}`, border: `1px solid ${myColorScale[1]}`, backgroundColor: 'white' }} avatar={<Avatar style={{ backgroundColor:`${myColorScale[1]}` }}> </Avatar>} label={switchedToTotal ? 'Current Cases' : 'Recovered Cases'} />
            <br />
-           <Chip variant="outlined" className={classes.chipMargin} style={{ color: `${myColorScale[0]}`, border: `1px solid ${myColorScale[0]}`, backgroundColor: 'white' }} avatar={<Avatar style={{ backgroundColor:`${myColorScale[0]}` }}> </Avatar>} label="Deaths" />
+           <Chip variant="outlined" className={classes.chipMargin} style={{ color: `${myColorScale[2]}`, border: `1px solid ${myColorScale[2]}`, backgroundColor: 'white' }} avatar={<Avatar style={{ backgroundColor:`${myColorScale[2]}` }}> </Avatar>} label="Deaths" />
            <br />
          </div>
         }
