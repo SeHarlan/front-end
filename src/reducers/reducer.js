@@ -9,7 +9,8 @@ const initialState = {
   mobilitySubregionNames: [],
   covidSubData: {},
   mobilitySubData: {},
-  selectedCountryName: 'Worldwide'
+  selectedCountryName: 'Worldwide',
+  selectedSubregion: ''
 };
 
 export default function reducer(state = initialState, { type, payload }) {

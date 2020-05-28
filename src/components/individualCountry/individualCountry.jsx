@@ -51,7 +51,7 @@ export const individualCountry = () => {
   const stackGraphDataSet = stackGraphSubData.date ? stackGraphSubData : chartDataSet;
 
   return (
-    <Grid container className={classes.root}>
+    <Grid container justify="center" className={classes.root}>
       <Grid item xs={12}>
         <Typography variant="h3" className={classes.title}>{countryName}</Typography>
         {subregion && <Typography variant="h4" className={classes.title}>{subregion}</Typography>}
@@ -62,15 +62,16 @@ export const individualCountry = () => {
       <Grid item xs={12}>
         { !selectOptions.length 
           ? <Typography variant="body1">No Subregions Found</Typography>
-          : <FormControl variant="filled" className={classes.formControl}>
+          : <FormControl variant="outlined" size="small" className={classes.formControl}>
             <InputLabel id="subregion-select-label">Subregion</InputLabel>
             <Select
+              label="Subregion"
               labelId="subregion-select-label"
               id="subregion-select"
               value={subregion}
               onChange={({ target }) => dispatch(setSelectedSubregion(target.value))}
             >
-              <MenuItem value="">Choose a Subregion</MenuItem>
+              <MenuItem value="" key="default">Choose a Subregion</MenuItem>
               {selectOptions}
             </Select>
           </FormControl>}
@@ -82,7 +83,7 @@ export const individualCountry = () => {
 
       </Grid>
 
-      <Grid item xs={12} lg={6} className={classes.graph}>
+      <Grid item xs={12} lg={10} className={classes.graph}>
         <MiniChartsContainer />
       </Grid>
 
