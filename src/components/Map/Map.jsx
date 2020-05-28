@@ -3,7 +3,7 @@ import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'; 
+import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, CircularProgress } from '@material-ui/core'; 
 
 import style from './Map.css';
 import leftArrow from '../../assets/RotateLeft.png';
@@ -14,7 +14,7 @@ import { setGlobalMobilityDataByDate, setSelectedCountryCode, setSelectedCountry
 import { getMobilityDates, getSelectedCountryCode } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
 import { useStyles } from './Map.styles';
-// import { useIsMobile } from '../hooks/isMobile';
+import { useIsMobile } from '../../hooks/isMobile';
 
 const SliderStyled = withStyles({
   root: {
@@ -89,7 +89,7 @@ const Map = ({ mapData, countryCode = '' }) => {
   const wrapperHeight = dimensions?.height;
   const dispatch = useDispatch();
   const history = useHistory();
-  // const isMobile = useIsMobile();
+  const isMobile = useIsMobile();
   
 
   //this could be trimed down if we used redux for countryName
