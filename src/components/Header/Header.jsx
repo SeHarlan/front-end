@@ -5,7 +5,7 @@ import { setSelectedCountryCode, setSelectedCountryName, setSelectedCountry, set
 import { Grid, Typography, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 // import { useStyles } from './Header.styles';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   fullWidth: {
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const Header = () => {
   const classes = useStyles();
-
+  const history = useHistory();
   const dispatch = useDispatch();
   const selectedCountryCode = useSelector(getSelectedCountryCode);
   const selectedCountryName = useSelector(getSelectedCountryName);
@@ -80,6 +80,7 @@ export const Header = () => {
               };
               dispatch(setSelectedCountry(toDispatch));
               dispatch(setSelectedSubregion(''));
+              history.replace(`/country/${countryCode}`);
             }}
           >
             <MenuItem value={JSON.stringify({

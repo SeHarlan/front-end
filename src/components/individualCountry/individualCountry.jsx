@@ -8,7 +8,7 @@ import StackGraph from '../StackGraph/StackGraph';
 import { getCovidChartData } from '../../selectors/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import MiniChartsContainer from '../MiniChart/MiniChartsContainer';
-import { setSelectedSubregion, setMobilitySubregionNames, setCovidSubData, setMobilitySubData, resetCovidSubData, setSelectedCountryCode } from '../../actions/actions';
+import { setSelectedSubregion, setMobilitySubregionNames, setCovidSubData, setMobilitySubData, resetCovidSubData, setSelectedCountryCode, setSelectedCountry, setSelectedCountryName } from '../../actions/actions';
 
 export const individualCountry = () => {
   const classes = useStyles();
@@ -22,16 +22,21 @@ export const individualCountry = () => {
   const chartDataSet = useSelector(getCovidChartData);
   const stackGraphSubData = useSelector(getCovidSubData);
 
+
+  
   useEffect(() => {
-    if(!countryCode) {
-      dispatch(setSelectedCountryCode(countryCodeParam));
-    }
+    if(!countryCode.length) dispatch(setSelectedCountryCode(countryCodeParam));
   }, []);
+
   
   useEffect(() => {
     if(countryCode === '') return;
+    console.log(chartDataSet);
+    if(countryName === 'Worldwide' || chartDataSet.countryName !== 'Worldwide') {
+      dispatch(setSelectedCountryName(chartDataSet.countryName));
+    }  
     dispatch(setMobilitySubregionNames(countryCode));
-  }, [countryCode]);
+  }, [countryCode, chartDataSet]);
 
   useEffect(() => {
     if(subregion === '') return dispatch(resetCovidSubData());
@@ -72,12 +77,8 @@ export const individualCountry = () => {
       </Grid>
       
       <Grid item xs={12} lg={10} className={classes.graph}>
-        {/* { stackGraphSubData.date 
-          ? stackGraphSubData.date ? <StackGraph data={stackGraphSubData}/> : null
-          : chartDataSet.date ? <StackGraph data={chartDataSet} /> : null
-        } */}
 
-        <StackGraph data={stackGraphDataSet} />
+        { stackGraphDataSet && <StackGraph data={stackGraphDataSet} />}
 
       </Grid>
 

@@ -21,7 +21,7 @@ function StackGraph({ data }) {
   const selectedCountryCode = useSelector(getSelectedCountryCode);
   const selectedSubregion = useSelector(getSelectedSubregion);
 
-  const dataStructure = data?.date.reduce((acc, date, i) => {
+  const dataStructure = data?.date?.reduce((acc, date, i) => {
     acc.push({ 
       countryCode: data.countryCode,
       countryName: data.countryName,
@@ -38,7 +38,7 @@ function StackGraph({ data }) {
   }, []);
 
   useEffect(() => {
-
+    if(!dataStructure) return;
     const svg = select(svgRef.current);
 
     const width = 1000;
