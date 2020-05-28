@@ -6,6 +6,7 @@ import { Grid, Typography, FormControl, InputLabel, Select, MenuItem } from '@ma
 
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useStyles } from './Header.styles';
+import logo from '../../assets/logo.png';
 
 // const useStyles = makeStyles((theme) => ({
 //   fullWidth: {
@@ -56,8 +57,14 @@ export const Header = () => {
     <Grid container justify='center' alignItems='center' className={classes.fullWidth}>
       <Grid item sm={3} />
       <Grid item xs={12} sm={6} className={classes.fullWidthWhite}>
-        <Typography variant="h1" align="center" className={classes.title}><Link to='/' className={classes.h1TitleLink}>Going Viral</Link></Typography>
-        <Typography variant="h3" align="center" className={classes.subtitle}>Pandemic-Related Mobility Metrics</Typography>
+        <Link to='/' className={classes.h1TitleLink}>
+          <section style={{ textAlign: 'center' }}> 
+            <Typography variant="h1" align="center" style={{ display: 'inline' }} className={classes.title}>G</Typography>
+            <img src={logo} alt="Going Viral" style={{ width: '3rem', position: 'relative', top: '0.7rem', left: '0.2rem', margin: '0 -0.2rem 0 -0.2rem' }}/>
+            <Typography variant="h1" align="center" style={{ display: 'inline' }}className={classes.title}>ing Viral</Typography>
+          </section>
+          <Typography variant="h3" align="center" className={classes.subtitle}>Pandemic-Related Mobility Metrics</Typography>
+        </Link>
       </Grid>
       <Grid item xs={12} sm={3}>
         { globalMapMobilityData.features && (location.pathname !== '/about') &&
