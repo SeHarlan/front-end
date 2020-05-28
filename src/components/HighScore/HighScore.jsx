@@ -29,11 +29,10 @@ export const HighScore = () => {
 
   console.log('absolute change in metrics', result);
 
-
   const list = mappedData.map(([countryName, data], i) => {
     return (
       <div key={countryName}>
-        { (i !== 121) && <p> {i + 1} {countryName} </p> }
+        { (i !== 121) && <p> {i + 1}. {countryName} </p> }
       </div>
       //  {data.sumMetric} {data.residentialChange}</
     );
@@ -49,7 +48,7 @@ export const HighScore = () => {
 
         <Grid item xs={12} sm={3}>
           <FormControl variant="outlined" size="small" fullWidth className={classes.formControl}>
-            <InputLabel id="country-select-label">Choose two Countries to compare</InputLabel>
+            <InputLabel id="country-select-label">Choose a Country to compare</InputLabel>
             <Select
               labelId="country-select-label"
               id="country-select"
