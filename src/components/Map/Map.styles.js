@@ -2,7 +2,9 @@ import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
   mapContainer: {
-    minHeight: '600px'
+    minHeight: '600px',
+    padding: '2rem',
+    marginBottom: '1rem'
   },
   popover: {
     pointerEvents: 'auto',

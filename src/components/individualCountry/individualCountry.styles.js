@@ -5,7 +5,6 @@ export const useStyles = makeStyles((theme) => ({
     padding: '2.5rem 0',
   },
   title: {
-    color: theme.palette.common.green.main,
     paddingBottom: '.5rem',
     fontWeight: '550'
   },
@@ -17,7 +16,7 @@ export const useStyles = makeStyles((theme) => ({
     margin: '2rem'
   },
   formControl: {
-    margin: theme.spacing(1),
+    margin: '8px 0 8px 0',
     minWidth: 120,
   },
   selectEmpty: {

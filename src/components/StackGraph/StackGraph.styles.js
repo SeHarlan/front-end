@@ -15,7 +15,6 @@ export const useStyles = makeStyles((theme) => ({
   },
   legend: {
     display: 'flex',
-    flexDirection: 'column',
     margin: '1rem'
   }
 }));
