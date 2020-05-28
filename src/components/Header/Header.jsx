@@ -8,30 +8,6 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useStyles } from './Header.styles';
 import logo from '../../assets/logo.png';
 
-// const useStyles = makeStyles((theme) => ({
-//   fullWidth: {
-//     backgroundColor: 'none', 
-//     width: 'calc(100% + 48px)',
-//     margin: '0 -24px',
-//     padding: '18px 24px',
-//   },
-//   title: {
-//     color: theme.palette.common.teal.main,
-//     fontWeight: 'bold',
-//   },
-//   h1TitleLink: {
-//     color: theme.palette.primary.main,
-//     fontWeight: 'bold',
-//     textDecoration: 'none',
-//   },
-//   subtitle: {
-//     color: theme.palette.common.teal.main,
-//   },
-//   formControl: {
-//     backgroundColor: 'white',
-//   }
-// }));
-
 export const Header = () => {
   const classes = useStyles();
   const history = useHistory();

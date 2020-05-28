@@ -35,6 +35,11 @@ export const useStyles = makeStyles((theme) => ({
     fontSize: '2rem',
     fontWeight: '550',
     // position: 'absolute'
-  }
+  },
+  formControl: {
+    margin: '8px 0 8px 0',
+    minWidth: 300,
+    // backgroundColor: 'white'
+  },
 }));
 
