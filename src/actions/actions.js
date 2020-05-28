@@ -205,3 +205,10 @@ export const setMobilitySubData = (countryCode, subRegion1) => dispatch => {
       });
     });
 };
+
+export const RESET_COVID_SUB_DATA = 'RESET_COVID_SUB_DATA';
+export const resetCovidSubData = () => dispatch => {
+  dispatch({
+    type: RESET_COVID_SUB_DATA,
+  });
+};
