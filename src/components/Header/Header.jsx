@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getSelectedCountryCode, getGlobalMapMobilityByDate, getSelectedCountryName } from '../../selectors/selectors';
 import { setSelectedCountryCode, setSelectedCountryName, setSelectedCountry, setSelectedSubregion } from '../../actions/actions';
 import { Grid, Typography, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-// import { makeStyles } from '@material-ui/core/styles';
+
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useStyles } from './Header.styles';
 import { Link } from 'react-router-dom';
-// import logo from '../assets/logo.png';
 
 // const useStyles = makeStyles((theme) => ({
 //   fullWidth: {
@@ -34,7 +34,8 @@ import { Link } from 'react-router-dom';
 
 export const Header = () => {
   const classes = useStyles();
-
+  const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
   const selectedCountryCode = useSelector(getSelectedCountryCode);
   const selectedCountryName = useSelector(getSelectedCountryName);
@@ -63,9 +64,10 @@ export const Header = () => {
         <Typography variant="h3" align="center" className={classes.subtitle}>Mobility in Times of Quarantine</Typography>
       </Grid>
       <Grid item xs={12} sm={3}>
-        { globalMapMobilityData.features &&
+        { globalMapMobilityData.features && (location.pathname !== '/about') &&
         <FormControl variant="outlined" size="small" fullWidth className={classes.formControl}>
           {/* <InputLabel id="country-select-label">Choose a Country</InputLabel> */}
+          
           <Select
             labelId="country-select-label"
             id="country-select"
@@ -81,6 +83,7 @@ export const Header = () => {
               };
               dispatch(setSelectedCountry(toDispatch));
               dispatch(setSelectedSubregion(''));
+              if(location.pathname !== '/')history.replace(`/country/${countryCode}`);
             }}
           >
             <MenuItem value={JSON.stringify({
