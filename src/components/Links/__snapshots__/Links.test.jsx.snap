@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App component renders App 1`] = `
+exports[`Links component renders Links 1`] = `
 <ContextProvider>
-  <App />
+  <Component />
 </ContextProvider>
 `;
