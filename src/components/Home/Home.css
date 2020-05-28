@@ -1,17 +1,18 @@
 .Home {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: 4rem;
+  padding-bottom: 3rem;
 
 }
 
 .fullWidthLightBlue {
   width: calc(100% + 48px) !important;
-  background-color: rgba(43,73,157,0.1);
+  background-color: rgba(43, 73, 157, 0.132);
   margin: 0 -24px;
   padding: 2rem;
-  box-shadow: 0 -3px 50px rgba(107, 135, 199, 0.26);
 
   .subhead {
     margin: 0 0 2rem 0;
+    color: #229c9a; 
+
   }
 }
