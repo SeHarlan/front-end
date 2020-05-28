@@ -86,10 +86,12 @@ export const Header = () => {
               if(location.pathname !== '/')history.replace(`/country/${countryCode}`);
             }}
           >
-            <MenuItem value={JSON.stringify({
-              countryCode: '',
-              countryName: 'Worldwide'
-            })}>Choose a Country</MenuItem>
+            { (location.pathname === '/') &&
+              <MenuItem value={JSON.stringify({
+                countryCode: '',
+                countryName: 'Worldwide'
+              })}>Choose a Country</MenuItem>
+            }
             {selectOptions}          
           </Select>
         </FormControl>

@@ -62,15 +62,16 @@ export const individualCountry = () => {
       <Grid item xs={12}>
         { !selectOptions.length 
           ? <Typography variant="body1">No Subregions Found</Typography>
-          : <FormControl variant="filled" className={classes.formControl}>
+          : <FormControl variant="outlined" size="small" className={classes.formControl}>
             <InputLabel id="subregion-select-label">Subregion</InputLabel>
             <Select
+              label="Subregion"
               labelId="subregion-select-label"
               id="subregion-select"
               value={subregion}
               onChange={({ target }) => dispatch(setSelectedSubregion(target.value))}
             >
-              <MenuItem value="">Choose a Subregion</MenuItem>
+              <MenuItem value="" key="default">Choose a Subregion</MenuItem>
               {selectOptions}
             </Select>
           </FormControl>}
