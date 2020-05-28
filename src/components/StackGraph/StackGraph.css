@@ -1,0 +1,39 @@
+.StackGraph {
+  margin-bottom: 10rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+  box-sizing: border-box;
+
+  svg {
+    display: block;
+    overflow: visible;
+  }
+  .legendBox {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5rem;
+  }
+  .legendSpan {
+    margin: 1rem;
+    padding: .5rem;
+    width: 5rem;
+    height: 2rem;
+    color: white;
+  }
+  .select {
+  }
+  svg rect.selection {
+    stroke: none;
+  }
+  .xAxis {
+    padding-top: 10rem;
+    font-size: 1em;
+  }
+  .yAxis {
+    font-size: 1em;
+  }
+}
