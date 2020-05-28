@@ -35,7 +35,7 @@ export const useStyles = makeStyles((theme) => ({
     backgroundColor: 'none', 
     // width: 'calc(100% + 48px)',
     // margin: '0 -24px',
-    // padding: '18px 24px',
+    padding: '18px 24px',
   },
   h1TitleLink: {
     color: theme.palette.primary.main,
