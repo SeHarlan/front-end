@@ -10,7 +10,7 @@ import { ComparePage } from '../ComparePage/ComparePage';
 import { HighScore } from '../HighScore/HighScore';
 import { About } from '../About/About';
 import { useDispatch, useSelector } from 'react-redux';
-import { setMobilityDates, setGlobalMobilityDataByDate, setCovidChartData } from '../../actions/actions';
+import { setMobilityDates, setGlobalMobilityDataByDate, setCovidChartData, setUSMobilityDataByDate } from '../../actions/actions';
 import { theme } from './theme';
 import { useStyles } from './App.styles';
 import { getSelectedCountryCode } from '../../selectors/selectors';
@@ -19,12 +19,13 @@ export default function App() {
   const dispatch = useDispatch();
   const styles = useStyles();
 
-  const defaultDate = '2020-05-09';
+  const defaultDate = '2020-04-03';
   const countryCode = useSelector(getSelectedCountryCode);
 
   useEffect(() => {
     dispatch(setMobilityDates());
     dispatch(setGlobalMobilityDataByDate(defaultDate));
+    dispatch(setUSMobilityDataByDate(defaultDate));
     dispatch(setCovidChartData());
   }, []);
 

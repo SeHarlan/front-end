@@ -36,6 +36,9 @@
     }
   }
   
+  .US {
+    overflow: hidden !important;
+  }
 
 }
 

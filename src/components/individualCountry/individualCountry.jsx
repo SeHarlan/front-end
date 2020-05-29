@@ -2,18 +2,19 @@ import React, { useEffect } from 'react';
 import { Grid, Typography, FormControl, Input, InputLabel, Select, MenuItem, CircularProgress } from '@material-ui/core';
 import { useStyles } from './individualCountry.styles';
 // import Map from '../Map/Map';
-import { getGlobalMapMobilityByDate, getSelectedCountryCode, getMobilitySubregionNames, getSelectedSubregion, getCovidSubData, getMobilitySubData, getSelectedCountryName } from '../../selectors/selectors';
+import { getGlobalMapMobilityByDate, getSelectedCountryCode, getMobilitySubregionNames, getSelectedSubregion, getCovidSubData, getMobilitySubData, getSelectedCountryName, getUSMobilityMap } from '../../selectors/selectors';
 import { useParams } from 'react-router-dom';
 import StackGraph from '../StackGraph/StackGraph';
 import { getCovidChartData } from '../../selectors/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import MiniChartsContainer from '../MiniChart/MiniChartsContainer';
-import { setSelectedSubregion, setMobilitySubregionNames, setCovidSubData, setMobilitySubData, resetCovidSubData, setSelectedCountryCode, setSelectedCountry, setSelectedCountryName } from '../../actions/actions';
+import { setSelectedSubregion, setMobilitySubregionNames, setCovidSubData, setMobilitySubData, resetCovidSubData, setSelectedCountryCode, setSelectedCountry, setSelectedCountryName, setUSMobilityDataByDate } from '../../actions/actions';
+import { set } from 'd3';
+import USMap from '../Map/USMap';
 
 export const individualCountry = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  // const globalMapMobilityData = useSelector(getGlobalMapMobilityByDate);
   const { countryCode: countryCodeParam } = useParams();
   const countryCode = useSelector(getSelectedCountryCode);
   const countryName = useSelector(getSelectedCountryName);
@@ -21,23 +22,17 @@ export const individualCountry = () => {
   const subRegionNames = useSelector(getMobilitySubregionNames);
   const chartDataSet = useSelector(getCovidChartData);
   const stackGraphSubData = useSelector(getCovidSubData);
+  const USMobilityMap = useSelector(getUSMobilityMap); //maybe move inline for faster performance?
+
 
 
   
   useEffect(() => {
     if(!countryCode.length) dispatch(setSelectedCountryCode(countryCodeParam));
   }, []);
-
-  
-  useEffect(() => {
-    if(!countryCode) {
-      dispatch(setSelectedCountryCode(countryCodeParam));
-    }
-  }, []);
   
   useEffect(() => {
     if(countryCode === '') return;
-    console.log(chartDataSet);
     if(countryName === 'Worldwide' || chartDataSet.countryName !== 'Worldwide') {
       dispatch(setSelectedCountryName(chartDataSet.countryName));
     }  
@@ -48,6 +43,7 @@ export const individualCountry = () => {
     if(subregion === '') return dispatch(resetCovidSubData());
     dispatch(setCovidSubData(countryCode, subregion));
     dispatch(setMobilitySubData(countryCode, subregion));
+
   }, [subregion]);
 
   const selectOptions = subRegionNames
@@ -59,12 +55,10 @@ export const individualCountry = () => {
   return (
     <Grid container justify="center" className={classes.root}>
       <Grid item xs={12} md={10}>
-        <Typography variant="h3" color="primary" className={classes.title}>{countryName}</Typography>
+        <Typography variant="h3" color="primary" className={classes.title}>COVID Statistics for {countryName}</Typography>
         {/* {subregion && <Typography variant="h4" color="secondary" className={classes.title}>{subregion}</Typography>} */}
         
-        {/* <Map mapData={globalMapMobilityData} countryCode={countryCodeParam || countryCode}/> */}
       </Grid>
-
       <Grid item xs={12} md={10}>
         { !selectOptions.length 
           ? <Typography variant="body1">No Subregions Found</Typography>
@@ -82,12 +76,18 @@ export const individualCountry = () => {
             </Select>
           </FormControl>}
       </Grid>
+      {countryCode === 'US' && 
+        <Grid item xs={12} md={10}>
+          <USMap mapData={USMobilityMap}/>
+        </Grid>
+      }
       
       <Grid item xs={12} md={10} className={classes.graph}>
         { stackGraphDataSet && <StackGraph data={stackGraphDataSet} />}
       </Grid>
 
       <Grid item xs={12} md={10} className={classes.graph}>
+        <Typography variant="h3" color="primary" className={classes.title} style={{ marginBottom: '1rem' }}>Mobility Statistics</Typography>
         <MiniChartsContainer />
       </Grid>
 
