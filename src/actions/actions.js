@@ -1,5 +1,6 @@
 import { fetchMobilityDataByCountryCode, fetchWorldMobilityData, fetchMobilitySubregions, fetchMobilitySubData } from '../services/mobility';
 import geoJson from '../data/World-map-lo-res.geo.json';
+import USgeoJson from '../data/US-States.geo.json';
 import { fetchCountryCovidData, fetchCovidSubData } from '../services/covid';
 
 
@@ -7,11 +8,8 @@ export const SET_GLOBAL_MAP_MOBILITY_BY_DATE = 'SET_GLOBAL_MAP_MOBILITY_BY_DATE'
 export const setGlobalMobilityDataByDate = (date) => dispatch => {
   return fetchWorldMobilityData(date)
     .then(mobilityData => {
-      
       return geoJson.features.map(mapCountry => {
-
         const matchedMobilityData = mobilityData.find(dataCountry =>  dataCountry.countryCode === mapCountry.properties.iso_a2);
-
         return {
           ...mapCountry,
           mobilityData: matchedMobilityData || {}
@@ -21,6 +19,34 @@ export const setGlobalMobilityDataByDate = (date) => dispatch => {
     .then(mungedGeoJson => {
       dispatch({
         type: SET_GLOBAL_MAP_MOBILITY_BY_DATE,
+        payload: {
+          'type': 'FeatureCollection',
+          'features': mungedGeoJson
+        }
+      });
+    });
+};
+export const SET_US_MAP_MOBILITY_BY_DATE = 'SET_US_MAP_MOBILITY_BY_DATE';
+export const setUSMobilityDataByDate = (date) => dispatch => {
+  return fetchMobilitySubregions('US')
+    .then(mobilityData => {
+      const mobilityDataByDate = mobilityData.reduce((acc, curr) => {
+        if(curr.subRegion1 !== null && curr.date.includes(date)) acc.push(curr);
+        return acc;
+      }, []);
+      return USgeoJson.features.map(mapFeature=> {
+        const matchedMobilityData = mobilityDataByDate.find(mobilityItem => {
+          return  mobilityItem.subRegion1 === mapFeature.properties.NAME;
+        });
+        return {
+          ...mapFeature,
+          mobilityData: matchedMobilityData
+        };
+      });
+    })
+    .then(mungedGeoJson => {
+      dispatch({
+        type: SET_US_MAP_MOBILITY_BY_DATE,
         payload: {
           'type': 'FeatureCollection',
           'features': mungedGeoJson

@@ -30,3 +30,6 @@ export const getCovidSubData = state => state.reducer.covidSubData;
 
 // returns all mobility data for a single subRegion
 export const getMobilitySubData = state => state.reducer.mobilitySubData;
+
+//returns US map geojson with mobility data 
+export const getUSMobilityMap = state => state.reducer.USMobilityMap;

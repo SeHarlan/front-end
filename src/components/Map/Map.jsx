@@ -11,7 +11,7 @@ import rightArrow from '../../assets/RotateRight.png';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalMobilityDataByDate, setSelectedCountryCode, setSelectedCountry } from '../../actions/actions';
-import { getMobilityDates, getSelectedCountryCode } from '../../selectors/selectors';
+import { getMobilityDates, getSelectedCountryCode, getSelectedCountryName } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
 import { useStyles } from './Map.styles';
 import { useIsMobile } from '../../hooks/isMobile';
@@ -51,24 +51,26 @@ const SliderStyled = withStyles({
 const Map = ({ mapData, countryCode = '' }) => {
   const dates = useSelector(getMobilityDates);
   const selectedCountryCode =  useSelector(getSelectedCountryCode);
+  const selectedCountryName = useSelector(getSelectedCountryName);
 
   const [property, setProperty] = useState('retailChange');
   const [clicked, setClicked] = useState(false);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
-  const [dateIndex, setDateIndex] = useState(84); //hard coded index for now, would come from dates.length - 1
-  const [selectedCountryName, setSelectedCountryName] = useState('test'); 
+  const [dateIndex, setDateIndex] = useState(48); //hard coded index for now, would come from dates.length - 1
   const [selectedCountryData, setSelectedCountryData] = useState({});
 
   const classes = useStyles();
 
   const marks = [
     { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
-    { value: 21, label: dates[21]?.slice(5).replace('-', '/') },
-    { value: 42, label: dates[42]?.slice(5).replace('-', '/') },
-    { value: 63, label: dates[63]?.slice(5).replace('-', '/') },
-    { value: 84, label: dates[84]?.slice(5).replace('-', '/') },
+    { value: 16, label: dates[16]?.slice(5).replace('-', '/') },
+    { value: 32, label: dates[32]?.slice(5).replace('-', '/') },
+    { value: 48, label: dates[48]?.slice(5).replace('-', '/') },
+    { value: 64, label: dates[64]?.slice(5).replace('-', '/') },
+    { value: 80, label: dates[80]?.slice(5).replace('-', '/') },
+    { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
   ];
 
   //PopOver
@@ -92,11 +94,8 @@ const Map = ({ mapData, countryCode = '' }) => {
   const isMobile = useIsMobile();
   
 
-  //this could be trimed down if we used redux for countryName
   useEffect(() => {
-    if(!selectedCountryCode) return;
-    const countryData = mapData.features.find(country => country.mobilityData.countryCode === selectedCountryCode).mobilityData;
-    setSelectedCountryName(countryData.countryName);
+    if(!selectedCountryCode) return setAnchorEl(null);
     setAnchorEl(wrapperRef.current);
   }, [selectedCountryCode]);
 
@@ -126,16 +125,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .translate(globePosition)
       .precision(100);
 
-    
-    
-    const selectedCountry = mapData.features
-      .find(({ properties }) => properties.iso_a2 === countryCode);
-    //Country Projection
-    const flatProjection = geoMercator()
-      .fitSize([width, height], selectedCountry)
-      .precision(50);
-
-    const pathGenerator = countryCode ? geoPath().projection(flatProjection) : geoPath().projection(projection);
+    const pathGenerator = geoPath().projection(projection);
 
     const defs = svg.append('defs');
     const linearGradient = defs.append('linearGradient')
@@ -162,7 +152,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .attr('offset', '100%').attr('stop-color', '#000')
       .attr('stop-opacity', '0');  
 
-    if(!countryCode) svg
+    svg
       .selectAll('ellipse')
       .data(['spot'])
       .join('ellipse')
@@ -173,7 +163,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .attr('class', 'noclicks')
       .style('fill', 'url(#drop_shadow)');
 
-    if(!countryCode) svg
+    svg
       .selectAll('circle')
       .data(['spot'])
       .join('circle')
@@ -184,7 +174,7 @@ const Map = ({ mapData, countryCode = '' }) => {
 
 
     
-    if(!countryCode) svg.call(drag()
+    svg.call(drag()
       .on('start', () => { 
         setRotating(true);
         setClicked(true);
@@ -267,7 +257,6 @@ const Map = ({ mapData, countryCode = '' }) => {
           ? <CircularProgress /> 
           : (<> 
             {!clicked && <Typography variant="body1" className={classes.dragLabel}>Click and drag to rotate</Typography>}
-            {/* {!clicked && <img src={leftArrow} alt="arrow" className={classes.arrow}/> } */}
             <svg ref={svgRef} className={style.svgStyle}></svg>
           </>)
         }
@@ -292,7 +281,6 @@ const Map = ({ mapData, countryCode = '' }) => {
               e.preventDefault();
               history.push(`/country/${selectedCountryCode}`);
             }}>Details</Button>
-          {/* <Button variant="contained" color="secondary" onClick={handlePopoverClose}>X</Button> */}
         </Popover>
       </Grid>
       
