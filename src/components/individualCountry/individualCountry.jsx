@@ -3,7 +3,7 @@ import { Grid, Typography, FormControl, Input, InputLabel, Select, MenuItem, Cir
 import { useStyles } from './IndividualCountry.styles';
 // import Map from '../Map/Map';
 import { getGlobalMapMobilityByDate, getSelectedCountryCode, getMobilitySubregionNames, getSelectedSubregion, getCovidSubData, getMobilitySubData, getSelectedCountryName, getUSMobilityMap } from '../../selectors/selectors';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import StackGraph from '../StackGraph/StackGraph';
 import { getCovidChartData } from '../../selectors/selectors';
 import { useSelector, useDispatch } from 'react-redux';
@@ -87,7 +87,8 @@ export const IndividualCountry = () => {
       </Grid>
 
       <Grid item xs={12} md={10} className={classes.graph}>
-        <Typography variant="h3" color="primary" className={classes.title} style={{ marginBottom: '1rem' }}>Mobility Statistics</Typography>
+        <Typography variant="h3" color="primary" className={classes.title} style={{ marginBottom: '1rem', display: 'inline-block' }}>Mobility Statistics</Typography>
+        <Link to={`/compare/${countryCode}`}><Typography variant="p" color="secondary" align="right" style={{ marginTop: '.5rem', display: 'inline-block', float: 'right' }}>Compare to another country</Typography></Link>
         <MiniChartsContainer />
       </Grid>
 

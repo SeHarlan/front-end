@@ -176,6 +176,14 @@ export const setSelectedSubregion = (subregion) => dispatch => {
   });
 };
 
+export const SET_MOBILITY_COMPARE_SUBREGION = 'SET_MOBILITY_COMPARE_SUBREGION';
+export const setMobilityCompareSubregion = (subregion) => dispatch => {
+  dispatch({
+    type: SET_MOBILITY_COMPARE_SUBREGION,
+    payload: subregion
+  });
+};
+
 export const SET_MOBILITY_DATES = 'SET_MOBILITY_DATES';
 export const setMobilityDates = () => dispatch => {
   return fetchMobilityDataByCountryCode('CA')
@@ -202,6 +210,25 @@ export const setMobilitySubregionNames = (countryCode) => dispatch => {
     .then(subRegion1Names => {
       dispatch({
         type: SET_MOBILITY_SUBREGION_NAMES,
+        payload: subRegion1Names
+      });
+    });
+};
+
+export const SET_MOBILITY_COMPARE_SUBREGION_NAMES = 'SET_MOBILITY_COMPARE_SUBREGION_NAMES';
+export const setMobilityCompareSubregionNames = (countryCode) => dispatch => {
+  fetchMobilitySubregions(countryCode)
+    .then(res => {  
+      return res.reduce((acc, curr) => {
+        if(curr.subRegion1 === null) return acc;
+        if(acc?.includes(curr.subRegion1)) return acc;
+        acc.push(curr.subRegion1);
+        return acc;
+      }, []);
+    })
+    .then(subRegion1Names => {
+      dispatch({
+        type: SET_MOBILITY_COMPARE_SUBREGION_NAMES,
         payload: subRegion1Names
       });
     });
@@ -272,6 +299,38 @@ export const setMobilitySubData = (countryCode, subRegion1) => dispatch => {
     .then(formattedRes => {
       dispatch({
         type: SET_MOBILITY_SUB_DATA,
+        payload: formattedRes
+      });
+    });
+};
+
+export const DELETE_MOBILITY_SUB_DATA = 'DELETE_MOBILITY_SUB_DATA';
+export const deleteMobilitySubData = () => dispatch => {
+  dispatch({
+    type: DELETE_MOBILITY_SUB_DATA,
+    payload: {}
+  });
+};
+
+export const SET_MOBILITY_COMPARE_SUB_DATA = 'SET_MOBILITY_COMPARE_SUB_DATA';
+export const setMobilityCompareSubData = (countryCode, subRegion1) => dispatch => {
+  fetchMobilitySubData(countryCode, subRegion1)
+    .then(res => res.slice().sort((a, b) => new Date(a.date) - new Date(b.date)))
+    .then(sortedRes => ({
+      date: sortedRes.map(item => item.date),
+      countryCode: sortedRes[0].countryCode,
+      countryName: sortedRes[0].countryName,
+      subRegion1: sortedRes.map(item => item.subRegion1 ?? 0),
+      retailChange: sortedRes.map(item => item.retailChange ?? 0),
+      groceryChange: sortedRes.map(item => item.groceryChange ?? 0),
+      parksChange: sortedRes.map(item => item.parksChange ?? 0),
+      transitChange: sortedRes.map(item => item.transitChange ?? 0),
+      workplacesChange: sortedRes.map(item => item.workplacesChange ?? 0),
+      residentialChange: sortedRes.map(item => item.residentialChange ?? 0),
+    }))
+    .then(formattedRes => {
+      dispatch({
+        type: SET_MOBILITY_COMPARE_SUB_DATA,
         payload: formattedRes
       });
     });

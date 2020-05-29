@@ -19,7 +19,7 @@ export const getMobilityCompareCountryName = state => state.reducer.mobilityComp
 // returns currently selected countryCode
 export const getSelectedCountryCode = state => state.reducer.selectedCountryCode;
 
-//returns currentyl selected countryCode
+//returns currently selected countryName
 export const getSelectedCountryName = state => state.reducer.selectedCountryName;
 
 // returns currently selected subregion
@@ -30,6 +30,12 @@ export const getMobilityDates = state => state.reducer.mobilityDates;
 
 // returns mobility data for a single country including subregions
 export const getMobilitySubregionNames = state => state.reducer.mobilitySubregionNames;
+
+// returns currently selected subregion
+export const getMobilityCompareSubregion = state => state.reducer.mobilityCompareSubregion;
+
+// returns mobility data for a single country including subregions
+export const getMobilityCompareSubregionNames = state => state.reducer.mobilityCompareSubregionNames;
 
 // returns covid data for a single country including subregions
 export const getCovidSubregions = state => state.reducer.covidSubregions;

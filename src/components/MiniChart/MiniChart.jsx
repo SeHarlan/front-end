@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, scaleOrdinal, schemeCategory10, min, max, extent, axisTop, axisLeft } from 'd3';
+import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, scaleOrdinal, schemeCategory10, min, max, extent, axisTop, axisLeft, interpolateString } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import { Typography, makeStyles } from '@material-ui/core';
 import styles from '../../styles/Chart.css';
@@ -113,7 +113,6 @@ export function MiniChart({ dataset, compareDataset, property }) {
       .attr('stroke', d => colorScale(d));
 
     // Draw compare line if there's data
-    console.log({ compareDataset });
     if((compareDataset[property.key]) && (location.pathname.includes('/compare'))) {
       svg
         .selectAll(`.${styles.graphLineCompare}`)

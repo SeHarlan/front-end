@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Grid } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { getSelectedCountryCode, getMobilityChartData, getMobilitySubData, getMobilityCompareCountryCode, getMobilityCompareChartData } from '../../selectors/selectors';
-import { setMobilityChartDataByCountryCode, setMobilityCompareChartDataByCountryCode } from '../../actions/actions';
+import { getSelectedCountryCode, getMobilityChartData, getMobilitySubData, getMobilityCompareCountryCode, getMobilityCompareChartData, getSelectedSubregion, getMobilityCompareSubregion } from '../../selectors/selectors';
+import { setMobilityChartDataByCountryCode, setMobilityCompareChartDataByCountryCode, setMobilitySubData, setMobilityCompareSubData, deleteMobilitySubData } from '../../actions/actions';
 import { MiniChart } from './MiniChart';
 
 
@@ -13,6 +13,9 @@ export const MiniChartsContainer = () => {
   const mobilityData = useSelector(getMobilityChartData);
   const miniChartSubData = useSelector(getMobilitySubData);
   const mobilityCompareData = useSelector(getMobilityCompareChartData);
+  const compareSubregion = useSelector(getMobilityCompareSubregion);
+  const subregion = useSelector(getSelectedSubregion);
+
   const dispatch = useDispatch();
   const properties = [
     { key: 'retailChange', description: 'Retail and recreation' },
@@ -29,8 +32,23 @@ export const MiniChartsContainer = () => {
   }, [selectedCountryCode]);
 
   useEffect(() => {
-    dispatch(setMobilityCompareChartDataByCountryCode(compareCountryCode));
-  }, [compareCountryCode]);
+    if(subregion === '') dispatch(deleteMobilitySubData(selectedCountryCode));
+    else dispatch(setMobilitySubData(selectedCountryCode, subregion));
+  }, [subregion]);
+
+  useEffect(() => {
+    if(compareSubregion === '') 
+      dispatch(setMobilityCompareChartDataByCountryCode(compareCountryCode));
+    else dispatch(setMobilityCompareSubData(compareCountryCode, compareSubregion));
+  }, [compareCountryCode, compareSubregion]);
+
+  // useEffect(() => {
+  //   if(compareSubregion === '') 
+  //     dispatch(setMobilityCompareChartDataByCountryCode(compareCountryCode));
+  //   else dispatch(setMobilityCompareSubData(compareCountryCode, compareSubregion));
+  // }, [compareSubregion]);
+
+  
 
   return (
     <>
@@ -38,7 +56,7 @@ export const MiniChartsContainer = () => {
         { properties.map((property, i) => 
           <Grid item xs={12} sm={6} lg={4} key={i}>
             { miniChartSubData.date
-              ? <MiniChart dataset={miniChartSubData} compareDataset={{}} property={property} />
+              ? <MiniChart dataset={miniChartSubData} compareDataset={mobilityCompareData} property={property} />
               : <MiniChart dataset={mobilityData} compareDataset={mobilityCompareData} property={property} />
             }
           </Grid>

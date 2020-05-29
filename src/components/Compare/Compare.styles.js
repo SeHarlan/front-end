@@ -9,11 +9,11 @@ export const useStyles = makeStyles((theme) => ({
     marginBottom: '2rem'
   },
   formControl: {
-    marginBottom: '3rem',
-    marginRight: '1rem'
+    marginBottom: '.5rem',
   },
   chipMarginTop: {
-    marginBottom: '2rem',
+    marginTop: '1rem',
+    marginBottom: '1rem',
     marginRight: '10px',
   },
   chipMarginBottom: {
