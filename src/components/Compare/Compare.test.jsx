@@ -1,13 +1,13 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import ComparePage from './ComparePage';
+import Compare from './Compare';
 import { ThemeProvider } from '@material-ui/core';
 
-describe('ComparePage component', () => {
-  it('renders ComparePage', () => {
+describe('Compare component', () => {
+  it('renders Compare', () => {
     const wrapper = shallow(
       <ThemeProvider>
-        <ComparePage />
+        <Compare />
       </ThemeProvider>
     );
     expect(wrapper).toMatchSnapshot();

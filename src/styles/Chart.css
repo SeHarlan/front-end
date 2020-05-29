@@ -10,20 +10,18 @@
     vertical-align: top;
     overflow: hidden;
   }
+
   /* Append optional class to container for other ratios */
   .oneToOne {
     padding-bottom: 100%; 
   }
-
   /* Default ratio */
   .twoToOne {
     padding-bottom: 50%; 
   }
-
   .threeToOne {
     padding-bottom: 33%; 
   }
-
   .fourToOne {
     padding-bottom: 25%; 
   }
@@ -40,12 +38,18 @@
     }        
     
     .xAxis, .yAxis {
-      font-family: 'Roboto', Arial, Helvetica, sans-serif;
-      font-size: .9em;
+      font-family: 'Space Mono', monospace;
+      /* font-family: 'Roboto', Arial, Helvetica, sans-serif; */
+      font-size: 1em;
       color: #777;
     }
 
     .graphLine {
+      stroke-width: 1.5;
+      transition: 0.5s;
+    }
+
+    .graphLineCompare {
       stroke-width: 1.5;
     }
 

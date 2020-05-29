@@ -2,6 +2,6 @@
 
 exports[`IndividualCountry component renders IndividualCountry 1`] = `
 <ContextProvider>
-  <Component />
+  <IndividualCountry />
 </ContextProvider>
 `;

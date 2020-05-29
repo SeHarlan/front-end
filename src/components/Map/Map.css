@@ -32,7 +32,7 @@
     .noData:hover {
       stroke: inherit;
       stroke-width: inherit;
-      cursor: grab
+      cursor: grab;
     }
   }
   

@@ -13,9 +13,12 @@ export const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
     textAlign: 'center',
-    background: 'rgba(255, 255, 255, 0.8)'
+    background: 'rgba(255, 255, 255, 0.8)',
+    border: 'none'
   },
   legendPaper: {
+    background: 'none',
+    border: 'none',
     padding: theme.spacing(1),
     textAlign: 'center',
     boxShadow: '0 0 0'
@@ -24,15 +27,22 @@ export const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
-  arrow: {
-    width: '3rem',
-    zIndex: 3
-  },
   dragLabel: {
     zIndex: 5,
     backgroundColor: 'rgba(240, 240, 240, 0.7)',
     padding: '1rem',
     borderRadius: '0.5rem',
     position: 'absolute'
+  },
+  statistic: {
+    color: '#0f3568',
+  },
+  popoverButton: {
+    marginTop: '1rem',
+    marginRight: '1rem'
+  },
+  aside: {
+    fontSize: '0.8rem',
+    color: 'grey'
   }
 }));

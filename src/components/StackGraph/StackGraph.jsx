@@ -14,7 +14,6 @@ function StackGraph({ data }) {
   const classes = useStyles();
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const legendRef = useRef();
 
   const [selectedDropDownKey, setSelectedDropDownKey] = useState('cases');
 
@@ -107,7 +106,10 @@ function StackGraph({ data }) {
       .attr('x', sequence => xScale(sequence.data.date)) // width of each rect
       .attr('width', xScale.bandwidth())
       .attr('y', sequence => yScale(sequence[1])) //top edge of rect, determined by [1]
-      .attr('height', sequence => yScale(sequence[0]) - yScale(sequence[1]));
+      .attr('height', sequence => {
+        if((yScale(sequence[0]) - yScale(sequence[1]) < 0)) return 0;
+        return (yScale(sequence[0]) - yScale(sequence[1]));
+      });
     // create all layers of data, stack keys
     // data for rectangles is layer
 
@@ -129,7 +131,7 @@ function StackGraph({ data }) {
       // .style('text-anchor', 'start')
       .call(yAxis);
 
-  }), [data, selectedDropDownKey, selectedSubregion, selectedCountryCode];
+  }), [dataStructure, data, selectedDropDownKey, selectedSubregion, selectedCountryCode];
 
   return (   
     <Grid container className={styles.Chart} alignItems="center" direction="row-reverse" justify="space-between">
@@ -142,7 +144,7 @@ function StackGraph({ data }) {
         </div>
 
       </Grid>
-      <Grid item xs={5} className={classes.legend}>   
+      <Grid item xs={10} sm={5} className={classes.legend}>   
         <Chip variant="outlined" style={{ color:'#229c9a', fontWeight: '500', border: '1px solid #229c9a', marginRight: '10px' }} avatar={<Avatar style={{ backgroundColor:'#229c9a' }}> </Avatar>} label={`Total ${selectedDropDownKey}`} />
         <br />
         <Chip variant="outlined" color="primary" avatar={<Avatar> </Avatar>} label={`Daily ${selectedDropDownKey}`} />
