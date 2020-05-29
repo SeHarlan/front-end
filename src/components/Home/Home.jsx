@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Map from '../Map/Map';
 import LineGraph from '../LineGraph/LineGraph';
 // import { useWorldMobilityData } from '../../hooks/mobilityHooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGlobalMapMobilityByDate, getSelectedCountryName } from '../../selectors/selectors';
 
-import { getCovidChartData, getSelectedCountryCode } from '../../selectors/selectors';
-import { setCovidChartData, setSelectedCountryCode, setSelectedCountryName, setSelectedSubregion } from '../../actions/actions';
+import { getCovidChartData } from '../../selectors/selectors';
+import { setCovidChartData, setSelectedCountryCode, setSelectedCountryName, setSelectedSubregion, resetCovidSubData } from '../../actions/actions';
 import { Grid, Typography } from '@material-ui/core';
 import styles from './Home.css';
 
@@ -23,6 +23,8 @@ export const Home = () => {
     dispatch(setSelectedCountryName('Worldwide'));
     dispatch(setSelectedCountryCode(''));
     dispatch(setSelectedSubregion(''));
+    dispatch(resetCovidSubData());
+    dispatch(setCovidChartData());
   }, []);
 
   return (

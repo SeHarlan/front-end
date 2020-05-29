@@ -348,3 +348,10 @@ export const resetMobilitySubData = () => dispatch => {
     type: RESET_MOBILITY_SUB_DATA,
   });
 };
+
+export const RESET_COVID_DATA = 'RESET_COVID_DATA';
+export const resetCovidData = () => dispatch => {
+  dispatch({
+    type: RESET_COVID_DATA,
+  });
+};

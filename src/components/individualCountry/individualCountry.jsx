@@ -8,8 +8,7 @@ import StackGraph from '../StackGraph/StackGraph';
 import { getCovidChartData } from '../../selectors/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import MiniChartsContainer from '../MiniChart/MiniChartsContainer';
-import { setSelectedSubregion, setMobilitySubregionNames, setCovidSubData, setMobilitySubData, resetCovidSubData, setSelectedCountryCode, setSelectedCountry, setSelectedCountryName, setUSMobilityDataByDate, resetMobilitySubData } from '../../actions/actions';
-import { set } from 'd3';
+import { setSelectedSubregion, setMobilitySubregionNames, setCovidSubData, setMobilitySubData, resetCovidSubData, setSelectedCountryCode, setSelectedCountryName, resetMobilitySubData } from '../../actions/actions';
 import USMap from '../Map/USMap';
 
 export const IndividualCountry = () => {
@@ -22,7 +21,7 @@ export const IndividualCountry = () => {
   const subRegionNames = useSelector(getMobilitySubregionNames);
   const chartDataSet = useSelector(getCovidChartData);
   const stackGraphSubData = useSelector(getCovidSubData);
-  const USMobilityMap = useSelector(getUSMobilityMap); //maybe move inline for faster performance?
+  const USMobilityMap = useSelector(getUSMobilityMap); 
 
 
 
@@ -59,7 +58,6 @@ export const IndividualCountry = () => {
      
       <Grid item xs={12} md={10}>
         <Typography variant="h3" color="primary" className={classes.title}>COVID Statistics for {countryName}</Typography>
-        {/* {subregion && <Typography variant="h4" color="secondary" className={classes.title}>{subregion}</Typography>} */}
         
       </Grid>
       <Grid item xs={12} md={10}>

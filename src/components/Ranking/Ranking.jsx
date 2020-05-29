@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography, List } from '@material-ui/core';
-import { useStyles } from './HighScore.styles';
+import { useStyles } from './Ranking.styles';
 import { Links } from '../Links/Links';
 import { useState } from 'react';
 import { useCovidData } from '../../hooks/covidHooks';

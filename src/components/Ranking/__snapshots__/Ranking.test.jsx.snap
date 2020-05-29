@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`HighScore component renders HighScore 1`] = `
+exports[`Ranking component renders Ranking 1`] = `
 <ContextProvider>
   <Component />
 </ContextProvider>

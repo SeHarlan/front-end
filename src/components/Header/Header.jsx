@@ -43,7 +43,7 @@ export const Header = () => {
         </Link>
       </Grid>
       <Grid item xs={12} sm={3}>
-        { globalMapMobilityData.features && (location.pathname !== '/about') && 
+        { globalMapMobilityData.features && (location.pathname !== '/about') && (!location.pathname.includes('/compare')) &&
         <FormControl variant="outlined" size="small" fullWidth className={classes.formControl}>
           {/* <InputLabel id="country-select-label">Choose a Country</InputLabel> */}
           <Select

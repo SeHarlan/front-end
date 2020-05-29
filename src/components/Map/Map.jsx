@@ -338,7 +338,7 @@ const Map = ({ mapData }) => {
           min={0} 
           max={dates.length - 1} 
           onChange={(_, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
-          valueLabelFormat={(index) => dates[index].slice(5)}
+          valueLabelFormat={(index) => dates[index].slice(5).replace('-', '/')}
           marks={marks} />}
       </Grid>
     </Grid>

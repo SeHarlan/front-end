@@ -48,12 +48,9 @@ const SliderStyled = withStyles({
 
 const Map = ({ mapData, selectedSubregion }) => {
   const dates = useSelector(getMobilityDates);
-  // const selectedCountryCode =  useSelector(getSelectedCountryCode);
-  // const selectedCountryName = useSelector(getSelectedCountryName);
-
   const [property, setProperty] = useState('retailChange');
   const [clicked, setClicked] = useState(false);
-  const [dateIndex, setDateIndex] = useState(48); //hard coded index for now, would come from dates.length - 1
+  const [dateIndex, setDateIndex] = useState(48); //hard coded index for now
   const [selectedState, setSelectedState] = useState(null);
   const isMobile = useIsMobile();
   const { width: screenWidth } = useScreenDimensions();
@@ -209,7 +206,7 @@ const Map = ({ mapData, selectedSubregion }) => {
           min={0} 
           max={dates.length - 1} 
           onChange={(_, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
-          valueLabelFormat={(index) => dates[index].slice(5)}
+          valueLabelFormat={(index) => dates[index].slice(5).replace('-', '/')}
           marks={marks} />}
       </Grid>
     </Grid>

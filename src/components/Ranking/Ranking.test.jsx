@@ -1,13 +1,13 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import HighScore from './HighScore';
+import Ranking from './Ranking';
 import { ThemeProvider } from '@material-ui/core';
 
-describe('HighScore component', () => {
-  it('renders HighScore', () => {
+describe('Ranking component', () => {
+  it('renders Ranking', () => {
     const wrapper = shallow(
       <ThemeProvider>
-        <HighScore />
+        <Ranking />
       </ThemeProvider>
     );
     expect(wrapper).toMatchSnapshot();
