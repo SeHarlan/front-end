@@ -6,7 +6,7 @@ import { Header } from '../Header/Header';
 import { Footer } from '../Footer/Footer';
 import { MiniChartsContainer } from '../MiniChart/MiniChartsContainer';
 import { individualCountry } from '../individualCountry/individualCountry';
-import { ComparePage } from '../ComparePage/ComparePage';
+import { Compare } from '../Compare/Compare';
 import { HighScore } from '../HighScore/HighScore';
 import { About } from '../About/About';
 import { useDispatch, useSelector } from 'react-redux';
@@ -46,7 +46,7 @@ export default function App() {
             <Route path="/country/:countryCode" component={individualCountry} />
             <Route path="/about" component={About} />
             {/* Stretch routes! */}
-            <Route path="/compare" component={ComparePage} />
+            <Route path="/compare/:countryCode" component={Compare} />
             <Route path="/highscore" component={HighScore} />
             {/* MiniCharts route is just for testing! */}
             <Route path="/minicharts" component={MiniChartsContainer} />

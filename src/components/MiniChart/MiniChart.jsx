@@ -6,11 +6,11 @@ import { Typography, makeStyles } from '@material-ui/core';
 import styles from '../../styles/Chart.css';
 
 
-export function MiniChart({ dataset, property }) {
+export function MiniChart({ dataset, compareDataset, property }) {
   
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const myColorScale = ['#46a1fe', '#229C9A', '#2b499d'];
+  const myColorScale = ['#2b499d', '#229C9A'];
  
   function formatDate(badDate) {
     return badDate.toString().slice(6, 7) + '/' + badDate.toString().slice(8, 10);
@@ -112,7 +112,20 @@ export function MiniChart({ dataset, property }) {
       .attr('fill', 'none')
       .attr('stroke', d => colorScale(d));
 
-  }, [dataset]);
+    // Draw compare line if there's data
+    console.log({ compareDataset });
+    if((compareDataset[property.key]) && (location.pathname.includes('/compare'))) {
+      svg
+        .selectAll(`.${styles.graphLineCompare}`)
+        .data([compareDataset[property.key]])
+        .join('path')
+        .attr('class', `${styles.graphLineCompare}`)
+        .attr('d', value => myLine(value))
+        .attr('fill', 'none')
+        .attr('stroke', d => colorScale(d));
+    }
+
+  }, [dataset, compareDataset]);
 
   return (   
     <div className={styles.Chart}>
@@ -132,6 +145,7 @@ export function MiniChart({ dataset, property }) {
 
 MiniChart.propTypes = {
   dataset: PropTypes.object.isRequired,
+  compareDataset: PropTypes.object.isRequired,
   property: PropTypes.object.isRequired
 };
 

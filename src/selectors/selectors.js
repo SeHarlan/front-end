@@ -7,6 +7,15 @@ export const getCovidChartData = state => state.reducer.covidChartData;
 // returns mobility data
 export const getMobilityChartData = state => state.reducer.mobilityChartData;
 
+// returns mobility comparison data
+export const getMobilityCompareChartData = state => state.reducer.mobilityCompareChartData;
+
+// returns currently selected countryCode
+export const getMobilityCompareCountryCode = state => state.reducer.mobilityCompareCountryCode;
+
+// returns currently selected countryName
+export const getMobilityCompareCountryName = state => state.reducer.mobilityCompareCountryName;
+
 // returns currently selected countryCode
 export const getSelectedCountryCode = state => state.reducer.selectedCountryCode;
 

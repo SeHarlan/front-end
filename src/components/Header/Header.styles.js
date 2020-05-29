@@ -48,6 +48,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     backgroundColor: 'white',
+    borderRadius: '4px',
   },
   // imageContainer: {
   //   // display: 'flex',
