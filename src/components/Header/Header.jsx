@@ -1,35 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSelectedCountryCode, getGlobalMapMobilityByDate, getSelectedCountryName } from '../../selectors/selectors';
-import { setSelectedCountryCode, setSelectedCountryName, setSelectedCountry, setSelectedSubregion } from '../../actions/actions';
-import { Grid, Typography, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { setSelectedCountry, setSelectedSubregion } from '../../actions/actions';
+import { Grid, Typography, FormControl, Select, MenuItem } from '@material-ui/core';
 
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useStyles } from './Header.styles';
-
-// const useStyles = makeStyles((theme) => ({
-//   fullWidth: {
-//     backgroundColor: 'none', 
-//     width: 'calc(100% + 48px)',
-//     margin: '0 -24px',
-//     padding: '18px 24px',
-//   },
-//   title: {
-//     color: theme.palette.common.teal.main,
-//     fontWeight: 'bold',
-//   },
-//   h1TitleLink: {
-//     color: theme.palette.primary.main,
-//     fontWeight: 'bold',
-//     textDecoration: 'none',
-//   },
-//   subtitle: {
-//     color: theme.palette.common.teal.main,
-//   },
-//   formControl: {
-//     backgroundColor: 'white',
-//   }
-// }));
+import logo from '../../assets/logo.png';
 
 export const Header = () => {
   const classes = useStyles();
@@ -56,14 +33,19 @@ export const Header = () => {
     <Grid container justify='center' alignItems='center' className={classes.fullWidth}>
       <Grid item sm={3} />
       <Grid item xs={12} sm={6} className={classes.fullWidthWhite}>
-        <Typography variant="h1" align="center" className={classes.title}><Link to='/' className={classes.h1TitleLink}>Going Viral</Link></Typography>
-        <Typography variant="h3" align="center" className={classes.subtitle}>Pandemic-Related Mobility Metrics</Typography>
+        <Link to='/' className={classes.h1TitleLink}>
+          <section style={{ textAlign: 'center' }}> 
+            <Typography variant="h1" align="center" style={{ display: 'inline' }} className={classes.title}>G</Typography>
+            <img src={logo} alt="Going Viral" className={classes.logo}/>
+            <Typography variant="h1" align="center" style={{ display: 'inline' }}className={classes.title}>ing Viral</Typography>
+          </section>
+          <Typography variant="h3" align="center" className={classes.subtitle}>Pandemic-Related Mobility Metrics</Typography>
+        </Link>
       </Grid>
       <Grid item xs={12} sm={3}>
-        { globalMapMobilityData.features && (location.pathname !== '/about') &&
+        { globalMapMobilityData.features && (location.pathname !== '/about') && (!location.pathname.includes('/compare')) &&
         <FormControl variant="outlined" size="small" fullWidth className={classes.formControl}>
           {/* <InputLabel id="country-select-label">Choose a Country</InputLabel> */}
-          
           <Select
             labelId="country-select-label"
             id="country-select"
@@ -79,7 +61,7 @@ export const Header = () => {
               };
               dispatch(setSelectedCountry(toDispatch));
               dispatch(setSelectedSubregion(''));
-              if(location.pathname !== '/')history.replace(`/country/${countryCode}`);
+              if(location.pathname.includes('/country')) history.replace(`/country/${countryCode}`);
             }}
           >
             { (location.pathname === '/') &&

@@ -13,7 +13,8 @@ export const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.blue.main,
   },
   graph: {
-    margin: '2rem'
+    margin: '2rem',
+    minHeight: '35vh'
   },
   formControl: {
     margin: '8px 0 8px 0',
@@ -22,4 +23,10 @@ export const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  backdrop: {
+    width: 'calc(100% + 48px) !important',
+    backgroundColor: 'rgba(43, 73, 157, 0.132)',
+    margin: '0 -24px',
+    padding: '2rem',
+  }
 }));

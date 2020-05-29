@@ -1,7 +1,5 @@
 .Home {
-  padding-top: 4rem;
-  padding-bottom: 3rem;
-
+  padding-top: 2rem;
 }
 
 .fullWidthLightBlue {
@@ -12,7 +10,6 @@
 
   .subhead {
     margin: 0 0 2rem 0;
-    color: #229c9a; 
-
+    color: #229c9a;
   }
 }
