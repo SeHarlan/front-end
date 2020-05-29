@@ -8,11 +8,11 @@ import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabe
 import style from './Map.css';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setGlobalMobilityDataByDate, setSelectedCountry, setUSMobilityDataByDate, setSelectedSubregion } from '../../actions/actions';
-import { getMobilityDates, getSelectedCountryCode, getSelectedCountryName } from '../../selectors/selectors';
+import { setGlobalMobilityDataByDate, setSelectedCountry, setUSMobilityDataByDate, setSelectedSubregion, resetCovidSubData, setMobilitySubData, resetMobilitySubData } from '../../actions/actions';
+import { getMobilityDates, getSelectedCountryCode, getSelectedCountryName, getSelectedSubregion } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
 import { useStyles } from './Map.styles';
-import { useIsMobile } from '../../hooks/isMobile';
+import { useIsMobile, useScreenDimensions } from '../../hooks/isMobile';
 
 const SliderStyled = withStyles({
   root: {
@@ -46,7 +46,7 @@ const SliderStyled = withStyles({
   },
 })(Slider);
 
-const Map = ({ mapData }) => {
+const Map = ({ mapData, selectedSubregion }) => {
   const dates = useSelector(getMobilityDates);
   // const selectedCountryCode =  useSelector(getSelectedCountryCode);
   // const selectedCountryName = useSelector(getSelectedCountryName);
@@ -55,33 +55,43 @@ const Map = ({ mapData }) => {
   const [clicked, setClicked] = useState(false);
   const [dateIndex, setDateIndex] = useState(48); //hard coded index for now, would come from dates.length - 1
   const [selectedState, setSelectedState] = useState(null);
+  const isMobile = useIsMobile();
+  const { width: screenWidth } = useScreenDimensions();
 
   const classes = useStyles();
 
-  const marks = [
-    { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
-    { value: 16, label: dates[16]?.slice(5).replace('-', '/') },
-    { value: 32, label: dates[32]?.slice(5).replace('-', '/') },
-    { value: 48, label: dates[48]?.slice(5).replace('-', '/') },
-    { value: 64, label: dates[64]?.slice(5).replace('-', '/') },
-    { value: 80, label: dates[80]?.slice(5).replace('-', '/') },
-    { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
-  ];
+  const marks = (!isMobile) 
+    ? [
+      { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
+      { value: 16, label: dates[16]?.slice(5).replace('-', '/') },
+      { value: 32, label: dates[32]?.slice(5).replace('-', '/') },
+      { value: 48, label: dates[48]?.slice(5).replace('-', '/') },
+      { value: 64, label: dates[64]?.slice(5).replace('-', '/') },
+      { value: 80, label: dates[80]?.slice(5).replace('-', '/') },
+      { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
+    ]
+    : [
+      { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
+      { value: 48, label: dates[48]?.slice(5).replace('-', '/') },
+      { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
+    ];
 
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
   const dispatch = useDispatch();
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     if(!dates.length) return;
     else dispatch(setUSMobilityDataByDate(dates[dateIndex]));
   }, [dateIndex]);
-  // useEffect(() => {
-  //   //find subregion in map data set to selected state (the features portion)
-  // }. [subregion])
+
+  useEffect(() => {
+    if(!selectedSubregion.length) return;
+    const newState = mapData.features.find(state => state.properties.NAME === selectedSubregion);
+    setSelectedState(newState);
+  }, [selectedSubregion]);
   
   useEffect(() => {
     if(!mapData.features) return;
@@ -139,14 +149,10 @@ const Map = ({ mapData }) => {
 
       <Grid item xs={3} sm={2} >
         <Paper elevation={2} className={classes.legendPaper}>
-          <div ref={legendRef} 
-            className={style.mapLegendContainer}
-          >Percent increase or decrease in travel to {property.replace('Change', '')} locations* 
-          </div>
-
-          <p className={style.legendNoData}>{isMobile ? 'N/A' : 'No Data Available'}</p>
-          <p>*compared to baseline, pre-pandemic measurements</p>
-
+          {(screenWidth > 600) && <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>}
+          <div ref={legendRef} className={style.mapLegendContainer}></div>
+          <p className={style.legendNoData}>{(screenWidth < 600) ? 'N/A' : 'No Data Available'}</p>
+          {(screenWidth > 600) && <em className={classes.aside}>*compared to baseline, pre-pandemic measurements</em>}
         </Paper>
       </Grid>
     
@@ -165,7 +171,7 @@ const Map = ({ mapData }) => {
           <FormControl component="fieldset">
 
             {/* <FormLabel component="legend">Choose a Metric</FormLabel> */}
-            <RadioGroup row={isMobile} aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+            <RadioGroup row={isMobile || screenWidth < 600} aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
 
               <FormControlLabel
                 value="groceryChange"
@@ -212,7 +218,8 @@ const Map = ({ mapData }) => {
 };
 
 Map.propTypes = {
-  mapData: PropTypes.object.isRequired
+  mapData: PropTypes.object.isRequired,
+  selectedSubregion: PropTypes.string.isRequired
 };
 
 export default Map;

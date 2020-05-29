@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core';
+import shadows from '@material-ui/core/styles/shadows';
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,7 +21,7 @@ export const useStyles = makeStyles((theme) => ({
   title: {
     // color: theme.palette.common.green.main, 
     // textShadow: '1px 1px 2px #87a3d0',
-    textShadow: '1px 1px 2px #e0f7fa',
+    textShadow: '2px 2px 2px #e0f7fa',
     fontSize: '3rem',
     fontWeight: '550',
     marginTop: '1rem'
@@ -28,7 +29,6 @@ export const useStyles = makeStyles((theme) => ({
   subtitle: {
     // color: theme.palette.common.teal.main,
     color: theme.palette.secondary.main, 
-    marginBottom: '1rem',
     marginTop: '.5rem'
   },
   fullWidth: {
@@ -43,23 +43,19 @@ export const useStyles = makeStyles((theme) => ({
     textDecoration: 'none',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center'
-
+    justifyContent: 'center',
   },
   formControl: {
     backgroundColor: 'white',
     borderRadius: '4px',
   },
-  // imageContainer: {
-  //   // display: 'flex',
-  //   // flexDirection: 'row',
-  //   // marginBottom: '2.5rem',
-  // },
-  // image: {
-  //   // maxWidth: '100%',
-  //   width: '10rem',
-  //   height: '10rem',
-  //   // marginTop: '-2rem',
-  // },
+  logo: {
+    width: '3rem', 
+    position: 'relative', 
+    top: '0.7rem', 
+    left: '0.2rem', 
+    margin: '0 -0.2rem 0 -0.2rem',
+    filter: 'drop-shadow(2px 2px 1px #e0f7fa)'
+  }
 }));
 

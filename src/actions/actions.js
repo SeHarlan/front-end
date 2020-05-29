@@ -58,7 +58,7 @@ export const setUSMobilityDataByDate = (date) => dispatch => {
 export const SET_MOBILITY_CHART_DATA = 'SET_MOBILITY_CHART_DATA';
 export const setMobilityChartDataByCountryCode = (countryCode) => dispatch => {
   fetchMobilityDataByCountryCode(countryCode)
-    .then(res => res.slice().sort((a, b) => new Date(a.date) - new Date(b.date)))
+    .then(res => res.sort((a, b) => new Date(a.date) - new Date(b.date)))
     .then(sortedRes => ({
       date: sortedRes.map(item => item.date),
       countryCode: sortedRes[0].countryCode,
@@ -340,5 +340,11 @@ export const RESET_COVID_SUB_DATA = 'RESET_COVID_SUB_DATA';
 export const resetCovidSubData = () => dispatch => {
   dispatch({
     type: RESET_COVID_SUB_DATA,
+  });
+};
+export const RESET_MOBILITY_SUB_DATA = 'RESET_MOBILITY_SUB_DATA';
+export const resetMobilitySubData = () => dispatch => {
+  dispatch({
+    type: RESET_MOBILITY_SUB_DATA,
   });
 };
