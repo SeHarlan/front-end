@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Grid, Typography, FormControl, Input, InputLabel, Select, MenuItem, CircularProgress } from '@material-ui/core';
-import { useStyles } from './individualCountry.styles';
+import { useStyles } from './IndividualCountry.styles';
 // import Map from '../Map/Map';
 import { getGlobalMapMobilityByDate, getSelectedCountryCode, getMobilitySubregionNames, getSelectedSubregion, getCovidSubData, getMobilitySubData, getSelectedCountryName, getUSMobilityMap } from '../../selectors/selectors';
 import { useParams } from 'react-router-dom';
@@ -12,7 +12,7 @@ import { setSelectedSubregion, setMobilitySubregionNames, setCovidSubData, setMo
 import { set } from 'd3';
 import USMap from '../Map/USMap';
 
-export const individualCountry = () => {
+export const IndividualCountry = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { countryCode: countryCodeParam } = useParams();
@@ -94,3 +94,5 @@ export const individualCountry = () => {
     </Grid>
   );
 };
+
+export default IndividualCountry;
