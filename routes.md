@@ -20,7 +20,7 @@
   * 4: GET mobility data
         -single country by countryCode
         -includes subregions
-        -excludes subregions
+        -excludes subregion2
         -all dates
     https://pandemic-legacy.herokuapp.com/api/v1/mobility/countryWithSub/${countryCode}
 
