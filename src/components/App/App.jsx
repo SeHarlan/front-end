@@ -44,9 +44,6 @@ export default function App() {
             <Route path="/country/:countryCode" component={IndividualCountry} />
             <Route path="/about" component={About} />
             <Route path="/compare/:countryCode" component={Compare} />
-            <Route path="/logo">
-              <img href="favicon.ico" />
-            </Route>
           </Switch>
           <Footer />
         </Container>
