@@ -2,15 +2,11 @@ import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from '../../styles/Chart.css';
 // import styles from '../MiniChart/MiniChart.styles';
-import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear, mouse, scaleOrdinal, schemeCategory10, min, max, scaleLog } from 'd3';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import { select, line, curveCardinal, axisBottom, axisRight, scaleLinear,  scaleOrdinal, min, max, scaleLog } from 'd3';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Switch, Chip, Avatar } from '@material-ui/core';
-import { useSelector } from 'react-redux';
-import { getSelectedCountryName } from '../../selectors/selectors';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
   },

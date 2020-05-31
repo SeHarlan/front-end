@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator } from 'd3';
+import { select, geoPath, geoOrthographic, scaleLinear, event, drag } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, CircularProgress } from '@material-ui/core'; 
+import { Slider, Popover, Typography, Button, withStyles, FormControl, Paper, Grid, RadioGroup, FormControlLabel, Radio, CircularProgress } from '@material-ui/core'; 
 
 import style from './Map.css';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setGlobalMobilityDataByDate, setSelectedCountryCode, setSelectedCountry } from '../../actions/actions';
+import { setGlobalMobilityDataByDate, setSelectedCountry } from '../../actions/actions';
 import { getMobilityDates, getSelectedCountryCode, getSelectedCountryName } from '../../selectors/selectors';
 import { useHistory } from 'react-router-dom';
 import { useStyles } from './Map.styles';
-import { useIsMobile } from '../../hooks/isMobile';
+import { useIsMobile, useScreenDimensions } from '../../hooks/isMobile';
 
 const SliderStyled = withStyles({
   root: {
@@ -24,11 +24,11 @@ const SliderStyled = withStyles({
     backgroundColor: '#fff',
     border: '2px solid currentColor',
     marginTop: -6,
-    marginLeft: -12
+    marginLeft: -12,
   },
   active: {},
   valueLabel: {
-    left: 'calc(-50%)'
+    left: 'calc(-50%)',
   },
   track: {
     height: 8,
@@ -46,41 +46,42 @@ const SliderStyled = withStyles({
   },
 })(Slider);
 
-const Map = ({ mapData, countryCode = '' }) => {
+const Map = ({ mapData }) => {
   const dates = useSelector(getMobilityDates);
   const selectedCountryCode =  useSelector(getSelectedCountryCode);
+  const selectedCountryName = useSelector(getSelectedCountryName);
 
   const [property, setProperty] = useState('retailChange');
+  const [clicked, setClicked] = useState(false);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
-  const [dateIndex, setDateIndex] = useState(84); //hard coded index for now, would come from dates.length - 1
+  const [dateIndex, setDateIndex] = useState(42); //hard coded index
   const [selectedCountryData, setSelectedCountryData] = useState({});
-  const selectedCountryName = useSelector(getSelectedCountryName);
+  const isMobile = useIsMobile();
+  const { width: screenWidth } = useScreenDimensions();
 
   const classes = useStyles();
+  
+  const marks = (!isMobile) 
+    ? [
+      { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
+      { value: 21, label: dates[21]?.slice(5).replace('-', '/') },
+      { value: 42, label: dates[42]?.slice(5).replace('-', '/') },
+      { value: 63, label: dates[63]?.slice(5).replace('-', '/') },
+      { value: 84, label: dates[84]?.slice(5).replace('-', '/') },
+    ]
+    : [
+      { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
+      { value: 42, label: dates[42]?.slice(5).replace('-', '/') },
+      { value: 84, label: dates[84]?.slice(5).replace('-', '/') },
+    ];
 
-  //use increments of 21 for more even markers
-  const marks = [
-    { value: 0, label: dates[0]?.slice(5) },
-    { value: 15, label: dates[15]?.slice(5) },
-    { value: 29, label: dates[29]?.slice(5) },
-    { value: 46, label: dates[46]?.slice(5) },
-    { value: 60, label: dates[60]?.slice(5) },
-    { value: 76, label: dates[76]?.slice(5) },
-    { value: 84, label: dates[84]?.slice(5) },
-  ];
-
-  //PopOver
   const [anchorEl, setAnchorEl] = useState(null);
-  // const handlePopoverOpen = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
-  //PopOver
 
   const svgRef = useRef();
   const wrapperRef = useRef();
@@ -89,8 +90,7 @@ const Map = ({ mapData, countryCode = '' }) => {
   const wrapperHeight = dimensions?.height;
   const dispatch = useDispatch();
   const history = useHistory();
-  const isMobile = useIsMobile();
-  
+ 
   useEffect(() => {
     if(!selectedCountryCode) return setAnchorEl(null);
     setAnchorEl(wrapperRef.current);
@@ -122,16 +122,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .translate(globePosition)
       .precision(100);
 
-    
-    
-    const selectedCountry = mapData.features
-      .find(({ properties }) => properties.iso_a2 === countryCode);
-    //Country Projection
-    const flatProjection = geoMercator()
-      .fitSize([width, height], selectedCountry)
-      .precision(50);
-
-    const pathGenerator = countryCode ? geoPath().projection(flatProjection) : geoPath().projection(projection);
+    const pathGenerator = geoPath().projection(projection);
 
     const defs = svg.append('defs');
     const linearGradient = defs.append('linearGradient')
@@ -158,7 +149,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .attr('offset', '100%').attr('stop-color', '#000')
       .attr('stop-opacity', '0');  
 
-    if(!countryCode) svg
+    if(!isMobile) svg
       .selectAll('ellipse')
       .data(['spot'])
       .join('ellipse')
@@ -169,7 +160,7 @@ const Map = ({ mapData, countryCode = '' }) => {
       .attr('class', 'noclicks')
       .style('fill', 'url(#drop_shadow)');
 
-    if(!countryCode) svg
+    svg
       .selectAll('circle')
       .data(['spot'])
       .join('circle')
@@ -180,10 +171,12 @@ const Map = ({ mapData, countryCode = '' }) => {
 
 
     
-    if(!countryCode) svg.call(drag()
-      .on('start', () => { setRotating(true);})
+    svg.call(drag()
+      .on('start', () => { 
+        setRotating(true);
+        setClicked(true);
+      })
       .on('drag', () => {
-
         const rotate = projection.rotate();
         const sensitivity = 50 / projection.scale();
 
@@ -207,13 +200,12 @@ const Map = ({ mapData, countryCode = '' }) => {
       .join('path')
       .on('click', (country) => {
         const { countryCode, countryName } = country.mobilityData;
-        if(!countryCode || !countryName) return;
         dispatch(setSelectedCountry({ countryCode, countryName }));
         setSelectedCountryData(country.mobilityData);
       })
       .attr('class', 'country')
-      .classed(style.noData, function(d) {
-        return !d.mobilityData[property];
+      .classed(style.noData, (country) => {
+        if(!country.mobilityData[property]) return style.noData;
       });
     
     if(rotating) {
@@ -249,20 +241,22 @@ const Map = ({ mapData, countryCode = '' }) => {
 
       <Grid item xs={3} sm={2} >
         <Paper elevation={2} className={classes.legendPaper}>
-          <div ref={legendRef} 
-            className={style.mapLegendContainer}
-          >% increase in travel to {property.replace('Change', '')} locations 
-          </div>
-          <p className={style.legendNoData}>No Data Available</p>
-          <div>% decrease in travel to {property.replace('Change', '')} locations</div>
+          {(screenWidth > 600) && <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>}
+          <div ref={legendRef} className={style.mapLegendContainer}></div>
+          <p className={style.legendNoData}>{(screenWidth < 600) ? 'N/A' : 'No Data Available'}</p>
+          {(screenWidth > 600) && <em className={classes.aside}>*compared to baseline, pre-pandemic measurements</em>}
         </Paper>
       </Grid>
     
       <Grid item xs={9} sm={8}ref={wrapperRef} className={style.Map} >
         { !mapData.features 
           ? <CircularProgress /> 
-          : <svg ref={svgRef} className={style.svgStyle}></svg>
+          : (<> 
+            {!clicked && <Typography variant="body1" className={classes.dragLabel}>Click and drag to rotate</Typography>}
+            <svg ref={svgRef} className={style.svgStyle}></svg>
+          </>)
         }
+
         <Popover id={style.countryPopover} 
           className={classes.popover} 
           classes={{ paper: classes.paper }} 
@@ -274,24 +268,38 @@ const Map = ({ mapData, countryCode = '' }) => {
           disableRestoreFocus
         >
           <Typography variant="h4">{selectedCountryName}</Typography>
-          <Typography>
-            Travel to <b>{property.replace('Change', '')} locations</b> on this date was <b>{selectedCountryData[property] || 'N/A'}%</b> compared to a normal day in {selectedCountryName}.
-          </Typography>
+          {selectedCountryData[property] 
+            ? <Typography>
+          Travel to <b>{property.replace('sChange', '').replace('Change', '')} locations</b> on this date was 
+              <b className={classes.statistic}> {selectedCountryData[property]}% </b>
+          compared to a normal day in {selectedCountryName}.
+            </Typography>
+            : <Typography>Data for <b>{property.replace('sChange', '').replace('Change', '')}</b> travel was not available for {selectedCountryName} on this date.</Typography>
+          }
           <Button variant="contained" 
+            className={classes.popoverButton}
+            color="secondary" 
+            onClick={(e) => {
+              e.preventDefault();
+              history.push(`/compare/${selectedCountryCode}`);
+            }}>Compare</Button>
+          <Button variant="contained" 
+            className={classes.popoverButton}
             color="primary" 
             onClick={(e) => {
               e.preventDefault();
               history.push(`/country/${selectedCountryCode}`);
             }}>Details</Button>
-          {/* <Button variant="contained" color="secondary" onClick={handlePopoverClose}>X</Button> */}
         </Popover>
       </Grid>
       
       <Grid item xs={12} sm={2}>
         <Paper elivation={2} className={classes.legendPaper}>
           <FormControl component="fieldset">
-            <FormLabel component="legend">Choose a Metric</FormLabel>
-            <RadioGroup row={isMobile} aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+
+            {/* <FormLabel component="legend">Choose a Metric</FormLabel> */}
+            <RadioGroup row={isMobile || screenWidth < 600} aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+
               <FormControlLabel
                 value="groceryChange"
                 control={<Radio color="primary"/>}
@@ -326,9 +334,9 @@ const Map = ({ mapData, countryCode = '' }) => {
         {dates.length && <SliderStyled 
           value={dateIndex} 
           min={0} 
-          max={dates.length - 1} 
+          max={84} 
           onChange={(_, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
-          valueLabelFormat={(index) => dates[index].slice(5)}
+          valueLabelFormat={(index) => dates[index].slice(5).replace('-', '/')}
           marks={marks} />}
       </Grid>
     </Grid>
@@ -337,7 +345,6 @@ const Map = ({ mapData, countryCode = '' }) => {
 };
 
 Map.propTypes = {
-  countryCode: PropTypes.string,
   mapData: PropTypes.object.isRequired
 };
 

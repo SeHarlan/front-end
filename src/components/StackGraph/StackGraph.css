@@ -24,8 +24,6 @@
     height: 2rem;
     color: white;
   }
-  .select {
-  }
   svg rect.selection {
     stroke: none;
   }

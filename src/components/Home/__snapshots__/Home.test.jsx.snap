@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home component renders Home 1`] = `
+<ContextProvider>
+  <Home />
+</ContextProvider>
+`;
