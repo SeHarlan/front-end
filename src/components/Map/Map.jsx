@@ -56,7 +56,7 @@ const Map = ({ mapData }) => {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
-  const [dateIndex, setDateIndex] = useState(48); //hard coded index
+  const [dateIndex, setDateIndex] = useState(42); //hard coded index
   const [selectedCountryData, setSelectedCountryData] = useState({});
   const isMobile = useIsMobile();
   const { width: screenWidth } = useScreenDimensions();
@@ -66,17 +66,15 @@ const Map = ({ mapData }) => {
   const marks = (!isMobile) 
     ? [
       { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
-      { value: 16, label: dates[16]?.slice(5).replace('-', '/') },
-      { value: 32, label: dates[32]?.slice(5).replace('-', '/') },
-      { value: 48, label: dates[48]?.slice(5).replace('-', '/') },
-      { value: 64, label: dates[64]?.slice(5).replace('-', '/') },
-      { value: 80, label: dates[80]?.slice(5).replace('-', '/') },
-      { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
+      { value: 21, label: dates[21]?.slice(5).replace('-', '/') },
+      { value: 42, label: dates[42]?.slice(5).replace('-', '/') },
+      { value: 63, label: dates[63]?.slice(5).replace('-', '/') },
+      { value: 84, label: dates[84]?.slice(5).replace('-', '/') },
     ]
     : [
       { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
-      { value: 48, label: dates[48]?.slice(5).replace('-', '/') },
-      { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
+      { value: 42, label: dates[42]?.slice(5).replace('-', '/') },
+      { value: 84, label: dates[84]?.slice(5).replace('-', '/') },
     ];
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -336,7 +334,7 @@ const Map = ({ mapData }) => {
         {dates.length && <SliderStyled 
           value={dateIndex} 
           min={0} 
-          max={dates.length - 1} 
+          max={84} 
           onChange={(_, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
           valueLabelFormat={(index) => dates[index].slice(5).replace('-', '/')}
           marks={marks} />}
