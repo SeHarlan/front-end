@@ -34,6 +34,15 @@
       stroke-width: inherit;
       cursor: grab;
     }
+    @media (max-width: 959px) {    
+      height: 500px;
+    }  
+    @media (max-width: 599px) {    
+      height: 400px;
+    }  
+    @media (max-width: 400px) {    
+      height: 300px;
+    }  
   }
   
   .US {
@@ -47,11 +56,18 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   font-size: 1rem;
   padding: 0.3rem;
+  @media (max-width: 400px) {
+    font-size: 12px;
+  }
 }
 .mapLegendContainer {
   display: flex;
   flex-direction: column;
   justify-content: stretch;
+  @media (max-width: 959px) {    
+    flex-direction: row-reverse;
+    justify-content: center;
+  }
 }
 
 .legendNoData {
@@ -60,4 +76,7 @@
   padding: 0.3rem;
   margin: 0;
   background-color:#dfe2e8;
+  @media (max-width: 400px) {
+    font-size: 12px;
+  }
 }

@@ -32,7 +32,7 @@ export const Header = () => {
   return (
     <Grid container justify='center' alignItems='center' className={classes.fullWidth}>
       <Grid item sm={3} />
-      <Grid item xs={12} sm={6} className={classes.fullWidthWhite}>
+      <Grid item xs={12} md={6} className={classes.fullWidthWhite}>
         <Link to='/' className={classes.h1TitleLink}>
           <section style={{ textAlign: 'center' }}> 
             <Typography variant="h1" align="center" style={{ display: 'inline' }} className={classes.title}>G</Typography>
@@ -42,7 +42,7 @@ export const Header = () => {
           <Typography variant="h3" align="center" className={classes.subtitle}>Pandemic-Related Mobility Metrics</Typography>
         </Link>
       </Grid>
-      <Grid item xs={12} sm={3}>
+      <Grid item xs={12} sm={6} md={3}>
         { globalMapMobilityData.features && (location.pathname !== '/about') && (!location.pathname.includes('/compare')) &&
         <FormControl variant="outlined" size="small" fullWidth className={classes.formControl}>
           {/* <InputLabel id="country-select-label">Choose a Country</InputLabel> */}
