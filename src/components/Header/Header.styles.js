@@ -48,6 +48,9 @@ export const useStyles = makeStyles((theme) => ({
   formControl: {
     backgroundColor: 'white',
     borderRadius: '4px',
+    '@media (max-width: 959px)': {
+      marginTop: '2rem',
+    },
   },
   logo: {
     width: '3rem', 
@@ -56,6 +59,6 @@ export const useStyles = makeStyles((theme) => ({
     left: '0.2rem', 
     margin: '0 -0.2rem 0 -0.2rem',
     filter: 'drop-shadow(2px 2px 1px #e0f7fa)'
-  }
+  },
 }));
 
