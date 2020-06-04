@@ -299,7 +299,7 @@ const Map = ({ mapData }) => {
           <FormControl component="fieldset">
 
             {/* <FormLabel component="legend">Choose a Metric</FormLabel> */}
-            <RadioGroup row={isMobile || screenWidth < 600} aria-label="position" name="metric" defaultValue="retailChange" className={classes.radioGroup} onChange={({ target }) => setProperty(target.value)}>
+            <RadioGroup row={isMobile || screenWidth < 960} aria-label="position" name="metric" defaultValue="retailChange" className={classes.radioGroup} onChange={({ target }) => setProperty(target.value)}>
 
               <FormControlLabel
                 value="groceryChange"
