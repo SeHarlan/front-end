@@ -1,10 +1,14 @@
 import { makeStyles } from '@material-ui/core';
+import { red } from '@material-ui/core/colors';
 
 export const useStyles = makeStyles((theme) => ({
   mapContainer: {
     minHeight: '600px',
     padding: '2rem',
-    marginBottom: '1rem'
+    marginBottom: '1rem',
+    '@media (max-width: 959px)': {
+      padding: 0,
+    },
   },
   popover: {
     pointerEvents: 'auto',
@@ -21,11 +25,25 @@ export const useStyles = makeStyles((theme) => ({
     border: 'none',
     padding: theme.spacing(1),
     textAlign: 'center',
-    boxShadow: '0 0 0'
+    boxShadow: '0 0 0',
+    '@media (max-width: 959px)': {
+      padding: '0 0 2rem 0',
+    },
+    '& p': {
+      '@media (max-width: 959px)': {
+        marginTop: '0',
+      },  
+    },
   },
+  
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
+  },
+  radioGroup: {
+    '@media (max-width: 599px)': {
+      justifyContent: 'center',
+    },
   },
   dragLabel: {
     zIndex: 5,
@@ -44,5 +62,5 @@ export const useStyles = makeStyles((theme) => ({
   aside: {
     fontSize: '0.8rem',
     color: 'grey'
-  }
+  },
 }));
