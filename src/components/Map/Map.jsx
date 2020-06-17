@@ -14,6 +14,8 @@ import { useHistory } from 'react-router-dom';
 import { useStyles } from './Map.styles';
 import { useIsMobile, useScreenDimensions } from '../../hooks/isMobile';
 
+
+//TO DO: move to a separate module
 const SliderStyled = withStyles({
   root: {
     height: 8
@@ -56,13 +58,16 @@ const Map = ({ mapData }) => {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
-  const [dateIndex, setDateIndex] = useState(42); //hard coded index
+  const [dateIndex, setDateIndex] = useState(42); //hard coded index (can't get programatically as it loads before recieving "dates" from getMobilityDates selector)
   const [selectedCountryData, setSelectedCountryData] = useState({});
-  const isMobile = useIsMobile();
-  const { width: screenWidth } = useScreenDimensions();
-
-  const classes = useStyles();
   
+  const { width: screenWidth } = useScreenDimensions();
+  const isMobile = useIsMobile();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const classes = useStyles();
+
+  //marks for timeline slider
   const marks = (!isMobile) 
     ? [
       { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
@@ -77,30 +82,34 @@ const Map = ({ mapData }) => {
       { value: 84, label: dates[84]?.slice(5).replace('-', '/') },
     ];
 
+  //popover elements/methods
   const [anchorEl, setAnchorEl] = useState(null);
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
 
+  //D3 and svg hooks
   const svgRef = useRef();
   const wrapperRef = useRef();
   const legendRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
   const wrapperHeight = dimensions?.height;
-  const dispatch = useDispatch();
-  const history = useHistory();
  
+  //resets popover to hidden upon load, reveals it when a country is selected
   useEffect(() => {
     if(!selectedCountryCode) return setAnchorEl(null);
     setAnchorEl(wrapperRef.current);
   }, [selectedCountryCode]);
 
+  //TO DO: play with adding debouceing, should be smooth but not overload fetch requests
+  //triggers fetch of global mobility data by date when the date slider is moved
   useEffect(() => {
     if(!dates.length) return;
     else dispatch(setGlobalMobilityDataByDate(dates[dateIndex]));
   }, [dateIndex]);
   
+  //D3 General update pattern for globe
   useEffect(() => {
     if(!mapData.features) return;
 
@@ -112,9 +121,9 @@ const Map = ({ mapData }) => {
       .domain([-100, 0, 100])
       .range(['#B71C1C', 'rgb(243, 240, 225)', '#1d7d0a']);
 
+    //globe Projection
     const globePosition = [width / 2, height / 2];
     const globeScale = 1;
-    //globe Projection
     const projection = geoOrthographic()
       .fitSize([width * globeScale, height * globeScale], mapData)
       .center([0, 0])
@@ -124,6 +133,8 @@ const Map = ({ mapData }) => {
 
     const pathGenerator = geoPath().projection(projection);
 
+    //TO DO: move to a module
+    //gradient for Blue Sphere behind geoJSON svg lines
     const defs = svg.append('defs');
     const linearGradient = defs.append('linearGradient')
       .attr('id', 'linear-gradient')
@@ -138,6 +149,8 @@ const Map = ({ mapData }) => {
       .attr('offset', '100%')
       .attr('stop-color', '#2C4099');
 
+    //TO DO: move to a module (will need to add a "defs" declaration)
+    //gragient for globe shadow
     const drop_shadow = svg.append('defs').append('radialGradient')
       .attr('id', 'drop_shadow')
       .attr('cx', '50%')
@@ -149,6 +162,7 @@ const Map = ({ mapData }) => {
       .attr('offset', '100%').attr('stop-color', '#000')
       .attr('stop-opacity', '0');  
 
+    //don't display shadow on mobile devices
     if(!isMobile) svg
       .selectAll('ellipse')
       .data(['spot'])
@@ -160,6 +174,7 @@ const Map = ({ mapData }) => {
       .attr('class', 'noclicks')
       .style('fill', 'url(#drop_shadow)');
 
+    //add blue gradient circle behind the geoJSON lines (countries)
     svg
       .selectAll('circle')
       .data(['spot'])
@@ -170,11 +185,11 @@ const Map = ({ mapData }) => {
       .style('fill', 'url(#linear-gradient)');
 
 
-    
+    //click and drag logic
     svg.call(drag()
       .on('start', () => { 
-        setRotating(true);
-        setClicked(true);
+        setRotating(true); //disables transitions for smoother dragging
+        setClicked(true); //hides intructional popever
       })
       .on('drag', () => {
         const rotate = projection.rotate();
@@ -190,10 +205,12 @@ const Map = ({ mapData }) => {
         const path = geoPath().projection(projection);
         svg.selectAll('path').attr('d', path);
       })
-      .on('end', () => { setRotating(false);})
+      .on('end', () => { setRotating(false); //enables transistions so colors change smoothly when switching between properties or dates
+      })
       
     );
 
+    //add main geoGSON svg lines
     const map = svg
       .selectAll('.country')
       .data(mapData.features)
@@ -208,16 +225,17 @@ const Map = ({ mapData }) => {
         if(!country.mobilityData[property]) return style.noData;
       });
     
-    if(rotating) {
+    if(rotating) { 
       map
         .attr('fill', country => country.mobilityData[property] 
           ? colorScale(country.mobilityData[property])
           : '#dfe2e8'
         )
         .attr('d', country => pathGenerator(country));  
-    } else {
+    } else { 
+      //if not rotating enable transitions
       map
-        .transition()
+        .transition() 
         .attr('fill', country => country.mobilityData[property] 
           ? colorScale(country.mobilityData[property])
           : '#dfe2e8'
@@ -225,6 +243,7 @@ const Map = ({ mapData }) => {
         .attr('d', country => pathGenerator(country));
     }
     
+    //add choropleth legend 
     const legend = select(legendRef.current);
     const legendText = [100, 75, 50, 25, 0, -25, -50, -75, -100];
     legend.selectAll('span')
@@ -240,7 +259,8 @@ const Map = ({ mapData }) => {
     <Grid container className={classes.mapContainer} alignItems="center" justify="center" spacing={2}>
 
       <Grid item xs={12} sm={9} md={2} >
-        <Paper elevation={2} className={classes.legendPaper}>
+        {/* TO DO: Paper elements may be unneccisery */}
+        <Paper elevation={2} className={classes.legendPaper}> 
           {(screenWidth > 1) && <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>}
           <div ref={legendRef} className={style.mapLegendContainer}>
             <p className={style.legendNoData}>{(screenWidth < 960) ? 'N/A' : 'No Data Available'}</p>
@@ -251,13 +271,14 @@ const Map = ({ mapData }) => {
     
       <Grid item xs={12} md={8}ref={wrapperRef} className={style.Map} >
         { !mapData.features 
-          ? <CircularProgress /> 
+          ? <CircularProgress /> //loading state
           : (<> 
             {!clicked && <Typography variant="body1" className={classes.dragLabel}>Click and drag to rotate</Typography>}
             <svg ref={svgRef} className={style.svgStyle}></svg>
           </>)
         }
 
+        {/* TO DO: move to a module */}
         <Popover id={style.countryPopover} 
           className={classes.popover} 
           classes={{ paper: classes.paper }} 
@@ -294,6 +315,7 @@ const Map = ({ mapData }) => {
         </Popover>
       </Grid>
       
+      {/* TO DO: move to a module */}
       <Grid item xs={12} md={2}>
         <Paper elevation={2} className={classes.legendPaper}>
           <FormControl component="fieldset">
@@ -331,6 +353,7 @@ const Map = ({ mapData }) => {
           </FormControl>
         </Paper>
       </Grid>
+      
       <Grid item xs={9}>
         {dates.length && <SliderStyled 
           value={dateIndex} 
