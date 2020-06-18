@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator, geoAlbersUsa } from 'd3';
+import { select, geoPath, scaleLinear, geoAlbersUsa } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, CircularProgress } from '@material-ui/core'; 
+import { Slider, Typography, withStyles, FormControl, Paper, Grid, RadioGroup, FormControlLabel, Radio, CircularProgress } from '@material-ui/core'; 
 
 import style from './Map.css';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setGlobalMobilityDataByDate, setSelectedCountry, setUSMobilityDataByDate, setSelectedSubregion, resetCovidSubData, setMobilitySubData, resetMobilitySubData } from '../../actions/actions';
-import { getMobilityDates, getSelectedCountryCode, getSelectedCountryName, getSelectedSubregion } from '../../selectors/selectors';
-import { useHistory } from 'react-router-dom';
+import { setUSMobilityDataByDate, setSelectedSubregion, } from '../../actions/actions';
+import { getMobilityDates } from '../../selectors/selectors';
 import { useStyles } from './Map.styles';
 import { useIsMobile, useScreenDimensions } from '../../hooks/isMobile';
 
@@ -50,7 +49,7 @@ const Map = ({ mapData, selectedSubregion }) => {
   const dates = useSelector(getMobilityDates);
   const [property, setProperty] = useState('retailChange');
   const [clicked, setClicked] = useState(false);
-  const [dateIndex, setDateIndex] = useState(48); //hard coded index for now
+  const [dateIndex, setDateIndex] = useState(59); //hard coded index for now
   const [selectedState, setSelectedState] = useState(null);
   const isMobile = useIsMobile();
   const { width: screenWidth } = useScreenDimensions();
@@ -66,11 +65,13 @@ const Map = ({ mapData, selectedSubregion }) => {
       { value: 64, label: dates[64]?.slice(5).replace('-', '/') },
       { value: 80, label: dates[80]?.slice(5).replace('-', '/') },
       { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
+      { value: 112, label: dates[112]?.slice(5).replace('-', '/') },
+
     ]
     : [
       { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
-      { value: 48, label: dates[48]?.slice(5).replace('-', '/') },
-      { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
+      { value: 59, label: dates[59]?.slice(5).replace('-', '/') },
+      { value: 118, label: dates[118]?.slice(5).replace('-', '/') },
     ];
 
   const svgRef = useRef();
