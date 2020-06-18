@@ -261,7 +261,7 @@ const Map = ({ mapData }) => {
       <Grid item xs={12} sm={9} md={2} >
         {/* TO DO: Paper elements may be unneccisery */}
         <Paper elevation={2} className={classes.legendPaper}> 
-          {(screenWidth > 1) && <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>}
+          <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>
           <div ref={legendRef} className={style.mapLegendContainer}>
             <p className={style.legendNoData}>{(screenWidth < 960) ? 'N/A' : 'No Data Available'}</p>
           </div>

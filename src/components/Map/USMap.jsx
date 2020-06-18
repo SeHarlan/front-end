@@ -145,16 +145,17 @@ const Map = ({ mapData, selectedSubregion }) => {
   return (<>
     <Grid container className={classes.mapContainer} alignItems="center" justify="center" spacing={2}>
 
-      <Grid item xs={3} sm={2} >
+      <Grid item xs={12} sm={9} md={2} >
         <Paper elevation={2} className={classes.legendPaper}>
-          {(screenWidth > 600) && <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>}
-          <div ref={legendRef} className={style.mapLegendContainer}></div>
-          <p className={style.legendNoData}>{(screenWidth < 600) ? 'N/A' : 'No Data Available'}</p>
+          <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>
+          <div ref={legendRef} className={style.mapLegendContainer}>
+            <p className={style.legendNoData}>{(screenWidth < 600) ? 'N/A' : 'No Data Available'}</p>
+          </div>
           {(screenWidth > 600) && <em className={classes.aside}>*compared to baseline, pre-pandemic measurements</em>}
         </Paper>
       </Grid>
     
-      <Grid item xs={9} sm={8}ref={wrapperRef} className={style.Map} >
+      <Grid item xs={12} md={8}ref={wrapperRef} className={style.Map} >
         { !mapData.features 
           ? <CircularProgress /> 
           : (<> 
@@ -169,7 +170,7 @@ const Map = ({ mapData, selectedSubregion }) => {
           <FormControl component="fieldset">
 
             {/* <FormLabel component="legend">Choose a Metric</FormLabel> */}
-            <RadioGroup row={isMobile || screenWidth < 600} aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+            <RadioGroup row={isMobile || screenWidth < 960} aria-label="position" name="metric" defaultValue="retailChange" className={classes.radioGroup} onChange={({ target }) => setProperty(target.value)}>
 
               <FormControlLabel
                 value="groceryChange"
