@@ -58,7 +58,7 @@ const Map = ({ mapData }) => {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [rotating, setRotating] = useState(false);
-  const [dateIndex, setDateIndex] = useState(42); //hard coded index (can't get programatically as it loads before recieving "dates" from getMobilityDates selector)
+  const [dateIndex, setDateIndex] = useState(59); //hard coded index (can't get programatically as it loads before recieving "dates" from getMobilityDates selector)
   const [selectedCountryData, setSelectedCountryData] = useState({});
   
   const { width: screenWidth } = useScreenDimensions();
@@ -71,15 +71,19 @@ const Map = ({ mapData }) => {
   const marks = (!isMobile) 
     ? [
       { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
-      { value: 21, label: dates[21]?.slice(5).replace('-', '/') },
-      { value: 42, label: dates[42]?.slice(5).replace('-', '/') },
-      { value: 63, label: dates[63]?.slice(5).replace('-', '/') },
-      { value: 84, label: dates[84]?.slice(5).replace('-', '/') },
+      { value: 16, label: dates[16]?.slice(5).replace('-', '/') },
+      { value: 32, label: dates[32]?.slice(5).replace('-', '/') },
+      { value: 48, label: dates[48]?.slice(5).replace('-', '/') },
+      { value: 64, label: dates[64]?.slice(5).replace('-', '/') },
+      { value: 80, label: dates[80]?.slice(5).replace('-', '/') },
+      { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
+      { value: 112, label: dates[112]?.slice(5).replace('-', '/') },
+
     ]
     : [
       { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
-      { value: 42, label: dates[42]?.slice(5).replace('-', '/') },
-      { value: 84, label: dates[84]?.slice(5).replace('-', '/') },
+      { value: 59, label: dates[59]?.slice(5).replace('-', '/') },
+      { value: 118, label: dates[118]?.slice(5).replace('-', '/') },
     ];
 
   //popover elements/methods
@@ -261,7 +265,7 @@ const Map = ({ mapData }) => {
       <Grid item xs={12} sm={9} md={2} >
         {/* TO DO: Paper elements may be unneccisery */}
         <Paper elevation={2} className={classes.legendPaper}> 
-          {(screenWidth > 1) && <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>}
+          <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>
           <div ref={legendRef} className={style.mapLegendContainer}>
             <p className={style.legendNoData}>{(screenWidth < 960) ? 'N/A' : 'No Data Available'}</p>
           </div>
@@ -358,7 +362,7 @@ const Map = ({ mapData }) => {
         {dates.length && <SliderStyled 
           value={dateIndex} 
           min={0} 
-          max={84} 
+          max={dates.length - 1} 
           onChange={(_, newValue) => setDateIndex(newValue)} valueLabelDisplay="on" 
           valueLabelFormat={(index) => dates[index].slice(5).replace('-', '/')}
           marks={marks} />}

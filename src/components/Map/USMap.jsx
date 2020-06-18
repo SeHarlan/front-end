@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { select, geoPath, geoOrthographic, scaleLinear, event, drag, geoMercator, geoAlbersUsa } from 'd3';
+import { select, geoPath, scaleLinear, geoAlbersUsa } from 'd3';
 import { useResizeObserver } from '../../hooks/d3Hooks';
 import PropTypes from 'prop-types';
 
-import { Slider, Popover, Typography, Button, withStyles, FormControl, InputLabel, Select, MenuItem, Paper, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, CircularProgress } from '@material-ui/core'; 
+import { Slider, Typography, withStyles, FormControl, Paper, Grid, RadioGroup, FormControlLabel, Radio, CircularProgress } from '@material-ui/core'; 
 
 import style from './Map.css';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setGlobalMobilityDataByDate, setSelectedCountry, setUSMobilityDataByDate, setSelectedSubregion, resetCovidSubData, setMobilitySubData, resetMobilitySubData } from '../../actions/actions';
-import { getMobilityDates, getSelectedCountryCode, getSelectedCountryName, getSelectedSubregion } from '../../selectors/selectors';
-import { useHistory } from 'react-router-dom';
+import { setUSMobilityDataByDate, setSelectedSubregion, } from '../../actions/actions';
+import { getMobilityDates } from '../../selectors/selectors';
 import { useStyles } from './Map.styles';
 import { useIsMobile, useScreenDimensions } from '../../hooks/isMobile';
 
@@ -50,7 +49,7 @@ const Map = ({ mapData, selectedSubregion }) => {
   const dates = useSelector(getMobilityDates);
   const [property, setProperty] = useState('retailChange');
   const [clicked, setClicked] = useState(false);
-  const [dateIndex, setDateIndex] = useState(48); //hard coded index for now
+  const [dateIndex, setDateIndex] = useState(59); //hard coded index for now
   const [selectedState, setSelectedState] = useState(null);
   const isMobile = useIsMobile();
   const { width: screenWidth } = useScreenDimensions();
@@ -66,11 +65,13 @@ const Map = ({ mapData, selectedSubregion }) => {
       { value: 64, label: dates[64]?.slice(5).replace('-', '/') },
       { value: 80, label: dates[80]?.slice(5).replace('-', '/') },
       { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
+      { value: 112, label: dates[112]?.slice(5).replace('-', '/') },
+
     ]
     : [
       { value: 0, label: dates[0]?.slice(5).replace('-', '/') },
-      { value: 48, label: dates[48]?.slice(5).replace('-', '/') },
-      { value: 96, label: dates[96]?.slice(5).replace('-', '/') },
+      { value: 59, label: dates[59]?.slice(5).replace('-', '/') },
+      { value: 118, label: dates[118]?.slice(5).replace('-', '/') },
     ];
 
   const svgRef = useRef();
@@ -144,16 +145,17 @@ const Map = ({ mapData, selectedSubregion }) => {
   return (<>
     <Grid container className={classes.mapContainer} alignItems="center" justify="center" spacing={2}>
 
-      <Grid item xs={3} sm={2} >
+      <Grid item xs={12} sm={9} md={2} >
         <Paper elevation={2} className={classes.legendPaper}>
-          {(screenWidth > 600) && <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>}
-          <div ref={legendRef} className={style.mapLegendContainer}></div>
-          <p className={style.legendNoData}>{(screenWidth < 600) ? 'N/A' : 'No Data Available'}</p>
+          <p>Percent increase or decrease in travel to <b>{property.replace('sChange', '').replace('Change', '')}</b> locations</p>
+          <div ref={legendRef} className={style.mapLegendContainer}>
+            <p className={style.legendNoData}>{(screenWidth < 600) ? 'N/A' : 'No Data Available'}</p>
+          </div>
           {(screenWidth > 600) && <em className={classes.aside}>*compared to baseline, pre-pandemic measurements</em>}
         </Paper>
       </Grid>
     
-      <Grid item xs={9} sm={8}ref={wrapperRef} className={style.Map} >
+      <Grid item xs={12} md={8}ref={wrapperRef} className={style.Map} >
         { !mapData.features 
           ? <CircularProgress /> 
           : (<> 
@@ -168,7 +170,7 @@ const Map = ({ mapData, selectedSubregion }) => {
           <FormControl component="fieldset">
 
             {/* <FormLabel component="legend">Choose a Metric</FormLabel> */}
-            <RadioGroup row={isMobile || screenWidth < 600} aria-label="position" name="metric" defaultValue="retailChange" onChange={({ target }) => setProperty(target.value)}>
+            <RadioGroup row={isMobile || screenWidth < 960} aria-label="position" name="metric" defaultValue="retailChange" className={classes.radioGroup} onChange={({ target }) => setProperty(target.value)}>
 
               <FormControlLabel
                 value="groceryChange"
